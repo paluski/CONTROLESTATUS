@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de Perguntas e Respostas</title>
+  <meta name="description" content="Controle de perguntas, protocolos, status e respostas — com importação de Excel." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- ===================== TOPO ===================== -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+            <rect x="9" y="3" width="6" height="4" rx="1" />
+            <path d="m9 14 2 2 4-4" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 id="appTitle">Controle de Perguntas</h1>
+          <p id="appSubtitle" class="brand-sub">Protocolos, status e respostas</p>
+        </div>
+      </div>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="view" role="tab">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          <span>Visualização</span>
+        </button>
+        <button class="tab" data-tab="form" role="tab">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Cadastro</span>
+        </button>
+      </nav>
+
+      <div class="topbar-actions">
+        <span id="modeBadge" class="mode-badge" title=""></span>
+        <button id="themeToggle" class="icon-btn" title="Alternar tema" aria-label="Alternar tema">
+          <svg class="ic-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="ic-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===================== VISUALIZAÇÃO ===================== -->
+      <section id="view" class="panel active" role="tabpanel">
+        <div class="summary" id="summary"></div>
+
+        <div class="toolbar">
+          <div class="search">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="search" type="search" placeholder="Buscar em todos os campos…" autocomplete="off" />
+          </div>
+          <div class="filters">
+            <select id="filterClass" class="select" aria-label="Filtrar por classificação"><option value="">Classificação: todas</option></select>
+            <select id="filterOrgao" class="select" aria-label="Filtrar por órgão"><option value="">Órgão: todos</option></select>
+            <select id="filterStatus" class="select" aria-label="Filtrar por status"><option value="">Status: todos</option></select>
+            <button id="clearFilters" class="btn btn-ghost" type="button">Limpar</button>
+          </div>
+          <div class="toolbar-right">
+            <button id="refreshBtn" class="btn btn-ghost" type="button" title="Atualizar">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              <span>Atualizar</span>
+            </button>
+            <button id="exportBtn" class="btn btn-secondary" type="button" title="Exportar Excel">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              <span>Exportar</span>
+            </button>
+            <button id="printBtn" class="btn btn-secondary" type="button" title="Imprimir / Salvar em PDF">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+              <span>Imprimir</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="subbar">
+          <div class="chips" id="statusChips">
+            <button class="chip active" type="button" data-ans="">Todas <b id="cnt-all">0</b></button>
+            <button class="chip" type="button" data-ans="yes">Respondidas <b id="cnt-yes">0</b></button>
+            <button class="chip" type="button" data-ans="no">Pendentes <b id="cnt-no">0</b></button>
+          </div>
+          <div class="subbar-right">
+            <label class="groupby" id="groupByWrap" hidden>
+              <span>Agrupar por</span>
+              <select id="groupBy" class="select">
+                <option value="classificacao">Classificação (tema)</option>
+                <option value="orgao_responsavel">Órgão responsável</option>
+                <option value="status">Status</option>
+              </select>
+            </label>
+            <div class="expandctl" id="expandCtl" hidden>
+              <button class="btn btn-ghost btn-sm" id="expandAll" type="button">Expandir tudo</button>
+              <button class="btn btn-ghost btn-sm" id="collapseAll" type="button">Recolher</button>
+            </div>
+            <div class="viewtoggle" id="viewToggle">
+              <button class="vt active" type="button" data-view="table">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M3 15h18M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                Tabela
+              </button>
+              <button class="vt" type="button" data-view="reading">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Leitura
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <span id="resultCount" class="result-count">0 registros</span>
+        </div>
+
+        <div class="table-wrap" id="tableWrap">
+          <table id="table">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="classificacao">Classificação</th>
+                <th class="sortable" data-sort="data_protocolo">Data protocolo</th>
+                <th class="sortable" data-sort="item_referente">Item referente</th>
+                <th class="sortable" data-sort="orgao_responsavel">Órgão responsável</th>
+                <th class="sortable" data-sort="status">Status</th>
+                <th>Pergunta</th>
+                <th>Resposta</th>
+                <th class="col-actions">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="readingView" class="reading" hidden></div>
+
+        <div id="emptyState" class="empty" hidden>
+          <div class="empty-icon">📭</div>
+          <h3>Nenhum registro encontrado</h3>
+          <p>Cadastre manualmente ou importe um arquivo Excel na aba <b>Cadastro</b>.</p>
+          <button class="btn btn-primary" type="button" data-goto="form">Ir para Cadastro</button>
+        </div>
+
+        <div id="loading" class="loading" hidden><div class="spinner"></div><span>Carregando…</span></div>
+      </section>
+
+      <!-- ===================== CADASTRO ===================== -->
+      <section id="form" class="panel" role="tabpanel">
+        <div class="grid-2">
+          <!-- Formulário -->
+          <div class="card form-card">
+            <div class="card-head">
+              <h2 id="formTitle">Novo registro</h2>
+              <button id="cancelEdit" class="btn btn-ghost" type="button" hidden>Cancelar edição</button>
+            </div>
+            <form id="recordForm" autocomplete="off">
+              <input type="hidden" id="recordId" />
+              <div class="form-grid">
+                <div class="field">
+                  <label for="f_classificacao">Classificação da pergunta</label>
+                  <input id="f_classificacao" name="classificacao" type="text" list="dl_class" placeholder="Ex.: Dúvida, Solicitação…" />
+                  <datalist id="dl_class"></datalist>
+                </div>
+                <div class="field">
+                  <label for="f_data">Data de protocolo</label>
+                  <input id="f_data" name="data_protocolo" type="date" />
+                </div>
+                <div class="field">
+                  <label for="f_item">Item referente</label>
+                  <input id="f_item" name="item_referente" type="text" placeholder="Ex.: Item 4.2 do edital" />
+                </div>
+                <div class="field">
+                  <label for="f_orgao">Órgão responsável</label>
+                  <input id="f_orgao" name="orgao_responsavel" type="text" list="dl_orgao" placeholder="Ex.: Secretaria…" />
+                  <datalist id="dl_orgao"></datalist>
+                </div>
+                <div class="field">
+                  <label for="f_status">Status</label>
+                  <input id="f_status" name="status" type="text" list="dl_status" placeholder="Ex.: Pendente, Respondida…" />
+                  <datalist id="dl_status">
+                    <option value="Pendente"></option>
+                    <option value="Em andamento"></option>
+                    <option value="Respondida"></option>
+                    <option value="Concluída"></option>
+                    <option value="Cancelada"></option>
+                  </datalist>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="f_pergunta">Pergunta <span class="counter" id="cnt_pergunta">0</span></label>
+                <textarea id="f_pergunta" name="pergunta" rows="4" placeholder="Digite a pergunta…"></textarea>
+              </div>
+              <div class="field">
+                <label for="f_resposta">Resposta <span class="counter" id="cnt_resposta">0</span></label>
+                <textarea id="f_resposta" name="resposta" rows="4" placeholder="Digite a resposta…"></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="saveBtn">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+                  <span id="saveBtnLabel">Salvar registro</span>
+                </button>
+                <button type="reset" class="btn btn-ghost">Limpar campos</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Importação -->
+          <div class="card import-card">
+            <div class="card-head">
+              <h2>Importar Excel</h2>
+              <button id="templateBtn" class="btn btn-ghost" type="button" title="Baixar modelo">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                Baixar modelo
+              </button>
+            </div>
+            <p class="import-help">
+              A planilha deve conter as colunas:
+              <b>Classificação da pergunta</b>, <b>Data de protocolo</b>, <b>Item referente</b>,
+              <b>Órgão responsável</b>, <b>Status</b>, <b>Pergunta</b> e <b>Resposta</b>.
+            </p>
+            <label id="dropzone" class="dropzone" for="fileInput">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+              <strong>Clique ou arraste o arquivo</strong>
+              <span>Formatos aceitos: .xlsx, .xls, .csv</span>
+              <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" hidden />
+            </label>
+            <div id="importFileName" class="import-filename" hidden></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="footerMode"></span>
+    </footer>
+  </div>
+
+  <!-- ===================== MODAL: DETALHE ===================== -->
+  <div id="modal" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div class="modal-badges" id="modalBadges"></div>
+        <button class="icon-btn modal-close" id="modalClose" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h3 id="modalTitle" class="modal-title">Detalhes do registro</h3>
+        <div class="modal-meta" id="modalMeta"></div>
+        <div class="modal-section">
+          <h4>Pergunta</h4>
+          <div class="modal-text" id="modalPergunta"></div>
+        </div>
+        <div class="modal-section">
+          <h4>Resposta</h4>
+          <div class="modal-text" id="modalResposta"></div>
+        </div>
+      </div>
+      <div class="modal-foot modal-foot-split">
+        <div class="foot-left">
+          <button class="btn btn-ghost" id="modalCopy" type="button" title="Copiar texto da pergunta e resposta">Copiar texto</button>
+          <button class="btn btn-ghost" id="modalCopyLink" type="button" title="Copiar link direto para este item">Copiar link</button>
+        </div>
+        <div class="foot-right">
+          <button class="btn btn-danger" id="modalDelete" type="button">Excluir</button>
+          <button class="btn btn-primary" id="modalEdit" type="button">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: PRÉVIA IMPORTAÇÃO ===================== -->
+  <div id="importModal" class="modal-backdrop" hidden>
+    <div class="modal modal-wide" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 class="modal-title">Prévia da importação</h3>
+        <button class="icon-btn modal-close" id="importClose" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="importSummary" class="import-summary"></div>
+        <div class="table-wrap import-preview">
+          <table>
+            <thead>
+              <tr>
+                <th>Classificação</th><th>Data</th><th>Item</th><th>Órgão</th><th>Status</th><th>Pergunta</th><th>Resposta</th>
+              </tr>
+            </thead>
+            <tbody id="importPreviewBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="importCancel" type="button">Cancelar</button>
+        <button class="btn btn-primary" id="importConfirm" type="button">Confirmar importação</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CONFIRMAÇÃO ===================== -->
+  <div id="confirmModal" class="modal-backdrop" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-body">
+        <h3 class="modal-title" id="confirmTitle">Confirmar</h3>
+        <p id="confirmText" class="confirm-text"></p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="confirmNo" type="button">Cancelar</button>
+        <button class="btn btn-danger" id="confirmYes" type="button">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <!-- Bibliotecas -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Aplicação -->
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
