@@ -137,6 +137,14 @@
         if (error) throw error;
         return data;
       },
+      async updateItem(id, item) {
+        const patch = {};
+        if ("codigo" in item) patch.codigo = item.codigo;
+        if ("titulo" in item) patch.titulo = item.titulo;
+        const { data, error } = await client.from("itens").update(patch).eq("id", id).select().single();
+        if (error) throw error;
+        return data;
+      },
       async removeItem(id) {
         const { error } = await client.from("itens").delete().eq("id", id);
         if (error) throw error;
@@ -222,6 +230,14 @@
       async createItem(item) {
         const a = await this.listItens(); const row = { ...item, id: uid(), created_at: new Date().toISOString() };
         a.push(row); localStorage.setItem("controle_itens_v1", JSON.stringify(a)); emitChange(); return row;
+      },
+      async updateItem(id, item) {
+        let a = await this.listItens(); const i = a.findIndex((x) => x.id === id);
+        if (i > -1) {
+          if ("codigo" in item) a[i].codigo = item.codigo;
+          if ("titulo" in item) a[i].titulo = item.titulo;
+          localStorage.setItem("controle_itens_v1", JSON.stringify(a)); emitChange(); return a[i];
+        }
       },
       async removeItem(id) {
         let a = await this.listItens(); a = a.filter((x) => x.id !== id && x.parent_id !== id);

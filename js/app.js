@@ -34,6 +34,8 @@
   let editingId = null;
   let currentDetailId = null;
   let hashChecked = false;
+  let docModalDocId = null;
+  const docModalCollapsed = new Set();
   const state = { search: "", classificacao: "", orgao: "", status: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
 
   /* ---------- Utilidades --------------------------------------------- */
@@ -516,20 +518,117 @@
     wrap.innerHTML = documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).map((d) => {
       const its = itens.filter((i) => i.documento_id === d.id);
       const qn = records.filter((r) => r.documento_id === d.id).length;
-      let tree = "";
-      const walk = (n, depth) => {
-        tree += `<div class="doc-item" style="padding-left:${10 + depth * 18}px"><span class="di-label">${n.codigo ? "<b>" + txt(n.codigo) + "</b> " : ""}${txt(n.titulo || "")}</span><button class="di-del" data-del-item="${txt(n.id)}" title="Excluir item" type="button">✕</button></div>`;
-        n.children.slice().sort(itemSort).forEach((c) => walk(c, depth + 1));
-      };
-      itemTreeRoots(d.id).sort(itemSort).forEach((n) => walk(n, 0));
       return `<div class="doc-block">
         <div class="doc-block-head">
           <div><div class="doc-block-nome">${txt(d.nome)}</div><div class="doc-block-meta">${d.sigla ? txt(d.sigla) + " · " : ""}${d.orgao ? txt(d.orgao) + " · " : ""}${its.length} item(ns) · ${qn} pergunta(s)</div></div>
-          <button class="btn btn-ghost btn-sm" data-del-doc="${txt(d.id)}" type="button">Excluir</button>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-primary btn-sm" data-open-doc="${txt(d.id)}" type="button">Ver itens</button>
+            <button class="btn btn-ghost btn-sm" data-del-doc="${txt(d.id)}" type="button">Excluir</button>
+          </div>
         </div>
-        <div class="doc-tree">${tree || '<div class="di-empty">Sem itens cadastrados.</div>'}</div>
       </div>`;
     }).join("");
+  }
+
+  /* ---------- Modal de documento (árvore de itens) ------------------- */
+  function openDocModal(docId) {
+    docModalDocId = docId;
+    docModalCollapsed.clear();
+    const doc = documentos.find((d) => d.id === docId);
+    if (!doc) return;
+    $("dmTitle").textContent = doc.nome;
+    $("dmMeta").textContent = [doc.sigla, doc.tipo, doc.orgao, doc.ano].filter(Boolean).join(" · ");
+    $("dmMeta").hidden = ![doc.sigla, doc.tipo, doc.orgao, doc.ano].some(Boolean);
+    $("docModal").hidden = false;
+    renderDocModalTree();
+  }
+  function closeDocModal() {
+    $("docModal").hidden = true;
+    docModalDocId = null;
+    docModalCollapsed.clear();
+  }
+  function renderDocModalTree() {
+    const docId = docModalDocId;
+    const its = itens.filter((i) => i.documento_id === docId);
+    const tree = $("dmTree");
+    const empty = $("dmEmpty");
+    const colbar = $("dmColBar");
+    if (!its.length) { tree.innerHTML = ""; empty.hidden = false; colbar.hidden = true; return; }
+    empty.hidden = true;
+
+    const byId = {}; its.forEach((i) => (byId[i.id] = { ...i, children: [] }));
+    const roots = []; Object.values(byId).forEach((n) => { if (n.parent_id && byId[n.parent_id]) byId[n.parent_id].children.push(n); else roots.push(n); });
+    const hasChildren = new Set(Object.values(byId).filter((n) => n.children.length).map((n) => n.id));
+    colbar.hidden = hasChildren.size === 0;
+
+    function isHidden(node) {
+      let cur = node;
+      while (cur.parent_id && byId[cur.parent_id]) {
+        if (docModalCollapsed.has(cur.parent_id)) return true;
+        cur = byId[cur.parent_id];
+      }
+      return false;
+    }
+    function depth(node) {
+      let d = 0, cur = node;
+      while (cur.parent_id && byId[cur.parent_id]) { d++; cur = byId[cur.parent_id]; }
+      return d;
+    }
+    const flat = [];
+    const walk = (n) => { flat.push(n); n.children.slice().sort(itemSort).forEach(walk); };
+    roots.slice().sort(itemSort).forEach(walk);
+
+    tree.innerHTML = flat.map((n) => {
+      const isParent = hasChildren.has(n.id);
+      const open = isParent && !docModalCollapsed.has(n.id);
+      const hidden = isHidden(n);
+      const qn = records.filter((r) => r.item_id === n.id).length;
+      const qBadge = qn > 0
+        ? `<span class="dm-qbadge has-q">${qn}q</span>`
+        : `<span class="dm-qbadge no-q">0q</span>`;
+      const chevron = isParent
+        ? `<button class="dd-toggle" data-dm-toggle="${txt(n.id)}" aria-expanded="${open}" title="${open ? "Recolher" : "Expandir"}">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(${open ? 0 : -90}deg);transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+           </button>`
+        : `<span class="dd-toggle-spacer"></span>`;
+      return `<div class="dd-item" data-depth="${Math.min(depth(n), 4)}"${hidden ? ' style="display:none"' : ''}>
+        ${chevron}
+        ${n.codigo ? `<span class="item-codigo">${txt(n.codigo)}</span>` : ""}
+        <span class="item-titulo">${txt(n.titulo || "")}</span>
+        ${qBadge}
+        <div class="item-actions">
+          <button class="row-btn" title="Editar item" data-dm-edit-item="${txt(n.id)}">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+          </button>
+          <button class="row-btn danger" title="Excluir item" data-del-item="${txt(n.id)}">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </div>`;
+    }).join("");
+  }
+  function openEditItemModal(itemId) {
+    const item = itens.find((i) => i.id === itemId);
+    if (!item) return;
+    $("eiCodigo").value = item.codigo || "";
+    $("eiTitulo").value = item.titulo || "";
+    $("editItemModal").dataset.itemId = itemId;
+    $("editItemModal").hidden = false;
+    $("eiCodigo").focus();
+  }
+  async function saveEditItem() {
+    const id = $("editItemModal").dataset.itemId;
+    const codigo = $("eiCodigo").value.trim() || null;
+    const titulo = $("eiTitulo").value.trim();
+    if (!titulo && !codigo) { toast("Informe código ou título.", "error"); return; }
+    try {
+      await DataStore.updateItem(id, { codigo, titulo });
+      toast("Item atualizado.", "success");
+      $("editItemModal").hidden = true;
+      await load();
+      renderDocModalTree();
+      renderDocumentosTab();
+    } catch (e) { toast("Erro: " + (e.message || e), "error"); }
   }
 
   /* ---------- Modal de detalhe -------------------------------------- */
@@ -983,6 +1082,8 @@
     });
     $("i_doc").addEventListener("change", (e) => fillParentSelect(e.target.value, ""));
     $("docsList").addEventListener("click", async (e) => {
+      const od = e.target.closest("[data-open-doc]");
+      if (od) { openDocModal(od.dataset.openDoc); return; }
       const di = e.target.closest("[data-del-item]");
       if (di) {
         if (await confirmDialog("Excluir item", "Excluir este item e seus subitens? As perguntas vinculadas ficarão sem item.", "Excluir")) {
@@ -1018,12 +1119,47 @@
     $("importCancel").onclick = () => ($("importModal").hidden = true);
     $("importConfirm").onclick = confirmImport;
 
+    // Modal de documento
+    $("dmClose").onclick = closeDocModal;
+    $("docModal").addEventListener("click", (e) => { if (e.target.id === "docModal") closeDocModal(); });
+    $("dmTree").addEventListener("click", async (e) => {
+      const tog = e.target.closest("[data-dm-toggle]");
+      if (tog) {
+        const id = tog.dataset.dmToggle;
+        if (docModalCollapsed.has(id)) docModalCollapsed.delete(id); else docModalCollapsed.add(id);
+        renderDocModalTree(); return;
+      }
+      const ed = e.target.closest("[data-dm-edit-item]");
+      if (ed) { openEditItemModal(ed.dataset.dmEditItem); return; }
+      const del = e.target.closest("[data-del-item]");
+      if (del) {
+        if (await confirmDialog("Excluir item", "Excluir este item e seus subitens? As perguntas vinculadas ficarão sem item.", "Excluir")) {
+          try { await DataStore.removeItem(del.dataset.delItem); toast("Item excluído.", "success"); await load(); renderDocModalTree(); renderDocumentosTab(); }
+          catch (err) { toast("Erro: " + (err.message || err), "error"); }
+        }
+        return;
+      }
+    });
+    $("dmExpandAll").onclick = () => { docModalCollapsed.clear(); renderDocModalTree(); };
+    $("dmCollapseAll").onclick = () => {
+      itens.filter((i) => i.documento_id === docModalDocId && itens.some((j) => j.parent_id === i.id)).forEach((i) => docModalCollapsed.add(i.id));
+      renderDocModalTree();
+    };
+
+    // Modal editar item
+    $("editItemClose").onclick = () => ($("editItemModal").hidden = true);
+    $("editItemCancel").onclick = () => ($("editItemModal").hidden = true);
+    $("editItemSave").onclick = saveEditItem;
+    $("editItemModal").addEventListener("click", (e) => { if (e.target.id === "editItemModal") $("editItemModal").hidden = true; });
+
     // ESC fecha modais
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         $("modal").hidden = true;
         $("importModal").hidden = true;
         $("confirmModal").hidden = true;
+        if (!$("editItemModal").hidden) { $("editItemModal").hidden = true; return; }
+        if (!$("docModal").hidden) { closeDocModal(); return; }
       }
     });
   }
