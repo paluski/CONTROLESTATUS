@@ -36,7 +36,7 @@
   let hashChecked = false;
   let docModalDocId = null;
   const docModalCollapsed = new Set();
-  const state = { search: "", classificacao: "", orgao: "", status: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
+  const state = { search: "", classificacao: "", orgao: "", status: "", documento: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
 
   /* ---------- Utilidades --------------------------------------------- */
   function normalize(s) {
@@ -204,6 +204,8 @@
     sel.value = values.includes(current) ? current : "";
   }
   function populateFilters() {
+    const docNames = documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).map((d) => d.nome);
+    fillSelect($("filterDoc"), docNames, "Documento: todos", state.documento);
     fillSelect($("filterClass"), distinct("classificacao"), "Tipo: todos", state.classificacao);
     fillSelect($("filterOrgao"), distinct("orgao_responsavel"), "Órgão: todos", state.orgao);
     fillSelect($("filterStatus"), distinct("status"), "Status: todos", state.status);
@@ -223,6 +225,10 @@
       if (state.classificacao && (r.classificacao || "") !== state.classificacao) return false;
       if (state.orgao && (r.orgao_responsavel || "") !== state.orgao) return false;
       if (state.status && (r.status || "") !== state.status) return false;
+      if (state.documento) {
+        const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
+        if (docNome !== state.documento) return false;
+      }
       if (q) {
         const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
         const itemTxt = r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "";
@@ -380,37 +386,56 @@
   }
   function docCardHTML(d, total, ans, q) {
     const pend = total - ans;
-    const meta = total === 0 ? `<span class="nav-meta-empty">sem perguntas</span>`
-      : (pend ? `<span class="meta-pend">${pend} pendente(s)</span>` : `<span class="meta-ok">tudo respondido</span>`);
-    return `<button class="nav-card doc" type="button" data-doc="${txt(d.id)}">
-      <span class="nav-ic">📕</span>
-      <span class="nav-main">
-        <span class="nav-name">${highlight(d.nome, q)}</span>
-        <span class="nav-meta">${d.sigla ? txt(d.sigla) + " · " : ""}${total} pergunta(s) · ${meta}</span>
+    const pct = total ? Math.round((ans / total) * 100) : 0;
+    const statusTxt = total === 0
+      ? `<span class="nc-empty">sem perguntas</span>`
+      : pend ? `<span class="nc-pend">${pend} pendente${pend > 1 ? "s" : ""}</span>` : `<span class="nc-ok">tudo respondido</span>`;
+    return `<button class="nav-card nc-doc" type="button" data-doc="${txt(d.id)}">
+      <span class="nc-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       </span>
-      <span class="nav-count">${total}</span>
+      <span class="nc-body">
+        <span class="nc-name">${highlight(d.nome, q)}</span>
+        <span class="nc-desc">${d.sigla ? txt(d.sigla) + " · " : ""}${statusTxt}</span>
+        ${total > 0 ? `<span class="nc-bar"><span style="width:${pct}%"></span></span>` : ""}
+      </span>
+      <span class="nc-footer">
+        <span class="nc-count-txt">${total}</span>
+        <svg class="nc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </span>
     </button>`;
   }
   function itemCardHTML(n) {
     const pend = n.total - n.ans;
-    const meta = pend ? `<span class="meta-pend">${pend} pendente(s)</span>` : `<span class="meta-ok">tudo respondido</span>`;
-    const childInfo = n.children.length ? ` · ${n.children.length} subitem(ns)` : "";
-    return `<button class="nav-card" type="button" data-item="${txt(n.id)}">
-      <span class="nav-ic">${n.children.length ? "📂" : "📄"}</span>
-      <span class="nav-main">
-        <span class="nav-name">${n.codigo ? '<b class="nav-code">' + txt(n.codigo) + "</b> " : ""}${txt(n.titulo || "")}</span>
-        <span class="nav-meta">${n.total} pergunta(s)${n.total ? " · " + meta : ""}${childInfo}</span>
+    const isFolder = n.children.length > 0;
+    const folderIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`;
+    const fileIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+    const statusTxt = n.total === 0 ? "" : pend
+      ? `<span class="nc-pend">${pend} pend.</span>`
+      : `<span class="nc-ok">ok</span>`;
+    const subInfo = isFolder ? `${n.children.length} sub · ` : "";
+    return `<button class="nav-card nc-item" type="button" data-item="${txt(n.id)}">
+      <span class="nc-icon${isFolder ? " nc-folder" : " nc-file"}">${isFolder ? folderIcon : fileIcon}</span>
+      <span class="nc-body">
+        <span class="nc-name">${n.codigo ? `<b class="nc-badge">${txt(n.codigo)}</b> ` : ""}${txt(n.titulo || "")}</span>
+        <span class="nc-desc">${subInfo}${n.total} pergunta${n.total !== 1 ? "s" : ""}${n.total ? " · " + statusTxt : ""}</span>
       </span>
-      <span class="nav-count">${n.total}</span>
+      <span class="nc-footer">
+        <span class="nc-count-txt">${n.total}</span>
+        <svg class="nc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </span>
     </button>`;
   }
   function questionRowHTML(r) {
     const q = state.search;
+    const answered = isAnswered(r);
+    const dotClass = answered ? "dot-ok" : "dot-pend";
     return `<button class="qrow" type="button" data-id="${txt(r.id)}">
-      <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "•"}</span>
+      <span class="qrow-dot ${dotClass}"></span>
+      <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "·"}</span>
       <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
       <span class="qrow-badges">${readingStatus(r)}</span>
-      <svg class="qrow-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      <svg class="qrow-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
     </button>`;
   }
   function qlistHTML(qs, headLabel) {
@@ -430,7 +455,8 @@
     $("navView").innerHTML =
       `<div class="search-head">${list.length} resultado(s) para “${txt(q)}”</div><div class="qlist">` +
       sorted.map((r) => `<button class="qrow qrow-search" type="button" data-id="${txt(r.id)}">
-          <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "•"}</span>
+          <span class="qrow-dot ${isAnswered(r) ? "dot-ok" : "dot-pend"}"></span>
+          <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "·"}</span>
           <span class="qrow-main">
             <span class="qrow-path">${highlight(pathOf(r), q)}</span>
             <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
@@ -996,11 +1022,12 @@
 
     // Busca / filtros
     $("search").addEventListener("input", debounce((e) => { state.search = e.target.value; render(); }, 180));
+    $("filterDoc").onchange = (e) => { state.documento = e.target.value; render(); };
     $("filterClass").onchange = (e) => { state.classificacao = e.target.value; render(); };
     $("filterOrgao").onchange = (e) => { state.orgao = e.target.value; render(); };
     $("filterStatus").onchange = (e) => { state.status = e.target.value; render(); };
     $("clearFilters").onclick = () => {
-      state.search = state.classificacao = state.orgao = state.status = state.answered = "";
+      state.search = state.classificacao = state.orgao = state.status = state.answered = state.documento = "";
       $("search").value = "";
       populateFilters();
       render();
