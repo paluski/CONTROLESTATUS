@@ -1,0 +1,398 @@
+{
+  "documentos": [
+    {
+      "nome": "Instruções de Cadastramento e Habilitação Técnica (SAE)",
+      "sigla": "EPE-DEE-RE-079/2024-R2",
+      "tipo": "Instruções",
+      "orgao": "EPE",
+      "ano": 2026,
+      "itens": [
+        {
+          "codigo": "1",
+          "titulo": "Objetivo",
+          "pai": null
+        },
+        {
+          "codigo": "2",
+          "titulo": "Diretrizes",
+          "pai": null
+        },
+        {
+          "codigo": "3",
+          "titulo": "Da Solicitação de Cadastramento e Habilitação Técnica",
+          "pai": null
+        },
+        {
+          "codigo": "3.1",
+          "titulo": "Preenchimento do AEGE",
+          "pai": "3"
+        },
+        {
+          "codigo": "3.2",
+          "titulo": "Regularização dos Dados do AEGE e da Documentação",
+          "pai": "3"
+        },
+        {
+          "codigo": "3.3",
+          "titulo": "Requerimento de Cadastramento",
+          "pai": "3"
+        },
+        {
+          "codigo": "3.4",
+          "titulo": "Solicitação de Cadastramento com Aproveitamento de Documentos",
+          "pai": "3"
+        },
+        {
+          "codigo": "4",
+          "titulo": "Documentação Exigida",
+          "pai": null
+        },
+        {
+          "codigo": "4.1",
+          "titulo": "Memorial Descritivo",
+          "pai": "4"
+        },
+        {
+          "codigo": "4.2",
+          "titulo": "Documentos de Acesso",
+          "pai": "4"
+        },
+        {
+          "codigo": "4.3",
+          "titulo": "Ficha de Dados",
+          "pai": "4"
+        },
+        {
+          "codigo": "4.4",
+          "titulo": "Direito de Usar ou Dispor do Local",
+          "pai": "4"
+        },
+        {
+          "codigo": "4.5",
+          "titulo": "Declaração de Participação de Empreendimentos com Conteúdo Nacional",
+          "pai": "4"
+        },
+        {
+          "codigo": "4.6",
+          "titulo": "Declaração para Fins de Cadastramento e Habilitação Técnica de SAE",
+          "pai": "4"
+        },
+        {
+          "codigo": "4.7",
+          "titulo": "Atos Complementares",
+          "pai": "4"
+        },
+        {
+          "codigo": "5",
+          "titulo": "Requisitos da Documentação",
+          "pai": null
+        },
+        {
+          "codigo": "5.1",
+          "titulo": "Condições Gerais",
+          "pai": "5"
+        },
+        {
+          "codigo": "5.2",
+          "titulo": "Arquivos Eletrônicos (Upload)",
+          "pai": "5"
+        },
+        {
+          "codigo": "5.3",
+          "titulo": "Documentação Original",
+          "pai": "5"
+        },
+        {
+          "codigo": "6",
+          "titulo": "Requisitos Específicos de Habilitação Técnica",
+          "pai": null
+        },
+        {
+          "codigo": "6.1",
+          "titulo": "Sobreposição de projetos",
+          "pai": "6"
+        },
+        {
+          "codigo": "6.2",
+          "titulo": "Alteração de Características Técnicas após o Cadastramento",
+          "pai": "6"
+        },
+        {
+          "codigo": "7",
+          "titulo": "Envio de Documentação Complementar",
+          "pai": null
+        },
+        {
+          "codigo": "8",
+          "titulo": "Recursos Administrativos",
+          "pai": null
+        },
+        {
+          "codigo": "9",
+          "titulo": "Dúvidas e Sugestões",
+          "pai": null
+        },
+        {
+          "codigo": "10",
+          "titulo": "Endereço para Envio de Correspondência",
+          "pai": null
+        },
+        {
+          "codigo": "11",
+          "titulo": "Desistência",
+          "pai": null
+        },
+        {
+          "codigo": "12",
+          "titulo": "Habilitação Técnica",
+          "pai": null
+        },
+        {
+          "codigo": "ANEXO I",
+          "titulo": "Glossário",
+          "pai": null
+        },
+        {
+          "codigo": "ANEXO II",
+          "titulo": "Documentos que Instruem o Processo de Habilitação",
+          "pai": null
+        },
+        {
+          "codigo": "ANEXO III",
+          "titulo": "Modelo de Requerimento de Cadastramento e Habilitação Técnica",
+          "pai": null
+        },
+        {
+          "codigo": "ANEXO IV",
+          "titulo": "Modelo de Planilha com as Coordenadas da Área Ocupada",
+          "pai": null
+        },
+        {
+          "codigo": "ANEXO V",
+          "titulo": "Impressão da Ficha de Dados",
+          "pai": null
+        },
+        {
+          "codigo": "ANEXO VI",
+          "titulo": "Modelo de Declaração do Direito de Usar ou Dispor do Local",
+          "pai": null
+        },
+        {
+          "codigo": "ANEXO VII",
+          "titulo": "Modelo de Declaração de Participação de Empreendimentos com Conteúdo Nacional",
+          "pai": null
+        }
+      ]
+    },
+    {
+      "nome": "Portaria Normativa MME nº 136/2026 (Diretrizes LRCAP 2026)",
+      "sigla": "MME 136/2026",
+      "tipo": "Portaria",
+      "orgao": "MME",
+      "ano": 2026,
+      "itens": [
+        {
+          "codigo": "Art. 1º",
+          "titulo": "Esta Portaria Normativa estabelece as Diretrizes e a Sistemática para a realização dos",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 2º",
+          "titulo": "O montante total de Reserva de Capacidade a ser contratado será definido pelo",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 3º",
+          "titulo": "A Agência Nacional de Energia Elétrica - ANEEL deverá promover, direta ou",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 4º",
+          "titulo": "Os SAEs participantes dos produtos de que tratam os §§ 2º e 3º do art. 1º deverão",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 5º",
+          "titulo": "Pela disponibilidade da potência contratada, o titular do empreendimento fará jus à",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 6º",
+          "titulo": "Os empreendedores que pretenderem propor a inclusão de projetos de SAEs no LRCAP",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 7º",
+          "titulo": "Não serão Habilitados Tecnicamente pela EPE os seguintes empreendimentos:",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 8º",
+          "titulo": "Para o cálculo da disponibilidade de potência dos SAEs candidatos, será considerada a",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 9º",
+          "titulo": "Caberá à ANEEL elaborar o Edital, seus Anexos e os respectivos CRCAPs, bem como",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 10",
+          "titulo": "Para os empreendimentos participantes do Produto Potência Armazenamento 2028 A do",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 11",
+          "titulo": "Para fins de classificação dos lances do LRCAP de 2026 - Armazenamento Nacional e",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 12",
+          "titulo": "Para fins de realização dos Leilões de que trata o art. 1º, dos quantitativos de Capacidad",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 13",
+          "titulo": "O Edital deverá conter os requisitos técnicos de conexão ao sistema de transmissão para",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 14",
+          "titulo": "Para fins de realização do LRCAP de 2026 - Armazenamento, de que trata o inciso II do",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 15",
+          "titulo": "Nos Leilões de que trata o art. 1º desta Portaria Normativa, não se aplica o disposto no",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 16",
+          "titulo": "Os empreendedores poderão modificar as características técnicas do empreendimento",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 17",
+          "titulo": "A Sistemática a ser aplicada na realização dos Leilões de que trata o art. 1º desta Portar",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 18",
+          "titulo": "Aplica-se a Portaria GM/MME nº 102, de 22 de março de 2016 ao LRCAP de 2026 -",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 19",
+          "titulo": "Esta Portaria Normativa entra em vigor e produz efeitos na data de sua publicação.",
+          "pai": null
+        }
+      ]
+    },
+    {
+      "nome": "Resolução Normativa ANEEL nº 1.055/2022 (ADS)",
+      "sigla": "REN 1.055/2022",
+      "tipo": "Resolução",
+      "orgao": "ANEEL",
+      "ano": 2022,
+      "itens": [
+        {
+          "codigo": "Art. 1º",
+          "titulo": "Aprovar a revisão do Módulo 1 - Glossário das Regras dos Serviços de Transmissão",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 2º",
+          "titulo": "Aprovar a revisão do Módulo 3 - Instalações e Equipamentos das Regras dos Serviç",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 3º",
+          "titulo": "Aprovar a revisão do Módulo 5 - Acesso ao Sistema das Regras dos Serviços de",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 4º",
+          "titulo": "Alterar a versão do Módulo 1 - Glossário das Regras de Transmissão publicada no",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 5º",
+          "titulo": "Alterar a versão do Módulo 3 - Instalações e Equipamentos das Regras de Transmis",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 6º",
+          "titulo": "Incluir o item 3a no ANEXO II da Resolução Normativa nº 876, de 10 de março de 2",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 7º",
+          "titulo": ". Os geradores nas fases construção não iniciada ou em construção que não esteja",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 8º",
+          "titulo": ". O Operador Nacional do Sistema Elétrico - ONS deverá encaminhar à ANEEL, no pr",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 9º",
+          "titulo": ". Será realizada Avaliação de Resultado Regulatório - ARR no prazo de 6 (seis) a",
+          "pai": null
+        },
+        {
+          "codigo": "Art. 10",
+          "titulo": ". Esta Resolução entra em vigor no dia 1º de abril de 2023.",
+          "pai": null
+        }
+      ],
+      "secoes": [
+        {
+          "codigo": "—",
+          "titulo": "Anexo I - Módulo 1 das Regras de Transmissão - Resolução Normativa nº 905, de",
+          "pai": null
+        },
+        {
+          "codigo": "—",
+          "titulo": "Módulo 1 - Glossário",
+          "pai": null
+        },
+        {
+          "codigo": "—",
+          "titulo": "SEÇÃO 1.0 - INTRODUÇÃO",
+          "pai": null
+        },
+        {
+          "codigo": "—",
+          "titulo": "SEÇÃO 1.1 - GLOSSÁRIO DE TERMOS TÉCNICOS DAS REGRAS DE TRANSMISSÃO",
+          "pai": null
+        },
+        {
+          "codigo": "—",
+          "titulo": "Anexo I da Seção 4.3 do Módulo 4 das Regras de",
+          "pai": null
+        },
+        {
+          "codigo": "—",
+          "titulo": "Anexo III - Módulo 3 das Regras de Transmissão- Resolução Normativa nº 905, de",
+          "pai": null
+        },
+        {
+          "codigo": "—",
+          "titulo": "Anexo V - Módulo 5 das Regras de Transmissão - Resolução Normativa nº 905, de",
+          "pai": null
+        },
+        {
+          "codigo": "—",
+          "titulo": "Anexo Ia - Módulo 1 das Regras de Transmissão - Resolução Normativa nº 1.052,",
+          "pai": null
+        },
+        {
+          "codigo": "—",
+          "titulo": "Anexo IIIa - Módulo 3 das Regras de Transmissão - Resolução Normativa nº 1.052,",
+          "pai": null
+        }
+      ]
+    }
+  ]
+}

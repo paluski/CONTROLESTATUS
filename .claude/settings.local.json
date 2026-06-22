@@ -3,7 +3,11 @@
     "allow": [
       "Bash(py --version)",
       "Bash(npx --version)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(python -c \"import pypdf; print\\('pypdf OK', pypdf.__version__\\)\")",
+      "Bash(python -c \"import pdfplumber; print\\('pdfplumber OK'\\)\")",
+      "Bash(python -c \"import fitz; print\\('pymupdf OK'\\)\")",
+      "Bash(python -)"
     ]
   }
 }

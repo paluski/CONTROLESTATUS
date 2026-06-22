@@ -17,9 +17,11 @@ create extension if not exists "pgcrypto";
 
 create table if not exists public.registros (
   id                uuid primary key default gen_random_uuid(),
-  classificacao     text,
+  documento         text,            -- documento (ex.: livro, edital, lei)
+  capitulo          text,            -- caminho hierárquico (ex.: "Área > Georreferenciamento")
+  item_referente    text,            -- número/código da pergunta (ex.: 1.1)
+  classificacao     text,            -- TIPO da pergunta (ex.: Dúvida, Solicitação)
   data_protocolo    date,
-  item_referente    text,
   orgao_responsavel text,
   status            text,
   pergunta          text,
@@ -27,8 +29,13 @@ create table if not exists public.registros (
   created_at        timestamptz not null default now()
 );
 
+-- Caso a tabela já tenha sido criada antes (sem documento/capitulo), garante as colunas:
+alter table public.registros add column if not exists documento text;
+alter table public.registros add column if not exists capitulo  text;
+
 -- Índices úteis para busca/ordenação
 create index if not exists idx_registros_created_at on public.registros (created_at desc);
+create index if not exists idx_registros_documento  on public.registros (documento);
 create index if not exists idx_registros_status     on public.registros (status);
 
 -- Habilita Row Level Security
