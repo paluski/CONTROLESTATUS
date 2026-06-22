@@ -414,7 +414,7 @@
       ? `<span class="nc-pend">${pend} pend.</span>`
       : `<span class="nc-ok">ok</span>`;
     const subInfo = isFolder ? `${n.children.length} sub · ` : "";
-    return `<button class="nav-card nc-item" type="button" data-item="${txt(n.id)}">
+    return `<button class="nav-card nc-item" type="button" data-item="${txt(n.id)}" data-drop-item="${txt(n.id)}">
       <span class="nc-icon${isFolder ? " nc-folder" : " nc-file"}">${isFolder ? folderIcon : fileIcon}</span>
       <span class="nc-body">
         <span class="nc-name">${n.codigo ? `<b class="nc-badge">${txt(n.codigo)}</b> ` : ""}${txt(n.titulo || "")}</span>
@@ -430,7 +430,7 @@
     const q = state.search;
     const answered = isAnswered(r);
     const dotClass = answered ? "dot-ok" : "dot-pend";
-    return `<button class="qrow" type="button" data-id="${txt(r.id)}">
+    return `<button class="qrow" type="button" data-id="${txt(r.id)}" draggable="true" title="Arraste para mover para outro item">
       <span class="qrow-dot ${dotClass}"></span>
       <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "·"}</span>
       <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
@@ -509,9 +509,65 @@
     }
     nodes = nodes.slice().sort((a, b) => naturalCompare((a.codigo || "") + (a.titulo || ""), (b.codigo || "") + (b.titulo || "")) || (a.ordem - b.ordem));
     if (nodes.length) html += `<div class="nav-grid">` + nodes.map(itemCardHTML).join("") + `</div>`;
-    html += qlistHTML(qs, "Perguntas neste item");
+    const curLabel = curId ? "Perguntas neste item" : "Perguntas do documento";
+    html += qs.length ? qlistHTML(qs, curLabel) : "";
     if (!nodes.length && !qs.length) html += `<div class="nav-empty">Nada cadastrado aqui ainda.</div>`;
     $("navView").innerHTML = html;
+    bindDragDrop(curId);
+  }
+
+  function bindDragDrop(currentItemId) {
+    let dragId = null;
+
+    $("navView").querySelectorAll(".qrow[draggable]").forEach((row) => {
+      row.addEventListener("dragstart", (e) => {
+        dragId = row.dataset.id;
+        e.dataTransfer.effectAllowed = "move";
+        row.classList.add("dragging");
+      });
+      row.addEventListener("dragend", () => {
+        dragId = null;
+        row.classList.remove("dragging");
+        $("navView").querySelectorAll(".drag-over").forEach((el) => el.classList.remove("drag-over"));
+      });
+    });
+
+    // Drop nos cards de item
+    $("navView").querySelectorAll("[data-drop-item]").forEach((card) => {
+      card.addEventListener("dragover", (e) => { e.preventDefault(); card.classList.add("drag-over"); });
+      card.addEventListener("dragleave", () => card.classList.remove("drag-over"));
+      card.addEventListener("drop", async (e) => {
+        e.preventDefault();
+        card.classList.remove("drag-over");
+        if (!dragId) return;
+        const targetItemId = card.dataset.dropItem;
+        if (!targetItemId || targetItemId === currentItemId) return;
+        await moveRecordToItem(dragId, targetItemId);
+      });
+    });
+
+    // Drop na qlist atual (mover de volta para o item corrente)
+    const qlist = $("navView").querySelector(".qlist");
+    if (qlist) {
+      qlist.addEventListener("dragover", (e) => { e.preventDefault(); qlist.classList.add("drag-over"); });
+      qlist.addEventListener("dragleave", () => qlist.classList.remove("drag-over"));
+      qlist.addEventListener("drop", async (e) => {
+        e.preventDefault();
+        qlist.classList.remove("drag-over");
+        if (!dragId) return;
+        await moveRecordToItem(dragId, currentItemId);
+      });
+    }
+  }
+
+  async function moveRecordToItem(recordId, targetItemId) {
+    try {
+      await DataStore.update(recordId, { item_id: targetItemId || null });
+      toast("Pergunta movida com sucesso", "success");
+      await reload();
+    } catch (e) {
+      toast("Erro ao mover: " + (e.message || e), "error");
+    }
   }
 
   /* ---------- Aba Documentos (cadastro de documentos e itens) -------- */

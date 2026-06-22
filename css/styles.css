@@ -574,6 +574,19 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 .qrow:first-child { border-top: 0; }
 .qrow:hover       { background: var(--surface-2); }
+.qrow[draggable]  { cursor: grab; }
+.qrow.dragging    { opacity: .45; cursor: grabbing; }
+.nav-card.drag-over {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  transform: translateY(-2px);
+}
+.qlist.drag-over {
+  outline: 2px dashed var(--primary);
+  outline-offset: 2px;
+  background: var(--primary-soft);
+}
 
 .qrow-dot   { width: 7px; height: 7px; border-radius: 50%; flex: none; }
 .dot-ok     { background: var(--success); }
