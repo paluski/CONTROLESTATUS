@@ -342,11 +342,11 @@
     </div>
   </div>
 
-  <!-- ===================== MODAL: NOVO DOCUMENTO ===================== -->
+  <!-- ===================== MODAL: NOVO / EDITAR DOCUMENTO ===================== -->
   <div id="newDocModal" class="modal-backdrop" hidden>
     <div class="modal modal-sm" role="dialog" aria-modal="true">
       <div class="modal-head">
-        <h3 class="modal-title" style="font-size:16px">Novo documento</h3>
+        <h3 id="newDocModalTitle" class="modal-title" style="font-size:16px">Novo documento</h3>
         <button class="icon-btn modal-close" id="newDocClose" aria-label="Fechar">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
@@ -363,8 +363,17 @@
             <div class="field"><label for="d_orgao">Órgão</label><input id="d_orgao" type="text" placeholder="Ex.: ANEEL" /></div>
             <div class="field"><label for="d_ano">Ano</label><input id="d_ano" type="number" placeholder="Ex.: 2026" /></div>
           </div>
+          <div class="field">
+            <label for="d_anexo">Anexo <span class="hint">PDF, Word, Excel…</span></label>
+            <div id="d_anexo_info" class="doc-anexo-current" hidden></div>
+            <label class="dropzone dropzone-sm" for="d_anexo" id="d_anexo_zone">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+              <span id="d_anexo_label">Clique para selecionar arquivo</span>
+              <input id="d_anexo" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" hidden />
+            </label>
+          </div>
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Criar documento</button>
+            <button type="submit" class="btn btn-primary"><span id="newDocSubmitLabel">Criar documento</span></button>
             <button type="button" class="btn btn-ghost" id="newDocCancel">Cancelar</button>
           </div>
         </form>

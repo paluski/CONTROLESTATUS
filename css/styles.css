@@ -428,6 +428,14 @@ tbody tr:last-child td { border-bottom: 0; }
 .dropzone:hover, .dropzone.dragover { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
 .dropzone strong { color: var(--text); font-size: 14px; }
 .dropzone span   { font-size: 12px; color: var(--muted); }
+.dropzone-sm { padding: 14px 16px; flex-direction: row; gap: 10px; border-radius: var(--r-sm); }
+.dropzone-sm span { font-size: 13px; color: var(--text-2); }
+.doc-anexo-current {
+  font-size: 12px; color: var(--text-2); font-weight: 500;
+  padding: 6px 10px; background: var(--surface-3);
+  border: 1px solid var(--border); border-radius: 7px;
+  margin-bottom: 6px;
+}
 .import-filename {
   margin-top: 12px; padding: 10px 13px; border-radius: 9px;
   background: var(--surface-2); border: 1px solid var(--border);

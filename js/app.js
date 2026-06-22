@@ -32,6 +32,7 @@
   let itens = [];
   let pendingImport = [];
   let editingId = null;
+  let editingDocId = null;
   let currentDetailId = null;
   let hashChecked = false;
   let docModalDocId = null;
@@ -570,6 +571,38 @@
     }
   }
 
+  /* ---------- Modal de criar/editar documento ----------------------- */
+  function openDocFormModal(docId) {
+    editingDocId = docId || null;
+    const doc = docId ? documentos.find((d) => d.id === docId) : null;
+    $("newDocModalTitle").textContent = doc ? "Editar documento" : "Novo documento";
+    $("newDocSubmitLabel").textContent = doc ? "Salvar alterações" : "Criar documento";
+    $("d_nome").value = doc ? doc.nome : "";
+    $("d_sigla").value = doc ? (doc.sigla || "") : "";
+    $("d_tipo").value = doc ? (doc.tipo || "") : "";
+    $("d_orgao").value = doc ? (doc.orgao || "") : "";
+    $("d_ano").value = doc ? (doc.ano || "") : "";
+    $("d_anexo").value = "";
+    $("d_anexo_label").textContent = "Clique para selecionar arquivo";
+    const info = $("d_anexo_info");
+    if (doc && doc.anexo_nome) {
+      info.textContent = "Anexo atual: " + doc.anexo_nome;
+      info.hidden = false;
+    } else {
+      info.hidden = true;
+    }
+    $("newDocModal").hidden = false;
+    setTimeout(() => $("d_nome").focus(), 60);
+  }
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   /* ---------- Aba Documentos (cadastro de documentos e itens) -------- */
   function itemTreeRoots(docId) {
     const its = itens.filter((i) => i.documento_id === docId);
@@ -600,10 +633,17 @@
     wrap.innerHTML = documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).map((d) => {
       const its = itens.filter((i) => i.documento_id === d.id);
       const qn = records.filter((r) => r.documento_id === d.id).length;
+      const downloadBtn = d.anexo_url
+        ? `<a class="btn btn-ghost btn-sm" href="${txt(d.anexo_url)}" download="${txt(d.anexo_nome || d.nome)}" title="Baixar anexo" style="text-decoration:none">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Baixar</a>`
+        : "";
       return `<div class="doc-block">
         <div class="doc-block-head">
           <div><div class="doc-block-nome">${txt(d.nome)}</div><div class="doc-block-meta">${d.sigla ? txt(d.sigla) + " · " : ""}${d.orgao ? txt(d.orgao) + " · " : ""}${its.length} item(ns) · ${qn} pergunta(s)</div></div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            ${downloadBtn}
+            <button class="btn btn-ghost btn-sm" data-edit-doc="${txt(d.id)}" type="button">Editar</button>
             <button class="btn btn-primary btn-sm" data-open-doc="${txt(d.id)}" type="button">Ver itens</button>
             <button class="btn btn-ghost btn-sm" data-del-doc="${txt(d.id)}" type="button">Excluir</button>
           </div>
@@ -1160,14 +1200,42 @@
     $("f_resposta").addEventListener("input", updateCounters);
 
     // Aba Documentos
+    $("d_anexo").addEventListener("change", (e) => {
+      const f = e.target.files[0];
+      $("d_anexo_label").textContent = f ? f.name : "Clique para selecionar arquivo";
+    });
     $("docForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const nome = $("d_nome").value.trim();
       if (!nome) { toast("Informe o nome do documento.", "error"); return; }
+      const base = {
+        nome,
+        sigla: $("d_sigla").value.trim() || null,
+        tipo: $("d_tipo").value.trim() || null,
+        orgao: $("d_orgao").value.trim() || null,
+        ano: $("d_ano").value ? parseInt($("d_ano").value, 10) : null,
+      };
+      // Processar anexo se houver arquivo selecionado
+      const file = $("d_anexo").files[0];
+      if (file) {
+        try {
+          base.anexo_url = await readFileAsBase64(file);
+          base.anexo_nome = file.name;
+        } catch (_) { toast("Erro ao processar o arquivo.", "error"); return; }
+      }
       try {
-        await DataStore.createDocumento({ nome, sigla: $("d_sigla").value.trim() || null, tipo: $("d_tipo").value.trim() || null, orgao: $("d_orgao").value.trim() || null, ano: $("d_ano").value ? parseInt($("d_ano").value, 10) : null });
-        toast("Documento criado.", "success"); $("docForm").reset(); $("newDocModal").hidden = true; await load();
-      } catch (err) { console.error(err); toast("Erro ao criar documento: " + (err.message || err), "error"); }
+        if (editingDocId) {
+          await DataStore.updateDocumento(editingDocId, base);
+          toast("Documento atualizado.", "success");
+        } else {
+          await DataStore.createDocumento(base);
+          toast("Documento criado.", "success");
+        }
+        $("docForm").reset();
+        $("newDocModal").hidden = true;
+        editingDocId = null;
+        await load();
+      } catch (err) { console.error(err); toast("Erro ao salvar documento: " + (err.message || err), "error"); }
     });
     $("itemForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -1183,6 +1251,8 @@
     $("docsList").addEventListener("click", async (e) => {
       const od = e.target.closest("[data-open-doc]");
       if (od) { openDocModal(od.dataset.openDoc); return; }
+      const ed = e.target.closest("[data-edit-doc]");
+      if (ed) { openDocFormModal(ed.dataset.editDoc); return; }
       const di = e.target.closest("[data-del-item]");
       if (di) {
         if (await confirmDialog("Excluir item", "Excluir este item e seus subitens? As perguntas vinculadas ficarão sem item.", "Excluir")) {
@@ -1258,10 +1328,10 @@
     $("addItemCancel").onclick = () => ($("addItemModal").hidden = true);
     $("addItemModal").addEventListener("click", (e) => { if (e.target.id === "addItemModal") $("addItemModal").hidden = true; });
 
-    // Modal novo documento
-    $("newDocBtn").onclick = () => { $("newDocModal").hidden = false; setTimeout(() => $("d_nome").focus(), 60); };
-    $("newDocClose").onclick = () => ($("newDocModal").hidden = true);
-    $("newDocCancel").onclick = () => ($("newDocModal").hidden = true);
+    // Modal novo/editar documento
+    $("newDocBtn").onclick = () => openDocFormModal(null);
+    $("newDocClose").onclick = () => { $("newDocModal").hidden = true; editingDocId = null; };
+    $("newDocCancel").onclick = () => { $("newDocModal").hidden = true; editingDocId = null; };
     $("newDocModal").addEventListener("click", (e) => { if (e.target.id === "newDocModal") $("newDocModal").hidden = true; });
 
     // ESC fecha modais
