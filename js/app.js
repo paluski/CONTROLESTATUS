@@ -626,7 +626,7 @@
       const its = itens.filter((i) => i.documento_id === d.id);
       const qn = records.filter((r) => r.documento_id === d.id).length;
       const downloadBtn = d.anexo_url
-        ? `<a class="btn btn-ghost btn-sm" href="${txt(d.anexo_url)}" download="${txt(d.anexo_nome || d.nome)}" title="Baixar anexo" style="text-decoration:none">
+        ? `<a class="btn btn-ghost btn-sm" href="${txt(d.anexo_url)}" target="_blank" rel="noopener noreferrer" title="Abrir anexo" style="text-decoration:none">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
             Baixar</a>`
         : "";
