@@ -1035,6 +1035,8 @@
     $("filterStatus").onchange = (e) => { state.status = e.target.value; render(); };
     $("clearFilters").onclick = () => {
       state.search = state.classificacao = state.orgao = state.status = state.answered = state.documento = "";
+      state.navDoc = null;
+      state.navItems = [];
       $("search").value = "";
       populateFilters();
       render();
