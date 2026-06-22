@@ -372,6 +372,7 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 .modal-wide { max-width: 1000px; }
 .modal-sm { max-width: 420px; }
+.modal-overlay { z-index: 150; }
 @keyframes pop { from { opacity: 0; transform: scale(.96) translateY(10px); } to { opacity: 1; transform: none; } }
 .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
 .modal-close { width: 36px; height: 36px; }
