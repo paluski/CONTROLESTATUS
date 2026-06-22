@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=3" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <div id="app">
@@ -38,10 +38,6 @@
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
           <span>Cadastro</span>
         </button>
-        <button class="tab" data-tab="docs" role="tab">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          <span>Documentos</span>
-        </button>
       </nav>
 
       <div class="topbar-actions">
@@ -64,7 +60,7 @@
             <input id="search" type="search" placeholder="Buscar em todos os campos…" autocomplete="off" />
           </div>
           <div class="filters">
-            <select id="filterClass" class="select" aria-label="Filtrar por tipo"><option value="">Tipo: todos</option></select>
+            <select id="filterClass" class="select" aria-label="Filtrar por classificação"><option value="">Classificação: todas</option></select>
             <select id="filterOrgao" class="select" aria-label="Filtrar por órgão"><option value="">Órgão: todos</option></select>
             <select id="filterStatus" class="select" aria-label="Filtrar por status"><option value="">Status: todos</option></select>
             <button id="clearFilters" class="btn btn-ghost" type="button">Limpar</button>
@@ -92,14 +88,26 @@
             <button class="chip" type="button" data-ans="no">Pendentes <b id="cnt-no">0</b></button>
           </div>
           <div class="subbar-right">
+            <label class="groupby" id="groupByWrap" hidden>
+              <span>Agrupar por</span>
+              <select id="groupBy" class="select">
+                <option value="classificacao">Classificação (tema)</option>
+                <option value="orgao_responsavel">Órgão responsável</option>
+                <option value="status">Status</option>
+              </select>
+            </label>
+            <div class="expandctl" id="expandCtl" hidden>
+              <button class="btn btn-ghost btn-sm" id="expandAll" type="button">Expandir tudo</button>
+              <button class="btn btn-ghost btn-sm" id="collapseAll" type="button">Recolher</button>
+            </div>
             <div class="viewtoggle" id="viewToggle">
-              <button class="vt active" type="button" data-view="navigate">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                Navegar
-              </button>
-              <button class="vt" type="button" data-view="table">
+              <button class="vt active" type="button" data-view="table">
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M3 15h18M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
                 Tabela
+              </button>
+              <button class="vt" type="button" data-view="reading">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Leitura
               </button>
             </div>
           </div>
@@ -113,11 +121,9 @@
           <table id="table">
             <thead>
               <tr>
-                <th class="sortable" data-sort="documento">Documento</th>
-                <th class="sortable" data-sort="capitulo">Capítulo</th>
-                <th class="sortable" data-sort="item_referente">Item</th>
-                <th class="sortable" data-sort="classificacao">Tipo</th>
+                <th class="sortable" data-sort="classificacao">Classificação</th>
                 <th class="sortable" data-sort="data_protocolo">Data protocolo</th>
+                <th class="sortable" data-sort="item_referente">Item referente</th>
                 <th class="sortable" data-sort="orgao_responsavel">Órgão responsável</th>
                 <th class="sortable" data-sort="status">Status</th>
                 <th>Pergunta</th>
@@ -129,7 +135,7 @@
           </table>
         </div>
 
-        <div id="navView" class="navview" hidden></div>
+        <div id="readingView" class="reading" hidden></div>
 
         <div id="emptyState" class="empty" hidden>
           <div class="empty-icon">📭</div>
@@ -152,27 +158,19 @@
             </div>
             <form id="recordForm" autocomplete="off">
               <input type="hidden" id="recordId" />
-              <div class="field field-wide">
-                <label for="f_documento">Documento</label>
-                <select id="f_documento" name="documento_id" class="select"><option value="">— Sem documento —</option></select>
-              </div>
-              <div class="field field-wide">
-                <label for="f_item_link">Item do documento <span class="hint">opcional</span></label>
-                <select id="f_item_link" name="item_id" class="select"><option value="">— Documento inteiro —</option></select>
-              </div>
               <div class="form-grid">
                 <div class="field">
-                  <label for="f_item">Item referente</label>
-                  <input id="f_item" name="item_referente" type="text" placeholder="Ex.: 1.1" />
-                </div>
-                <div class="field">
-                  <label for="f_classificacao">Tipo da pergunta</label>
+                  <label for="f_classificacao">Classificação da pergunta</label>
                   <input id="f_classificacao" name="classificacao" type="text" list="dl_class" placeholder="Ex.: Dúvida, Solicitação…" />
                   <datalist id="dl_class"></datalist>
                 </div>
                 <div class="field">
                   <label for="f_data">Data de protocolo</label>
                   <input id="f_data" name="data_protocolo" type="date" />
+                </div>
+                <div class="field">
+                  <label for="f_item">Item referente</label>
+                  <input id="f_item" name="item_referente" type="text" placeholder="Ex.: Item 4.2 do edital" />
                 </div>
                 <div class="field">
                   <label for="f_orgao">Órgão responsável</label>
@@ -221,10 +219,9 @@
               </button>
             </div>
             <p class="import-help">
-              Colunas aceitas (a ordem não importa):
-              <b>Documento</b>, <b>Capítulo</b>, <b>Item referente</b>, <b>Tipo da pergunta</b>,
-              <b>Data de protocolo</b>, <b>Órgão responsável</b>, <b>Status</b>, <b>Pergunta</b> e <b>Resposta</b>.
-              No <b>Capítulo</b>, use <code>&gt;</code> para criar níveis (ex.: <i>Área &gt; Georreferenciamento</i>).
+              A planilha deve conter as colunas:
+              <b>Classificação da pergunta</b>, <b>Data de protocolo</b>, <b>Item referente</b>,
+              <b>Órgão responsável</b>, <b>Status</b>, <b>Pergunta</b> e <b>Resposta</b>.
             </p>
             <label id="dropzone" class="dropzone" for="fileInput">
               <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
@@ -233,46 +230,6 @@
               <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" hidden />
             </label>
             <div id="importFileName" class="import-filename" hidden></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== DOCUMENTOS ===================== -->
-      <section id="docs" class="panel" role="tabpanel">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-head"><h2>Novo documento</h2></div>
-            <form id="docForm" autocomplete="off">
-              <div class="field">
-                <label for="d_nome">Nome do documento</label>
-                <input id="d_nome" type="text" required placeholder="Ex.: Instruções de Cadastramento (SAE)" />
-              </div>
-              <div class="form-grid">
-                <div class="field"><label for="d_sigla">Sigla</label><input id="d_sigla" type="text" placeholder="Ex.: EPE-DEE-RE-079" /></div>
-                <div class="field"><label for="d_tipo">Tipo</label><input id="d_tipo" type="text" list="dl_tipo" placeholder="Ex.: Portaria" /><datalist id="dl_tipo"><option value="Instruções"></option><option value="Portaria"></option><option value="Resolução"></option><option value="Lei"></option><option value="Manual"></option><option value="Edital"></option><option value="Procedimentos"></option></datalist></div>
-                <div class="field"><label for="d_orgao">Órgão</label><input id="d_orgao" type="text" placeholder="Ex.: ANEEL" /></div>
-                <div class="field"><label for="d_ano">Ano</label><input id="d_ano" type="number" placeholder="Ex.: 2026" /></div>
-              </div>
-              <div class="form-actions"><button type="submit" class="btn btn-primary">Criar documento</button></div>
-            </form>
-
-            <div class="card-sep"></div>
-
-            <div class="card-head"><h2>Novo item</h2></div>
-            <form id="itemForm" autocomplete="off">
-              <div class="field"><label for="i_doc">Documento</label><select id="i_doc" class="select"></select></div>
-              <div class="field"><label for="i_parent">Item-pai <span class="hint">deixe em "Raiz" para nível 1</span></label><select id="i_parent" class="select"><option value="">— Raiz —</option></select></div>
-              <div class="form-grid">
-                <div class="field"><label for="i_codigo">Código</label><input id="i_codigo" type="text" placeholder="Ex.: 4.1 / Art. 16" /></div>
-                <div class="field"><label for="i_titulo">Título</label><input id="i_titulo" type="text" placeholder="Ex.: Memorial Descritivo" /></div>
-              </div>
-              <div class="form-actions"><button type="submit" class="btn btn-primary">Adicionar item</button></div>
-            </form>
-          </div>
-
-          <div class="card">
-            <div class="card-head"><h2>Documentos cadastrados</h2></div>
-            <div id="docsList"></div>
           </div>
         </div>
       </section>
@@ -332,7 +289,7 @@
           <table>
             <thead>
               <tr>
-                <th>Documento</th><th>Capítulo</th><th>Item</th><th>Tipo</th><th>Status</th><th>Pergunta</th><th>Resposta</th>
+                <th>Classificação</th><th>Data</th><th>Item</th><th>Órgão</th><th>Status</th><th>Pergunta</th><th>Resposta</th>
               </tr>
             </thead>
             <tbody id="importPreviewBody"></tbody>
@@ -360,6 +317,142 @@
     </div>
   </div>
 
+  <!-- ===================== MODAL: DETALHE DO DOCUMENTO ===================== -->
+  <div id="docDetailModal" class="modal-backdrop" hidden>
+    <div class="modal modal-doc-detail" role="dialog" aria-modal="true" aria-labelledby="dModalTitle">
+      <div class="modal-head">
+        <div class="doc-modal-headinfo">
+          <h3 id="dModalTitle" class="modal-title">Documento</h3>
+          <div id="dModalMeta" class="modal-meta"></div>
+        </div>
+        <div class="doc-modal-headactions">
+          <button class="btn btn-primary btn-sm" id="dModalAddItemBtn" type="button">Novo item</button>
+          <button class="btn btn-secondary btn-sm" id="dModalEditBtn" type="button">Editar</button>
+          <button class="btn btn-danger btn-sm" id="dModalDeleteBtn" type="button">Excluir</button>
+          <button class="icon-btn modal-close" id="dModalClose" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body doc-modal-body">
+        <div id="dModalColBar" class="dd-colbar" hidden>
+          <button class="btn btn-ghost btn-sm" id="dModalExpandAll" type="button">Expandir tudo</button>
+          <button class="btn btn-ghost btn-sm" id="dModalCollapseAll" type="button">Recolher tudo</button>
+        </div>
+        <div id="dModalTree" class="dd-tree"></div>
+        <div id="dModalEmpty" class="empty" hidden>
+          <div class="empty-icon">📄</div>
+          <h3>Nenhum item cadastrado</h3>
+          <p>Use o botão <b>Novo item</b> para adicionar itens a este documento.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: EDITAR DOCUMENTO ===================== -->
+  <div id="editDocModal" class="modal-backdrop" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="editDocTitle">
+      <div class="modal-head">
+        <h3 class="modal-title" id="editDocTitle">Editar documento</h3>
+        <button class="icon-btn modal-close" id="editDocClose" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label for="edNome">Nome</label>
+          <input id="edNome" type="text" placeholder="Nome do documento" />
+        </div>
+        <div class="field">
+          <label for="edSigla">Sigla</label>
+          <input id="edSigla" type="text" placeholder="Ex.: PDM" />
+        </div>
+        <div class="field">
+          <label for="edTipo">Tipo</label>
+          <input id="edTipo" type="text" list="dl_tipo_ed" placeholder="Ex.: Edital, Lei…" />
+          <datalist id="dl_tipo_ed">
+            <option value="Edital"></option>
+            <option value="Lei"></option>
+            <option value="Decreto"></option>
+            <option value="Plano"></option>
+            <option value="Relatório"></option>
+            <option value="Contrato"></option>
+          </datalist>
+        </div>
+        <div class="field">
+          <label for="edOrgao">Órgão</label>
+          <input id="edOrgao" type="text" placeholder="Órgão responsável" />
+        </div>
+        <div class="field">
+          <label for="edAno">Ano</label>
+          <input id="edAno" type="number" placeholder="Ex.: 2026" />
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="editDocCancel" type="button">Cancelar</button>
+        <button class="btn btn-primary" id="editDocSave" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: EDITAR ITEM ===================== -->
+  <div id="editItemModal" class="modal-backdrop" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="editItemTitle">
+      <div class="modal-head">
+        <h3 class="modal-title" id="editItemTitle">Editar item</h3>
+        <button class="icon-btn modal-close" id="editItemClose" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label for="eiCodigo">Código</label>
+          <input id="eiCodigo" type="text" placeholder="Ex.: 4.2" />
+        </div>
+        <div class="field">
+          <label for="eiTitulo">Título</label>
+          <input id="eiTitulo" type="text" placeholder="Título do item" />
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="editItemCancel" type="button">Cancelar</button>
+        <button class="btn btn-primary" id="editItemSave" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: NOVO ITEM ===================== -->
+  <div id="addItemModal" class="modal-backdrop" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="addItemTitle">
+      <div class="modal-head">
+        <h3 class="modal-title" id="addItemTitle">Novo item</h3>
+        <button class="icon-btn modal-close" id="addItemClose" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label for="aiParent">Item pai</label>
+          <select id="aiParent" class="select">
+            <option value="">— Raiz —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="aiCodigo">Código</label>
+          <input id="aiCodigo" type="text" placeholder="Ex.: 4.2" />
+        </div>
+        <div class="field">
+          <label for="aiTitulo">Título</label>
+          <input id="aiTitulo" type="text" placeholder="Título do item" />
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="addItemCancel" type="button">Cancelar</button>
+        <button class="btn btn-primary" id="addItemSave" type="button">Adicionar</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toasts" class="toasts" aria-live="polite"></div>
 
   <!-- Bibliotecas -->
@@ -367,8 +460,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Aplicação -->
-  <script src="js/config.js?v=3"></script>
-  <script src="js/data.js?v=3"></script>
-  <script src="js/app.js?v=3"></script>
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
