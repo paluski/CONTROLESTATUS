@@ -239,42 +239,20 @@
 
       <!-- ===================== DOCUMENTOS ===================== -->
       <section id="docs" class="panel" role="tabpanel">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-head"><h2>Novo documento</h2></div>
-            <form id="docForm" autocomplete="off">
-              <div class="field">
-                <label for="d_nome">Nome do documento</label>
-                <input id="d_nome" type="text" required placeholder="Ex.: Instruções de Cadastramento (SAE)" />
-              </div>
-              <div class="form-grid">
-                <div class="field"><label for="d_sigla">Sigla</label><input id="d_sigla" type="text" placeholder="Ex.: EPE-DEE-RE-079" /></div>
-                <div class="field"><label for="d_tipo">Tipo</label><input id="d_tipo" type="text" list="dl_tipo" placeholder="Ex.: Portaria" /><datalist id="dl_tipo"><option value="Instruções"></option><option value="Portaria"></option><option value="Resolução"></option><option value="Lei"></option><option value="Manual"></option><option value="Edital"></option><option value="Procedimentos"></option></datalist></div>
-                <div class="field"><label for="d_orgao">Órgão</label><input id="d_orgao" type="text" placeholder="Ex.: ANEEL" /></div>
-                <div class="field"><label for="d_ano">Ano</label><input id="d_ano" type="number" placeholder="Ex.: 2026" /></div>
-              </div>
-              <div class="form-actions"><button type="submit" class="btn btn-primary">Criar documento</button></div>
-            </form>
-
-            <div class="card-sep"></div>
-
-            <div class="card-head"><h2>Novo item</h2></div>
-            <form id="itemForm" autocomplete="off">
-              <div class="field"><label for="i_doc">Documento</label><select id="i_doc" class="select"></select></div>
-              <div class="field"><label for="i_parent">Item-pai <span class="hint">deixe em "Raiz" para nível 1</span></label><select id="i_parent" class="select"><option value="">— Raiz —</option></select></div>
-              <div class="form-grid">
-                <div class="field"><label for="i_codigo">Código</label><input id="i_codigo" type="text" placeholder="Ex.: 4.1 / Art. 16" /></div>
-                <div class="field"><label for="i_titulo">Título</label><input id="i_titulo" type="text" placeholder="Ex.: Memorial Descritivo" /></div>
-              </div>
-              <div class="form-actions"><button type="submit" class="btn btn-primary">Adicionar item</button></div>
-            </form>
+        <div class="docs-page-head">
+          <div>
+            <h2 class="docs-page-title">Documentos</h2>
+            <p class="docs-page-sub">Cadastre documentos e organize seus itens</p>
           </div>
-
-          <div class="card">
-            <div class="card-head"><h2>Documentos cadastrados</h2></div>
-            <div id="docsList"></div>
-          </div>
+          <button id="newDocBtn" class="btn btn-primary" type="button">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Novo documento
+          </button>
         </div>
+        <div id="docsList"></div>
+        <!-- Selects ocultos usados pelo JS de documentos/itens -->
+        <select id="i_doc" hidden></select>
+        <datalist id="dl_tipo"><option value="Instruções"></option><option value="Portaria"></option><option value="Resolução"></option><option value="Lei"></option><option value="Manual"></option><option value="Edital"></option><option value="Procedimentos"></option></datalist>
       </section>
     </main>
 
@@ -360,14 +338,76 @@
     </div>
   </div>
 
+  <!-- ===================== MODAL: NOVO DOCUMENTO ===================== -->
+  <div id="newDocModal" class="modal-backdrop" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 class="modal-title" style="font-size:16px">Novo documento</h3>
+        <button class="icon-btn modal-close" id="newDocClose" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="docForm" autocomplete="off">
+          <div class="field">
+            <label for="d_nome">Nome do documento</label>
+            <input id="d_nome" type="text" required placeholder="Ex.: Instruções de Cadastramento (SAE)" />
+          </div>
+          <div class="form-grid">
+            <div class="field"><label for="d_sigla">Sigla</label><input id="d_sigla" type="text" placeholder="Ex.: EPE-DEE-RE-079" /></div>
+            <div class="field"><label for="d_tipo">Tipo</label><input id="d_tipo" type="text" list="dl_tipo" placeholder="Ex.: Portaria" /></div>
+            <div class="field"><label for="d_orgao">Órgão</label><input id="d_orgao" type="text" placeholder="Ex.: ANEEL" /></div>
+            <div class="field"><label for="d_ano">Ano</label><input id="d_ano" type="number" placeholder="Ex.: 2026" /></div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Criar documento</button>
+            <button type="button" class="btn btn-ghost" id="newDocCancel">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: ADICIONAR ITEM ===================== -->
+  <div id="addItemModal" class="modal-backdrop" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 class="modal-title" style="font-size:16px">Adicionar item</h3>
+        <button class="icon-btn modal-close" id="addItemClose" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="itemForm" autocomplete="off">
+          <div class="field">
+            <label for="i_parent">Item-pai <span class="hint">deixe em "Raiz" para nível 1</span></label>
+            <select id="i_parent" class="select"><option value="">— Raiz —</option></select>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label for="i_codigo">Código</label><input id="i_codigo" type="text" placeholder="Ex.: 4.1 / Art. 16" /></div>
+            <div class="field"><label for="i_titulo">Título</label><input id="i_titulo" type="text" placeholder="Ex.: Memorial Descritivo" /></div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+            <button type="button" class="btn btn-ghost" id="addItemCancel">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- ===================== MODAL: DETALHE DOCUMENTO ===================== -->
   <div id="docModal" class="modal-backdrop" hidden>
     <div class="modal modal-doc-detail" role="dialog" aria-modal="true" aria-labelledby="dmTitle">
       <div class="modal-head">
-        <div style="min-width:0">
+        <div style="min-width:0;flex:1">
           <h3 class="modal-title" id="dmTitle" style="margin-bottom:2px"></h3>
           <div id="dmMeta" style="font-size:12px;color:var(--muted)"></div>
         </div>
+        <button id="dmAddItemBtn" class="btn btn-primary btn-sm" type="button" style="flex:none">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Adicionar item
+        </button>
         <button class="icon-btn modal-close" id="dmClose" aria-label="Fechar">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>

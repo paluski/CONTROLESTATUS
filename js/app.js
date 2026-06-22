@@ -607,6 +607,14 @@
       </div>`;
     }).join("");
   }
+  function openAddItemModal() {
+    $("i_doc").value = docModalDocId;
+    fillParentSelect(docModalDocId, "");
+    $("i_codigo").value = "";
+    $("i_titulo").value = "";
+    $("addItemModal").hidden = false;
+    setTimeout(() => $("i_codigo").focus(), 60);
+  }
   function openEditItemModal(itemId) {
     const item = itens.find((i) => i.id === itemId);
     if (!item) return;
@@ -1066,7 +1074,7 @@
       if (!nome) { toast("Informe o nome do documento.", "error"); return; }
       try {
         await DataStore.createDocumento({ nome, sigla: $("d_sigla").value.trim() || null, tipo: $("d_tipo").value.trim() || null, orgao: $("d_orgao").value.trim() || null, ano: $("d_ano").value ? parseInt($("d_ano").value, 10) : null });
-        toast("Documento criado.", "success"); $("docForm").reset(); await load();
+        toast("Documento criado.", "success"); $("docForm").reset(); $("newDocModal").hidden = true; await load();
       } catch (err) { console.error(err); toast("Erro ao criar documento: " + (err.message || err), "error"); }
     });
     $("itemForm").addEventListener("submit", async (e) => {
@@ -1077,10 +1085,9 @@
       if (!codigo && !titulo) { toast("Informe código ou título do item.", "error"); return; }
       try {
         await DataStore.createItem({ documento_id: docId, parent_id: $("i_parent").value || null, codigo: codigo || null, titulo: titulo || null, ordem: itens.filter((i) => i.documento_id === docId).length });
-        toast("Item adicionado.", "success"); $("i_codigo").value = ""; $("i_titulo").value = ""; await load();
+        toast("Item adicionado.", "success"); $("i_codigo").value = ""; $("i_titulo").value = ""; $("addItemModal").hidden = true; await load(); renderDocModalTree(); renderDocumentosTab();
       } catch (err) { console.error(err); toast("Erro ao adicionar item: " + (err.message || err), "error"); }
     });
-    $("i_doc").addEventListener("change", (e) => fillParentSelect(e.target.value, ""));
     $("docsList").addEventListener("click", async (e) => {
       const od = e.target.closest("[data-open-doc]");
       if (od) { openDocModal(od.dataset.openDoc); return; }
@@ -1146,20 +1153,35 @@
       renderDocModalTree();
     };
 
+    $("dmAddItemBtn").onclick = openAddItemModal;
+
     // Modal editar item
     $("editItemClose").onclick = () => ($("editItemModal").hidden = true);
     $("editItemCancel").onclick = () => ($("editItemModal").hidden = true);
     $("editItemSave").onclick = saveEditItem;
     $("editItemModal").addEventListener("click", (e) => { if (e.target.id === "editItemModal") $("editItemModal").hidden = true; });
 
+    // Modal adicionar item
+    $("addItemClose").onclick = () => ($("addItemModal").hidden = true);
+    $("addItemCancel").onclick = () => ($("addItemModal").hidden = true);
+    $("addItemModal").addEventListener("click", (e) => { if (e.target.id === "addItemModal") $("addItemModal").hidden = true; });
+
+    // Modal novo documento
+    $("newDocBtn").onclick = () => { $("newDocModal").hidden = false; setTimeout(() => $("d_nome").focus(), 60); };
+    $("newDocClose").onclick = () => ($("newDocModal").hidden = true);
+    $("newDocCancel").onclick = () => ($("newDocModal").hidden = true);
+    $("newDocModal").addEventListener("click", (e) => { if (e.target.id === "newDocModal") $("newDocModal").hidden = true; });
+
     // ESC fecha modais
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
+        if (!$("editItemModal").hidden) { $("editItemModal").hidden = true; return; }
+        if (!$("addItemModal").hidden) { $("addItemModal").hidden = true; return; }
+        if (!$("newDocModal").hidden) { $("newDocModal").hidden = true; return; }
+        if (!$("docModal").hidden) { closeDocModal(); return; }
         $("modal").hidden = true;
         $("importModal").hidden = true;
         $("confirmModal").hidden = true;
-        if (!$("editItemModal").hidden) { $("editItemModal").hidden = true; return; }
-        if (!$("docModal").hidden) { closeDocModal(); return; }
       }
     });
   }
