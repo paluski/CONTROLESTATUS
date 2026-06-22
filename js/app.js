@@ -6,21 +6,14 @@
 
   /* ---------- Campos (usados em tabela, formulário e importação) ------- */
   const FIELDS = [
-    { key: "documento",         label: "Documento",                 match: ["documento", "doc", "livro", "edital", "lei", "norma", "processo", "leilao", "leilão"] },
-    { key: "capitulo",          label: "Capítulo",                  match: ["capitulo", "capítulo", "tema", "secao", "seção", "assunto", "caminho", "estrutura", "item pai"] },
-    { key: "item_referente",    label: "Item referente",            match: ["item referente", "item", "referente", "numero", "número", "codigo", "código", "n"] },
-    { key: "classificacao",     label: "Tipo da pergunta",          match: ["tipo da pergunta", "tipo", "classificacao da pergunta", "classificacao", "classificação", "classif"] },
+    { key: "classificacao",     label: "Classificação da pergunta", match: ["classificacao da pergunta", "classificacao", "classificacao pergunta", "classif"] },
     { key: "data_protocolo",    label: "Data de protocolo",         match: ["data de protocolo", "data protocolo", "data do protocolo", "protocolo", "data"] },
+    { key: "item_referente",    label: "Item referente",            match: ["item referente", "item", "referente"] },
     { key: "orgao_responsavel", label: "Órgão responsável",         match: ["orgao responsavel", "orgao", "responsavel", "orgao responsavel pela resposta"] },
     { key: "status",            label: "Status",                    match: ["status", "situacao", "situacao atual"] },
     { key: "pergunta",          label: "Pergunta",                  match: ["pergunta", "questao", "duvida"] },
     { key: "resposta",          label: "Resposta",                  match: ["resposta", "retorno"] },
   ];
-  const PATH_SEP = /\s*[>›]\s*/; // separadores de nível (caminho de texto, usado na importação): ">" ou "›"
-  function splitPath(capitulo) {
-    return String(capitulo || "").split(PATH_SEP).map((s) => s.trim()).filter(Boolean);
-  }
-  function pathDisplay(capitulo) { return splitPath(capitulo).join(" › "); }
 
   /* ---------- Atalhos ------------------------------------------------- */
   const $ = (id) => document.getElementById(id);
@@ -28,13 +21,11 @@
 
   /* ---------- Estado -------------------------------------------------- */
   let records = [];
-  let documentos = [];
-  let itens = [];
   let pendingImport = [];
   let editingId = null;
   let currentDetailId = null;
   let hashChecked = false;
-  const state = { search: "", classificacao: "", orgao: "", status: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
+  const state = { search: "", classificacao: "", orgao: "", status: "", sortKey: null, sortDir: "asc", viewMode: "table", groupBy: "classificacao", answered: "" };
 
   /* ---------- Utilidades --------------------------------------------- */
   function normalize(s) {
@@ -173,12 +164,7 @@
   async function load() {
     try {
       if (!records.length) { $("loading").hidden = false; }
-      const [recs, docs, its] = await Promise.all([
-        DataStore.list(),
-        DataStore.listDocumentos ? DataStore.listDocumentos() : [],
-        DataStore.listItens ? DataStore.listItens() : [],
-      ]);
-      records = recs; documentos = docs; itens = its;
+      records = await DataStore.list();
     } catch (e) {
       console.error(e);
       toast("Erro ao carregar dados: " + (e.message || e), "error");
@@ -187,7 +173,6 @@
     }
     populateFilters();
     populateDatalists();
-    renderDocumentosTab();
     render();
     maybeOpenFromHash();
   }
@@ -202,16 +187,13 @@
     sel.value = values.includes(current) ? current : "";
   }
   function populateFilters() {
-    fillSelect($("filterClass"), distinct("classificacao"), "Tipo: todos", state.classificacao);
+    fillSelect($("filterClass"), distinct("classificacao"), "Classificação: todas", state.classificacao);
     fillSelect($("filterOrgao"), distinct("orgao_responsavel"), "Órgão: todos", state.orgao);
     fillSelect($("filterStatus"), distinct("status"), "Status: todos", state.status);
   }
   function populateDatalists() {
     $("dl_class").innerHTML = distinct("classificacao").map((v) => `<option value="${txt(v)}"></option>`).join("");
     $("dl_orgao").innerHTML = distinct("orgao_responsavel").map((v) => `<option value="${txt(v)}"></option>`).join("");
-    const curDoc = $("f_documento").value, curItem = $("f_item_link").value;
-    fillDocSelect();
-    fillItemSelect(curDoc, curItem);
   }
 
   /* ---------- Aplicar busca / filtro / ordenação --------------------- */
@@ -222,9 +204,7 @@
       if (state.orgao && (r.orgao_responsavel || "") !== state.orgao) return false;
       if (state.status && (r.status || "") !== state.status) return false;
       if (q) {
-        const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
-        const itemTxt = r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "";
-        const hay = normalize([r.item_referente, r.classificacao, r.orgao_responsavel, r.status, r.pergunta, r.resposta, docNome, itemTxt].join(" "));
+        const hay = normalize(FIELDS.map((f) => r[f.key]).join(" "));
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -278,22 +258,24 @@
       th.classList.toggle("desc", state.sortKey === th.dataset.sort && state.sortDir === "desc");
     });
 
-    const navigating = state.viewMode === "navigate";
-    document.querySelectorAll(".vt").forEach((b) => b.classList.toggle("active", b.dataset.view === state.viewMode));
+    const reading = state.viewMode === "reading";
+    $("groupByWrap").hidden = !reading;
+    $("expandCtl").hidden = !reading;
+    document.querySelectorAll(".vt").forEach((b) => b.classList.toggle("active", (b.dataset.view === "reading") === reading));
 
     const empty = list.length === 0;
     $("emptyState").hidden = !empty;
     if (empty) {
       $("tableWrap").style.display = "none";
-      $("navView").hidden = true;
+      $("readingView").hidden = true;
       return;
     }
-    if (navigating) {
+    if (reading) {
       $("tableWrap").style.display = "none";
-      renderNavigate(list);
-      $("navView").hidden = false;
+      renderReading(list);
+      $("readingView").hidden = false;
     } else {
-      $("navView").hidden = true;
+      $("readingView").hidden = true;
       $("tableWrap").style.display = "";
       renderTable(list);
     }
@@ -315,16 +297,11 @@
   }
 
   function renderTable(list) {
-    $("tableBody").innerHTML = list.map((r) => {
-      const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome : "";
-      const itemTxt = r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "";
-      return `
+    $("tableBody").innerHTML = list.map((r) => `
       <tr data-id="${txt(r.id)}">
-        <td data-label="Documento" class="cell-class">${cellH(docNome)}</td>
-        <td data-label="Item do doc.">${cellH(itemTxt)}</td>
-        <td data-label="Item">${cellH(r.item_referente)}</td>
-        <td data-label="Tipo">${cellH(r.classificacao)}</td>
+        <td data-label="Classificação" class="cell-class">${cellH(r.classificacao)}</td>
         <td data-label="Data protocolo" class="cell-date">${cellOr(formatDate(r.data_protocolo))}</td>
+        <td data-label="Item referente">${cellH(r.item_referente)}</td>
         <td data-label="Órgão responsável">${cellH(r.orgao_responsavel)}</td>
         <td data-label="Status">${statusBadge(r.status)}</td>
         <td data-label="Pergunta"><div class="cell-text">${cellH(r.pergunta)}</div></td>
@@ -339,195 +316,50 @@
             </button>
           </div>
         </td>
-      </tr>`;
-    }).join("");
+      </tr>`).join("");
   }
 
-  /* ---------- Navegação relacional (Documentos › Itens › Perguntas) --- */
-  function docById(id) { return documentos.find((d) => d.id === id); }
-  function itemById(id) { return itens.find((i) => i.id === id); }
-  function itemLabel(it) { return ((it.codigo ? it.codigo + " " : "") + (it.titulo || "")).trim() || "(item)"; }
-  function itemAncestry(itemId) {
-    const parts = []; let it = itemById(itemId), g = 0;
-    while (it && g++ < 30) { parts.unshift(it); it = it.parent_id ? itemById(it.parent_id) : null; }
-    return parts;
-  }
-  function buildItemNodes(docId, list) {
-    const byId = {};
-    itens.filter((i) => i.documento_id === docId).forEach((i) => { byId[i.id] = { ...i, children: [], direct: 0, dans: 0, total: 0, ans: 0 }; });
-    const roots = [];
-    Object.values(byId).forEach((n) => { if (n.parent_id && byId[n.parent_id]) byId[n.parent_id].children.push(n); else roots.push(n); });
-    list.forEach((r) => { if (r.documento_id === docId && r.item_id && byId[r.item_id]) { byId[r.item_id].direct++; if (isAnswered(r)) byId[r.item_id].dans++; } });
-    (function agg(n) { let t = n.direct, a = n.dans; n.children.forEach((c) => { agg(c); t += c.total; a += c.ans; }); n.total = t; n.ans = a; })({ children: roots, direct: 0, dans: 0 });
-    return { byId, roots };
-  }
-  function crumbBtn(label, level, current) {
-    return `<button class="crumb${current ? " current" : ""}" data-level="${level}" type="button">${label}</button>`;
-  }
-  function breadcrumbHTML() {
-    let s = `<nav class="breadcrumb">` + crumbBtn("📚 Documentos", "root", state.navDoc == null);
-    if (state.navDoc != null) {
-      const d = state.navDoc === "__none__" ? { nome: "(Sem documento)" } : docById(state.navDoc);
-      s += `<span class="crumb-sep">›</span>` + crumbBtn(txt(d ? d.nome : "?"), "doc", state.navItems.length === 0);
-      state.navItems.forEach((iid, i) => {
-        const it = itemById(iid);
-        s += `<span class="crumb-sep">›</span>` + crumbBtn(txt(it ? itemLabel(it) : "?"), String(i), i === state.navItems.length - 1);
-      });
-    }
-    return s + `</nav>`;
-  }
-  function docCardHTML(d, total, ans, q) {
-    const pend = total - ans;
-    const meta = total === 0 ? `<span class="nav-meta-empty">sem perguntas</span>`
-      : (pend ? `<span class="meta-pend">${pend} pendente(s)</span>` : `<span class="meta-ok">tudo respondido</span>`);
-    return `<button class="nav-card doc" type="button" data-doc="${txt(d.id)}">
-      <span class="nav-ic">📕</span>
-      <span class="nav-main">
-        <span class="nav-name">${highlight(d.nome, q)}</span>
-        <span class="nav-meta">${d.sigla ? txt(d.sigla) + " · " : ""}${total} pergunta(s) · ${meta}</span>
-      </span>
-      <span class="nav-count">${total}</span>
-    </button>`;
-  }
-  function itemCardHTML(n) {
-    const pend = n.total - n.ans;
-    const meta = pend ? `<span class="meta-pend">${pend} pendente(s)</span>` : `<span class="meta-ok">tudo respondido</span>`;
-    const childInfo = n.children.length ? ` · ${n.children.length} subitem(ns)` : "";
-    return `<button class="nav-card" type="button" data-item="${txt(n.id)}">
-      <span class="nav-ic">${n.children.length ? "📂" : "📄"}</span>
-      <span class="nav-main">
-        <span class="nav-name">${n.codigo ? '<b class="nav-code">' + txt(n.codigo) + "</b> " : ""}${txt(n.titulo || "")}</span>
-        <span class="nav-meta">${n.total} pergunta(s)${n.total ? " · " + meta : ""}${childInfo}</span>
-      </span>
-      <span class="nav-count">${n.total}</span>
-    </button>`;
-  }
-  function questionRowHTML(r) {
+  function renderReading(list) {
     const q = state.search;
-    return `<button class="qrow" type="button" data-id="${txt(r.id)}">
-      <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "•"}</span>
-      <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
-      <span class="qrow-badges">${readingStatus(r)}</span>
-      <svg class="qrow-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-    </button>`;
-  }
-  function qlistHTML(qs, headLabel) {
-    if (!qs.length) return "";
-    const sorted = qs.slice().sort((a, b) => naturalCompare(a.item_referente, b.item_referente));
-    return `<div class="qlist-head">${headLabel} (${qs.length})</div><div class="qlist">` + sorted.map(questionRowHTML).join("") + `</div>`;
-  }
-  function pathOf(r) {
-    const d = docById(r.documento_id);
-    const parts = [d ? d.nome : (r.documento_id ? "?" : "(sem documento)")];
-    if (r.item_id) itemAncestry(r.item_id).forEach((it) => parts.push(itemLabel(it)));
-    return parts.join(" › ");
-  }
-  function renderSearchResults(list) {
-    const q = state.search;
-    const sorted = list.slice().sort((a, b) => naturalCompare(pathOf(a) + (a.item_referente || ""), pathOf(b) + (b.item_referente || "")));
-    $("navView").innerHTML =
-      `<div class="search-head">${list.length} resultado(s) para “${txt(q)}”</div><div class="qlist">` +
-      sorted.map((r) => `<button class="qrow qrow-search" type="button" data-id="${txt(r.id)}">
-          <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "•"}</span>
-          <span class="qrow-main">
-            <span class="qrow-path">${highlight(pathOf(r), q)}</span>
-            <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
-          </span>
-          <span class="qrow-badges">${readingStatus(r)}</span>
-        </button>`).join("") + `</div>`;
-  }
-  function renderNavigate(list) {
-    if (state.search.trim()) { renderSearchResults(list); return; }
-    if (state.navDoc == null) { renderDocList(list); return; }
-    renderDocContents(list);
-  }
-  function renderDocList(list) {
-    let html = breadcrumbHTML();
-    const cards = documentos.map((d) => {
-      const qs = list.filter((r) => r.documento_id === d.id);
-      return { html: docCardHTML(d, qs.length, qs.filter(isAnswered).length, ""), nome: d.nome };
-    }).sort((a, b) => naturalCompare(a.nome, b.nome));
-    let cardsHtml = cards.map((c) => c.html).join("");
-    const noneQs = list.filter((r) => !r.documento_id);
-    if (noneQs.length) {
-      cardsHtml += `<button class="nav-card none" type="button" data-doc="__none__">
-        <span class="nav-ic">❓</span>
-        <span class="nav-main"><span class="nav-name">(Sem documento)</span>
-        <span class="nav-meta">${noneQs.length} pergunta(s) sem vínculo</span></span>
-        <span class="nav-count">${noneQs.length}</span></button>`;
-    }
-    html += `<div class="nav-grid">` + (cardsHtml || `<div class="nav-empty">Nenhum documento cadastrado. Use a aba <b>Documentos</b>.</div>`) + `</div>`;
-    $("navView").innerHTML = html;
-  }
-  function renderDocContents(list) {
-    let html = breadcrumbHTML();
-    if (state.navDoc === "__none__") {
-      const qs = list.filter((r) => !r.documento_id);
-      html += qlistHTML(qs, "Perguntas sem documento") || `<div class="nav-empty">Nada aqui.</div>`;
-      $("navView").innerHTML = html; return;
-    }
-    const docId = state.navDoc;
-    const { byId, roots } = buildItemNodes(docId, list);
-    const curId = state.navItems[state.navItems.length - 1] || null;
-    let nodes, qs;
-    if (!curId) {
-      nodes = roots;
-      qs = list.filter((r) => r.documento_id === docId && !r.item_id);
-    } else {
-      const cur = byId[curId];
-      if (!cur) { state.navItems = []; render(); return; }
-      nodes = cur.children;
-      qs = list.filter((r) => r.item_id === curId);
-    }
-    nodes = nodes.slice().sort((a, b) => naturalCompare((a.codigo || "") + (a.titulo || ""), (b.codigo || "") + (b.titulo || "")) || (a.ordem - b.ordem));
-    if (nodes.length) html += `<div class="nav-grid">` + nodes.map(itemCardHTML).join("") + `</div>`;
-    html += qlistHTML(qs, "Perguntas neste item");
-    if (!nodes.length && !qs.length) html += `<div class="nav-empty">Nada cadastrado aqui ainda.</div>`;
-    $("navView").innerHTML = html;
-  }
-
-  /* ---------- Aba Documentos (cadastro de documentos e itens) -------- */
-  function itemTreeRoots(docId) {
-    const its = itens.filter((i) => i.documento_id === docId);
-    const byId = {}; its.forEach((i) => (byId[i.id] = { ...i, children: [] }));
-    const roots = []; Object.values(byId).forEach((n) => { if (n.parent_id && byId[n.parent_id]) byId[n.parent_id].children.push(n); else roots.push(n); });
-    return roots;
-  }
-  const itemSort = (a, b) => naturalCompare((a.codigo || "") + (a.titulo || ""), (b.codigo || "") + (b.titulo || "")) || (a.ordem - b.ordem);
-  function fillParentSelect(docId, selected) {
-    const sel = $("i_parent"); if (!sel) return;
-    let opts = `<option value="">— Raiz —</option>`;
-    const walk = (n, d) => { opts += `<option value="${txt(n.id)}">${"  ".repeat(d)}${txt(itemLabel(n))}</option>`; n.children.slice().sort(itemSort).forEach((c) => walk(c, d + 1)); };
-    if (docId) itemTreeRoots(docId).sort(itemSort).forEach((n) => walk(n, 0));
-    sel.innerHTML = opts; sel.value = selected || "";
-  }
-  function renderDocumentosTab() {
-    const docSel = $("i_doc");
-    if (docSel) {
-      const cur = docSel.value;
-      docSel.innerHTML = documentos.length
-        ? documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).map((d) => `<option value="${txt(d.id)}">${txt(d.nome)}</option>`).join("")
-        : `<option value="">(crie um documento primeiro)</option>`;
-      if (cur && documentos.find((d) => d.id === cur)) docSel.value = cur;
-      fillParentSelect(docSel.value, "");
-    }
-    const wrap = $("docsList"); if (!wrap) return;
-    if (!documentos.length) { wrap.innerHTML = `<div class="nav-empty">Nenhum documento ainda. Crie ao lado.</div>`; return; }
-    wrap.innerHTML = documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).map((d) => {
-      const its = itens.filter((i) => i.documento_id === d.id);
-      const qn = records.filter((r) => r.documento_id === d.id).length;
-      let tree = "";
-      const walk = (n, depth) => {
-        tree += `<div class="doc-item" style="padding-left:${10 + depth * 18}px"><span class="di-label">${n.codigo ? "<b>" + txt(n.codigo) + "</b> " : ""}${txt(n.titulo || "")}</span><button class="di-del" data-del-item="${txt(n.id)}" title="Excluir item" type="button">✕</button></div>`;
-        n.children.slice().sort(itemSort).forEach((c) => walk(c, depth + 1));
-      };
-      itemTreeRoots(d.id).sort(itemSort).forEach((n) => walk(n, 0));
-      return `<div class="doc-block">
-        <div class="doc-block-head">
-          <div><div class="doc-block-nome">${txt(d.nome)}</div><div class="doc-block-meta">${d.sigla ? txt(d.sigla) + " · " : ""}${d.orgao ? txt(d.orgao) + " · " : ""}${its.length} item(ns) · ${qn} pergunta(s)</div></div>
-          <button class="btn btn-ghost btn-sm" data-del-doc="${txt(d.id)}" type="button">Excluir</button>
+    const gkey = state.groupBy;
+    const groups = {};
+    list.forEach((r) => {
+      const key = (r[gkey] || "").trim() || "(não informado)";
+      (groups[key] = groups[key] || []).push(r);
+    });
+    const keys = Object.keys(groups).sort(naturalCompare);
+    $("readingView").innerHTML = keys.map((k) => {
+      const items = groups[k].slice().sort((a, b) => naturalCompare(a.item_referente, b.item_referente));
+      const ans = items.filter(isAnswered).length;
+      return `<div class="rgroup">
+        <div class="rgroup-head">
+          <h3>${highlight(k, q)}</h3>
+          <span class="rgroup-meta">${items.length} item(ns) · ${ans} respondida(s)</span>
         </div>
-        <div class="doc-tree">${tree || '<div class="di-empty">Sem itens cadastrados.</div>'}</div>
+        <div class="rgroup-items">
+          ${items.map((r) => {
+            const meta = [
+              r.data_protocolo ? "📅 " + formatDate(r.data_protocolo) : "",
+              r.orgao_responsavel ? "🏛️ " + r.orgao_responsavel : "",
+            ].filter(Boolean).map((x) => `<span>${txt(x)}</span>`).join("");
+            return `<div class="qa" data-id="${txt(r.id)}">
+              <button class="qa-q" type="button">
+                <span class="qa-num">${r.item_referente ? txt(r.item_referente) : "•"}</span>
+                <span class="qa-text">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
+                <span class="qa-badges">${readingStatus(r)}</span>
+                <svg class="qa-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="qa-a" hidden>
+                <div class="qa-ameta">${meta}</div>
+                <div class="qa-atext">${r.resposta ? highlight(r.resposta, q) : "<i>Sem resposta cadastrada.</i>"}</div>
+                <div class="qa-actions">
+                  <button class="btn btn-ghost btn-sm" data-act="open" type="button">Abrir detalhes</button>
+                  <button class="btn btn-ghost btn-sm" data-act="copy" type="button">Copiar</button>
+                </div>
+              </div>
+            </div>`;
+          }).join("")}
+        </div>
       </div>`;
     }).join("");
   }
@@ -539,14 +371,10 @@
     currentDetailId = r.id;
     const q = state.search;
     $("modalBadges").innerHTML = readingStatus(r);
-    const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome : "";
-    const itemTxt = r.item_id ? (itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "") : "";
     $("modalMeta").innerHTML = [
-      ["Documento", docNome],
-      ["Item do documento", itemTxt],
-      ["Item referente", r.item_referente],
-      ["Tipo da pergunta", r.classificacao],
+      ["Classificação", r.classificacao],
       ["Data de protocolo", formatDate(r.data_protocolo)],
+      ["Item referente", r.item_referente],
       ["Órgão responsável", r.orgao_responsavel],
     ].map(([k, v]) => `<div class="meta-item"><div class="k">${k}</div><div class="v">${v ? txt(v) : "—"}</div></div>`).join("");
     $("modalPergunta").innerHTML = r.pergunta ? highlight(r.pergunta, q) : "";
@@ -573,13 +401,9 @@
 
   /* ---------- Copiar / compartilhar --------------------------------- */
   function recordToText(r) {
-    const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome : "";
-    const itemTxt = r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "";
     return [
-      docNome ? "Documento: " + docNome : "",
-      itemTxt ? "Item do documento: " + itemTxt : "",
+      r.classificacao ? "Classificação: " + r.classificacao : "",
       r.item_referente ? "Item referente: " + r.item_referente : "",
-      r.classificacao ? "Tipo: " + r.classificacao : "",
       r.data_protocolo ? "Data de protocolo: " + formatDate(r.data_protocolo) : "",
       r.orgao_responsavel ? "Órgão responsável: " + r.orgao_responsavel : "",
       r.status ? "Status: " + r.status : "",
@@ -617,25 +441,18 @@
   function printView() {
     const list = getFiltered();
     if (!list.length) { toast("Não há registros para imprimir.", "error"); return; }
-    const docs = {};
-    list.forEach((r) => {
-      const d = r.documento_id ? ((docById(r.documento_id) || {}).nome || "?") : "(Sem documento)";
-      const c = r.item_id && itemById(r.item_id) ? itemAncestry(r.item_id).map(itemLabel).join(" › ") : "(Sem item)";
-      docs[d] = docs[d] || {};
-      (docs[d][c] = docs[d][c] || []).push(r);
-    });
-    const body = Object.keys(docs).sort(naturalCompare).map((d) => {
-      const caps = docs[d];
-      const capsHtml = Object.keys(caps).sort(naturalCompare).map((c) => {
-        const items = caps[c].slice().sort((a, b) => naturalCompare(a.item_referente, b.item_referente));
-        return `<section class="g"><h2>${txt(c)}</h2>` + items.map((r) => `
-          <div class="qa">
-            <div class="q"><b>${txt(r.item_referente || "")}</b> ${txt(r.pergunta || "")}</div>
-            <div class="meta">${[r.classificacao, formatDate(r.data_protocolo), r.orgao_responsavel, r.status].filter(Boolean).map(txt).join(" · ")}</div>
-            <div class="a">${txt(r.resposta || "(sem resposta)")}</div>
-          </div>`).join("") + `</section>`;
-      }).join("");
-      return `<div class="docblock"><h1 class="docname">${txt(d)}</h1>${capsHtml}</div>`;
+    const gkey = state.groupBy;
+    const groups = {};
+    list.forEach((r) => { const k = (r[gkey] || "").trim() || "(não informado)"; (groups[k] = groups[k] || []).push(r); });
+    const keys = Object.keys(groups).sort(naturalCompare);
+    const body = keys.map((k) => {
+      const items = groups[k].slice().sort((a, b) => naturalCompare(a.item_referente, b.item_referente));
+      return `<section class="g"><h2>${txt(k)}</h2>` + items.map((r) => `
+        <div class="qa">
+          <div class="q"><b>${txt(r.item_referente || "")}</b> ${txt(r.pergunta || "")}</div>
+          <div class="meta">${[formatDate(r.data_protocolo), r.orgao_responsavel, r.status].filter(Boolean).map(txt).join(" · ")}</div>
+          <div class="a">${txt(r.resposta || "(sem resposta)")}</div>
+        </div>`).join("") + `</section>`;
     }).join("");
     const title = cfg.APP_TITLE || "Controle de Perguntas";
     const win = window.open("", "_blank");
@@ -643,18 +460,15 @@
     win.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>${txt(title)}</title>
       <style>
         body{font-family:Arial,Helvetica,sans-serif;color:#111;max-width:820px;margin:24px auto;padding:0 20px;line-height:1.5}
-        .apptitle{font-size:13px;color:#4f46e5;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin:0}
-        .sub{color:#666;font-size:12px;margin-bottom:18px}
-        .docblock{margin-bottom:26px}
-        .docname{font-size:19px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid #4f46e5}
-        section.g{margin-bottom:14px}h2{font-size:14px;background:#f1f1f4;padding:7px 12px;border-radius:6px;border-left:4px solid #4f46e5}
+        h1{font-size:20px;margin:0 0 4px}.sub{color:#666;font-size:12px;margin-bottom:18px}
+        section.g{margin-bottom:18px}h2{font-size:15px;background:#f1f1f4;padding:8px 12px;border-radius:6px;border-left:4px solid #4f46e5}
         .qa{padding:10px 4px;border-bottom:1px solid #e5e5ea;break-inside:avoid;page-break-inside:avoid}
         .q{font-weight:600;margin-bottom:4px}.q b{color:#4f46e5;margin-right:6px}
         .meta{font-size:11px;color:#777;margin-bottom:6px}
         .a{white-space:pre-wrap;background:#fafafb;border-left:3px solid #4f46e5;padding:8px 12px;border-radius:6px;font-size:13px}
         @media print{body{margin:0}}
       </style></head><body>
-      <p class="apptitle">${txt(title)}</p>
+      <h1>${txt(title)}</h1>
       <div class="sub">Gerado em ${txt(formatDate(ymd(new Date())))} · ${list.length} registro(s)${state.search ? ' · busca: "' + txt(state.search) + '"' : ""}</div>
       ${body}
       <scr` + `ipt>window.onload=function(){setTimeout(function(){window.print();},250);}</scr` + `ipt>
@@ -665,43 +479,19 @@
   /* ---------- Formulário (criar / editar) --------------------------- */
   function readForm() {
     return {
-      documento_id: $("f_documento").value || null,
-      item_id: $("f_item_link").value || null,
-      item_referente: $("f_item").value.trim(),
       classificacao: $("f_classificacao").value.trim(),
       data_protocolo: $("f_data").value || "",
+      item_referente: $("f_item").value.trim(),
       orgao_responsavel: $("f_orgao").value.trim(),
       status: $("f_status").value.trim(),
       pergunta: $("f_pergunta").value.trim(),
       resposta: $("f_resposta").value.trim(),
     };
   }
-  function fillDocSelect() {
-    const sel = $("f_documento"); const cur = sel.value;
-    sel.innerHTML = `<option value="">— Sem documento —</option>` +
-      documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).map((d) => `<option value="${txt(d.id)}">${txt(d.nome)}</option>`).join("");
-    sel.value = cur;
-  }
-  function fillItemSelect(docId, selected) {
-    const sel = $("f_item_link");
-    let opts = `<option value="">— Documento inteiro —</option>`;
-    if (docId) {
-      const its = itens.filter((i) => i.documento_id === docId);
-      const byId = {}; its.forEach((i) => (byId[i.id] = { ...i, children: [] }));
-      const roots = []; Object.values(byId).forEach((n) => { if (n.parent_id && byId[n.parent_id]) byId[n.parent_id].children.push(n); else roots.push(n); });
-      const sortf = (a, b) => naturalCompare((a.codigo || "") + (a.titulo || ""), (b.codigo || "") + (b.titulo || "")) || (a.ordem - b.ordem);
-      const walk = (n, depth) => { opts += `<option value="${txt(n.id)}">${"  ".repeat(depth)}${txt(itemLabel(n))}</option>`; n.children.slice().sort(sortf).forEach((c) => walk(c, depth + 1)); };
-      roots.slice().sort(sortf).forEach((n) => walk(n, 0));
-    }
-    sel.innerHTML = opts;
-    sel.value = selected || "";
-  }
   function resetForm() {
     $("recordForm").reset();
     editingId = null;
     $("recordId").value = "";
-    $("f_documento").value = "";
-    fillItemSelect("", "");
     $("formTitle").textContent = "Novo registro";
     $("saveBtnLabel").textContent = "Salvar registro";
     $("cancelEdit").hidden = true;
@@ -710,8 +500,6 @@
   function startEdit(r) {
     editingId = r.id;
     $("recordId").value = r.id;
-    $("f_documento").value = r.documento_id || "";
-    fillItemSelect(r.documento_id, r.item_id);
     $("f_classificacao").value = r.classificacao || "";
     $("f_data").value = r.data_protocolo || "";
     $("f_item").value = r.item_referente || "";
@@ -725,7 +513,7 @@
     updateCounters();
     switchTab("form");
     window.scrollTo({ top: 0, behavior: "smooth" });
-    $("f_documento").focus();
+    $("f_classificacao").focus();
   }
   async function submitForm(e) {
     e.preventDefault();
@@ -812,10 +600,10 @@
       (missing.length ? `<br><span style="color:var(--muted)">Colunas não encontradas (ficarão em branco): ${txt(missing.join(", "))}</span>` : "");
     $("importPreviewBody").innerHTML = rows.slice(0, 8).map((r) => `
       <tr>
-        <td>${cellOr(r.documento)}</td>
-        <td>${cellOr(pathDisplay(r.capitulo))}</td>
-        <td>${cellOr(r.item_referente)}</td>
         <td>${cellOr(r.classificacao)}</td>
+        <td class="cell-date">${cellOr(formatDate(r.data_protocolo))}</td>
+        <td>${cellOr(r.item_referente)}</td>
+        <td>${cellOr(r.orgao_responsavel)}</td>
         <td>${statusBadge(r.status)}</td>
         <td><div class="cell-text">${cellOr(r.pergunta)}</div></td>
         <td><div class="cell-text">${cellOr(r.resposta)}</div></td>
@@ -846,14 +634,17 @@
     if (typeof XLSX === "undefined") { toast("A biblioteca de planilha não carregou.", "error"); return; }
     const list = getFiltered();
     if (!list.length) { toast("Não há registros para exportar.", "error"); return; }
-    const headers = FIELDS.map((f) => f.label);
-    const rows = list.map((r) => {
-      const o = {};
-      FIELDS.forEach((f) => { o[f.label] = f.key === "data_protocolo" ? formatDate(r[f.key]) : (r[f.key] || ""); });
-      return o;
-    });
-    const ws = XLSX.utils.json_to_sheet(rows, { header: headers });
-    ws["!cols"] = FIELDS.map((f) => ({ wch: (f.key === "pergunta" || f.key === "resposta") ? 50 : (f.key === "capitulo" ? 28 : 20) }));
+    const rows = list.map((r) => ({
+      "Classificação da pergunta": r.classificacao || "",
+      "Data de protocolo": formatDate(r.data_protocolo),
+      "Item referente": r.item_referente || "",
+      "Órgão responsável": r.orgao_responsavel || "",
+      "Status": r.status || "",
+      "Pergunta": r.pergunta || "",
+      "Resposta": r.resposta || "",
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws["!cols"] = [{ wch: 22 }, { wch: 14 }, { wch: 22 }, { wch: 22 }, { wch: 14 }, { wch: 50 }, { wch: 50 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Registros");
     XLSX.writeFile(wb, `controle-perguntas-${ymd(new Date())}.xlsx`);
@@ -862,20 +653,9 @@
   function downloadTemplate() {
     if (typeof XLSX === "undefined") { toast("A biblioteca de planilha não carregou.", "error"); return; }
     const headers = FIELDS.map((f) => f.label);
-    const example = {
-      documento: "LRCAP 2026 – Armazenamento",
-      capitulo: "Área > Georreferenciamento",
-      item_referente: "1.1",
-      classificacao: "Dúvida",
-      data_protocolo: "2026-06-16",
-      orgao_responsavel: "EPE",
-      status: "Pendente",
-      pergunta: "Texto da pergunta de exemplo…",
-      resposta: "Texto da resposta de exemplo…",
-    };
-    const exampleRow = FIELDS.map((f) => example[f.key] || "");
-    const ws = XLSX.utils.aoa_to_sheet([headers, exampleRow]);
-    ws["!cols"] = FIELDS.map((f) => ({ wch: (f.key === "pergunta" || f.key === "resposta") ? 50 : (f.key === "capitulo" ? 28 : 20) }));
+    const example = ["Dúvida", "2026-06-19", "Item 4.2 do edital", "Secretaria de Administração", "Pendente", "Texto da pergunta de exemplo…", "Texto da resposta de exemplo…"];
+    const ws = XLSX.utils.aoa_to_sheet([headers, example]);
+    ws["!cols"] = headers.map((_, i) => ({ wch: i >= 5 ? 50 : 22 }));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Modelo");
     XLSX.writeFile(wb, "modelo-importacao.xlsx");
@@ -905,25 +685,28 @@
     // Chips de status (todas / respondidas / pendentes)
     document.querySelectorAll(".chip").forEach((c) => (c.onclick = () => { state.answered = c.dataset.ans; render(); }));
 
-    // Alternância de visão (Navegar / Tabela)
+    // Alternância de visão (tabela / leitura) e agrupamento
     document.querySelectorAll(".vt").forEach((b) => (b.onclick = () => { state.viewMode = b.dataset.view; render(); }));
+    $("groupBy").onchange = (e) => { state.groupBy = e.target.value; if (state.viewMode === "reading") render(); };
+    $("expandAll").onclick = () => document.querySelectorAll("#readingView .qa").forEach((qa) => { qa.classList.add("open"); qa.querySelector(".qa-a").hidden = false; });
+    $("collapseAll").onclick = () => document.querySelectorAll("#readingView .qa").forEach((qa) => { qa.classList.remove("open"); qa.querySelector(".qa-a").hidden = true; });
 
-    // Navegação: migalhas (breadcrumb), cartões (documento/item) e perguntas
-    $("navView").addEventListener("click", (e) => {
-      const crumb = e.target.closest(".crumb");
-      if (crumb) {
-        const lvl = crumb.dataset.level;
-        if (lvl === "root") { state.navDoc = null; state.navItems = []; }
-        else if (lvl === "doc") { state.navItems = []; }
-        else { state.navItems = state.navItems.slice(0, parseInt(lvl, 10) + 1); }
-        render(); return;
+    // Modo leitura: expandir / abrir detalhes / copiar
+    $("readingView").addEventListener("click", (e) => {
+      const qaEl = e.target.closest(".qa"); if (!qaEl) return;
+      const id = qaEl.dataset.id;
+      const act = e.target.closest("[data-act]");
+      if (act) {
+        e.stopPropagation();
+        if (act.dataset.act === "open") openDetail(id);
+        else copyItem(id);
+        return;
       }
-      const dc = e.target.closest(".nav-card[data-doc]");
-      if (dc) { state.navDoc = dc.dataset.doc; state.navItems = []; render(); return; }
-      const ic = e.target.closest(".nav-card[data-item]");
-      if (ic) { state.navItems = state.navItems.concat(ic.dataset.item); render(); return; }
-      const qrow = e.target.closest(".qrow");
-      if (qrow) { openDetail(qrow.dataset.id); return; }
+      if (e.target.closest(".qa-q")) {
+        const bodyEl = qaEl.querySelector(".qa-a");
+        const open = qaEl.classList.toggle("open");
+        bodyEl.hidden = !open;
+      }
     });
 
     // Ordenação
@@ -956,50 +739,8 @@
     $("recordForm").addEventListener("submit", submitForm);
     $("recordForm").addEventListener("reset", () => setTimeout(resetForm, 0));
     $("cancelEdit").onclick = resetForm;
-    $("f_documento").addEventListener("change", (e) => fillItemSelect(e.target.value, ""));
     $("f_pergunta").addEventListener("input", updateCounters);
     $("f_resposta").addEventListener("input", updateCounters);
-
-    // Aba Documentos
-    $("docForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const nome = $("d_nome").value.trim();
-      if (!nome) { toast("Informe o nome do documento.", "error"); return; }
-      try {
-        await DataStore.createDocumento({ nome, sigla: $("d_sigla").value.trim() || null, tipo: $("d_tipo").value.trim() || null, orgao: $("d_orgao").value.trim() || null, ano: $("d_ano").value ? parseInt($("d_ano").value, 10) : null });
-        toast("Documento criado.", "success"); $("docForm").reset(); await load();
-      } catch (err) { console.error(err); toast("Erro ao criar documento: " + (err.message || err), "error"); }
-    });
-    $("itemForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const docId = $("i_doc").value;
-      if (!docId) { toast("Selecione um documento.", "error"); return; }
-      const codigo = $("i_codigo").value.trim(), titulo = $("i_titulo").value.trim();
-      if (!codigo && !titulo) { toast("Informe código ou título do item.", "error"); return; }
-      try {
-        await DataStore.createItem({ documento_id: docId, parent_id: $("i_parent").value || null, codigo: codigo || null, titulo: titulo || null, ordem: itens.filter((i) => i.documento_id === docId).length });
-        toast("Item adicionado.", "success"); $("i_codigo").value = ""; $("i_titulo").value = ""; await load();
-      } catch (err) { console.error(err); toast("Erro ao adicionar item: " + (err.message || err), "error"); }
-    });
-    $("i_doc").addEventListener("change", (e) => fillParentSelect(e.target.value, ""));
-    $("docsList").addEventListener("click", async (e) => {
-      const di = e.target.closest("[data-del-item]");
-      if (di) {
-        if (await confirmDialog("Excluir item", "Excluir este item e seus subitens? As perguntas vinculadas ficarão sem item.", "Excluir")) {
-          try { await DataStore.removeItem(di.dataset.delItem); toast("Item excluído.", "success"); await load(); }
-          catch (err) { toast("Erro: " + (err.message || err), "error"); }
-        }
-        return;
-      }
-      const dd = e.target.closest("[data-del-doc]");
-      if (dd) {
-        if (await confirmDialog("Excluir documento", "Excluir este documento, todos os seus itens e desvincular as perguntas?", "Excluir")) {
-          try { await DataStore.removeDocumento(dd.dataset.delDoc); toast("Documento excluído.", "success"); await load(); }
-          catch (err) { toast("Erro: " + (err.message || err), "error"); }
-        }
-        return;
-      }
-    });
 
     // Modal de detalhe
     $("modalClose").onclick = closeDetail;
@@ -1027,6 +768,9 @@
       }
     });
   }
+
+  /* Expõe toast globalmente para outros módulos */
+  window.showToast = toast;
 
   /* ---------- Início ------------------------------------------------- */
   function init() {
