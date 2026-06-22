@@ -594,14 +594,6 @@
     $("newDocModal").hidden = false;
     setTimeout(() => $("d_nome").focus(), 60);
   }
-  function readFileAsBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
 
   /* ---------- Aba Documentos (cadastro de documentos e itens) -------- */
   function itemTreeRoots(docId) {
@@ -1215,13 +1207,14 @@
         orgao: $("d_orgao").value.trim() || null,
         ano: $("d_ano").value ? parseInt($("d_ano").value, 10) : null,
       };
-      // Processar anexo se houver arquivo selecionado
+      // Upload do anexo via DataStore (Storage no Supabase, Base64 no modo local)
       const file = $("d_anexo").files[0];
       if (file) {
         try {
-          base.anexo_url = await readFileAsBase64(file);
-          base.anexo_nome = file.name;
-        } catch (_) { toast("Erro ao processar o arquivo.", "error"); return; }
+          const { url, nome } = await DataStore.uploadAnexo(file, editingDocId || null);
+          base.anexo_url = url;
+          base.anexo_nome = nome;
+        } catch (err) { toast("Erro no anexo: " + (err.message || err), "error"); return; }
       }
       try {
         if (editingDocId) {
