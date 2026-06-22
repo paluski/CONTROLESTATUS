@@ -7,7 +7,7 @@
   /* ---------- Campos (usados em tabela, formulário e importação) ------- */
   const FIELDS = [
     { key: "documento",         label: "Documento",                 match: ["documento", "doc", "livro", "edital", "lei", "norma", "processo", "leilao", "leilão"] },
-    { key: "capitulo",          label: "Item do documento",         match: ["item do documento", "item do doc", "capitulo", "capítulo", "tema", "secao", "seção", "assunto", "caminho", "estrutura", "item pai"] },
+    { key: "capitulo",          label: "Capítulo",                  match: ["capitulo", "capítulo", "tema", "secao", "seção", "assunto", "caminho", "estrutura", "item pai"] },
     { key: "item_referente",    label: "Item referente",            match: ["item referente", "item", "referente", "numero", "número", "codigo", "código", "n"] },
     { key: "classificacao",     label: "Tipo da pergunta",          match: ["tipo da pergunta", "tipo", "classificacao da pergunta", "classificacao", "classificação", "classif"] },
     { key: "data_protocolo",    label: "Data de protocolo",         match: ["data de protocolo", "data protocolo", "data do protocolo", "protocolo", "data"] },
@@ -21,13 +21,6 @@
     return String(capitulo || "").split(PATH_SEP).map((s) => s.trim()).filter(Boolean);
   }
   function pathDisplay(capitulo) { return splitPath(capitulo).join(" › "); }
-  // Separa um texto de item em código + título (ex.: "4.4 Direito de Uso" → {4.4, "Direito de Uso"})
-  function parseItemText(t) {
-    t = String(t || "").trim();
-    const m = t.match(/^((?:Art\.?\s*\d+[ºo]?(?:-[A-Za-z])?)|(?:ANEXO\s+[IVXLC]+)|(?:\d+(?:[.\-]\d+)*))\s*[\.\-–:]?\s*(.*)$/i);
-    if (m) return { codigo: m[1].replace(/\s+/g, " ").trim(), titulo: (m[2] || "").trim() || null };
-    return { codigo: null, titulo: t };
-  }
 
   /* ---------- Atalhos ------------------------------------------------- */
   const $ = (id) => document.getElementById(id);
@@ -43,7 +36,7 @@
   let hashChecked = false;
   let docModalDocId = null;
   const docModalCollapsed = new Set();
-  const state = { search: "", docFilter: "", classificacao: "", orgao: "", status: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
+  const state = { search: "", classificacao: "", orgao: "", status: "", documento: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
 
   /* ---------- Utilidades --------------------------------------------- */
   function normalize(s) {
@@ -211,18 +204,11 @@
     sel.value = values.includes(current) ? current : "";
   }
   function populateFilters() {
+    const docNames = documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).map((d) => d.nome);
+    fillSelect($("filterDoc"), docNames, "Documento: todos", state.documento);
     fillSelect($("filterClass"), distinct("classificacao"), "Tipo: todos", state.classificacao);
     fillSelect($("filterOrgao"), distinct("orgao_responsavel"), "Órgão: todos", state.orgao);
     fillSelect($("filterStatus"), distinct("status"), "Status: todos", state.status);
-    fillDocFilter();
-  }
-  function fillDocFilter() {
-    const sel = $("filterDoc"); if (!sel) return;
-    let opts = `<option value="">Documento: todos</option>`;
-    documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).forEach((d) => { opts += `<option value="${txt(d.id)}">${txt(d.nome)}</option>`; });
-    if (records.some((r) => !r.documento_id)) opts += `<option value="__none__">(Sem documento)</option>`;
-    sel.innerHTML = opts;
-    sel.value = state.docFilter || "";
   }
   function populateDatalists() {
     $("dl_class").innerHTML = distinct("classificacao").map((v) => `<option value="${txt(v)}"></option>`).join("");
@@ -236,11 +222,13 @@
   function getBaseFiltered() {
     const q = normalize(state.search);
     return records.filter((r) => {
-      if (state.docFilter === "__none__") { if (r.documento_id) return false; }
-      else if (state.docFilter && r.documento_id !== state.docFilter) return false;
       if (state.classificacao && (r.classificacao || "") !== state.classificacao) return false;
       if (state.orgao && (r.orgao_responsavel || "") !== state.orgao) return false;
       if (state.status && (r.status || "") !== state.status) return false;
+      if (state.documento) {
+        const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
+        if (docNome !== state.documento) return false;
+      }
       if (q) {
         const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
         const itemTxt = r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "";
@@ -285,7 +273,6 @@
   function render() {
     const base = getBaseFiltered();
     renderSummary(base);
-    renderActiveFilters();
 
     const list = sortList(applyAnswered(base));
     const total = records.length;
@@ -326,25 +313,13 @@
     const pend = total - ans;
     const pct = total ? Math.round((ans / total) * 100) : 0;
     $("summary").innerHTML = `
-      <div class="stat"><span class="stat-k">Total</span><span class="stat-v">${total}</span></div>
-      <div class="stat ans"><span class="stat-k">Respondidas</span><span class="stat-v">${ans}</span></div>
-      <div class="stat pend"><span class="stat-k">Pendentes</span><span class="stat-v">${pend}</span></div>
-      <div class="stat pct"><span class="stat-k">Concluído</span><span class="stat-v">${pct}%</span><span class="stat-bar"><span style="width:${pct}%"></span></span></div>`;
+      <div class="sum-card"><div class="sum-k">Total</div><div class="sum-v">${total}</div></div>
+      <div class="sum-card ans"><div class="sum-k">Respondidas</div><div class="sum-v">${ans}</div></div>
+      <div class="sum-card pend"><div class="sum-k">Pendentes</div><div class="sum-v">${pend}</div></div>
+      <div class="sum-card pct"><div class="sum-k">Concluído</div><div class="sum-v">${pct}%</div><div class="sum-bar"><span style="width:${pct}%"></span></div></div>`;
     $("cnt-all").textContent = total;
     $("cnt-yes").textContent = ans;
     $("cnt-no").textContent = pend;
-  }
-  function renderActiveFilters() {
-    const pills = [];
-    if (state.search) pills.push(["search", `Busca: "${state.search}"`]);
-    if (state.answered === "yes") pills.push(["answered", "Respondidas"]);
-    else if (state.answered === "no") pills.push(["answered", "Pendentes"]);
-    if (state.docFilter) pills.push(["docFilter", "Doc: " + (state.docFilter === "__none__" ? "(sem documento)" : ((docById(state.docFilter) || {}).nome || "?"))]);
-    if (state.classificacao) pills.push(["classificacao", "Tipo: " + state.classificacao]);
-    if (state.orgao) pills.push(["orgao", "Órgão: " + state.orgao]);
-    if (state.status) pills.push(["status", "Status: " + state.status]);
-    $("activeFilters").innerHTML = pills.map(([k, l]) => `<button class="apill" data-clear="${k}" type="button">${txt(l)}<span class="apill-x">✕</span></button>`).join("");
-    $("clearFilters").hidden = pills.length === 0;
   }
 
   function renderTable(list) {
@@ -411,37 +386,56 @@
   }
   function docCardHTML(d, total, ans, q) {
     const pend = total - ans;
-    const meta = total === 0 ? `<span class="nav-meta-empty">sem perguntas</span>`
-      : (pend ? `<span class="meta-pend">${pend} pendente(s)</span>` : `<span class="meta-ok">tudo respondido</span>`);
-    return `<button class="nav-card doc" type="button" data-doc="${txt(d.id)}">
-      <span class="nav-ic">📕</span>
-      <span class="nav-main">
-        <span class="nav-name">${highlight(d.nome, q)}</span>
-        <span class="nav-meta">${d.sigla ? txt(d.sigla) + " · " : ""}${total} pergunta(s) · ${meta}</span>
+    const pct = total ? Math.round((ans / total) * 100) : 0;
+    const statusTxt = total === 0
+      ? `<span class="nc-empty">sem perguntas</span>`
+      : pend ? `<span class="nc-pend">${pend} pendente${pend > 1 ? "s" : ""}</span>` : `<span class="nc-ok">tudo respondido</span>`;
+    return `<button class="nav-card nc-doc" type="button" data-doc="${txt(d.id)}">
+      <span class="nc-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       </span>
-      <span class="nav-count">${total}</span>
+      <span class="nc-body">
+        <span class="nc-name">${highlight(d.nome, q)}</span>
+        <span class="nc-desc">${d.sigla ? txt(d.sigla) + " · " : ""}${statusTxt}</span>
+        ${total > 0 ? `<span class="nc-bar"><span style="width:${pct}%"></span></span>` : ""}
+      </span>
+      <span class="nc-footer">
+        <span class="nc-count-txt">${total}</span>
+        <svg class="nc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </span>
     </button>`;
   }
   function itemCardHTML(n) {
     const pend = n.total - n.ans;
-    const meta = pend ? `<span class="meta-pend">${pend} pendente(s)</span>` : `<span class="meta-ok">tudo respondido</span>`;
-    const childInfo = n.children.length ? ` · ${n.children.length} subitem(ns)` : "";
-    return `<button class="nav-card" type="button" data-item="${txt(n.id)}">
-      <span class="nav-ic">${n.children.length ? "📂" : "📄"}</span>
-      <span class="nav-main">
-        <span class="nav-name">${n.codigo ? '<b class="nav-code">' + txt(n.codigo) + "</b> " : ""}${txt(n.titulo || "")}</span>
-        <span class="nav-meta">${n.total} pergunta(s)${n.total ? " · " + meta : ""}${childInfo}</span>
+    const isFolder = n.children.length > 0;
+    const folderIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`;
+    const fileIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+    const statusTxt = n.total === 0 ? "" : pend
+      ? `<span class="nc-pend">${pend} pend.</span>`
+      : `<span class="nc-ok">ok</span>`;
+    const subInfo = isFolder ? `${n.children.length} sub · ` : "";
+    return `<button class="nav-card nc-item" type="button" data-item="${txt(n.id)}">
+      <span class="nc-icon${isFolder ? " nc-folder" : " nc-file"}">${isFolder ? folderIcon : fileIcon}</span>
+      <span class="nc-body">
+        <span class="nc-name">${n.codigo ? `<b class="nc-badge">${txt(n.codigo)}</b> ` : ""}${txt(n.titulo || "")}</span>
+        <span class="nc-desc">${subInfo}${n.total} pergunta${n.total !== 1 ? "s" : ""}${n.total ? " · " + statusTxt : ""}</span>
       </span>
-      <span class="nav-count">${n.total}</span>
+      <span class="nc-footer">
+        <span class="nc-count-txt">${n.total}</span>
+        <svg class="nc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </span>
     </button>`;
   }
   function questionRowHTML(r) {
     const q = state.search;
+    const answered = isAnswered(r);
+    const dotClass = answered ? "dot-ok" : "dot-pend";
     return `<button class="qrow" type="button" data-id="${txt(r.id)}">
-      <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "•"}</span>
+      <span class="qrow-dot ${dotClass}"></span>
+      <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "·"}</span>
       <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
       <span class="qrow-badges">${readingStatus(r)}</span>
-      <svg class="qrow-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      <svg class="qrow-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
     </button>`;
   }
   function qlistHTML(qs, headLabel) {
@@ -461,7 +455,8 @@
     $("navView").innerHTML =
       `<div class="search-head">${list.length} resultado(s) para “${txt(q)}”</div><div class="qlist">` +
       sorted.map((r) => `<button class="qrow qrow-search" type="button" data-id="${txt(r.id)}">
-          <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "•"}</span>
+          <span class="qrow-dot ${isAnswered(r) ? "dot-ok" : "dot-pend"}"></span>
+          <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "·"}</span>
           <span class="qrow-main">
             <span class="qrow-path">${highlight(pathOf(r), q)}</span>
             <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
@@ -474,16 +469,12 @@
     if (state.navDoc == null) { renderDocList(list); return; }
     renderDocContents(list);
   }
-  function isFiltering() {
-    return !!(state.search || state.docFilter || state.classificacao || state.orgao || state.status || state.answered);
-  }
   function renderDocList(list) {
     let html = breadcrumbHTML();
-    const filtering = isFiltering();
     const cards = documentos.map((d) => {
       const qs = list.filter((r) => r.documento_id === d.id);
-      return { qs, nome: d.nome, html: docCardHTML(d, qs.length, qs.filter(isAnswered).length, "") };
-    }).filter((c) => !filtering || c.qs.length > 0).sort((a, b) => naturalCompare(a.nome, b.nome));
+      return { html: docCardHTML(d, qs.length, qs.filter(isAnswered).length, ""), nome: d.nome };
+    }).sort((a, b) => naturalCompare(a.nome, b.nome));
     let cardsHtml = cards.map((c) => c.html).join("");
     const noneQs = list.filter((r) => !r.documento_id);
     if (noneQs.length) {
@@ -839,10 +830,17 @@
     sel.value = selected || "";
   }
   function resetForm() {
-    $("recordForm").reset();
     editingId = null;
     $("recordId").value = "";
     $("f_documento").value = "";
+    $("f_item_link").value = "";
+    $("f_item").value = "";
+    $("f_classificacao").value = "";
+    $("f_data").value = "";
+    $("f_orgao").value = "";
+    $("f_status").value = "";
+    $("f_pergunta").value = "";
+    $("f_resposta").value = "";
     fillItemSelect("", "");
     $("formTitle").textContent = "Novo registro";
     $("saveBtnLabel").textContent = "Salvar registro";
@@ -968,57 +966,10 @@
     if (!pendingImport.length) return;
     const btn = $("importConfirm"); btn.disabled = true;
     try {
-      // Índices a partir dos dados já carregados (para reaproveitar documentos/itens)
-      const docByName = {};
-      documentos.forEach((d) => { docByName[normalize(d.nome)] = d.id; if (d.sigla) docByName[normalize(d.sigla)] = d.id; });
-      const itemIdx = {};
-      const addItemKey = (docId, it) => {
-        if (it.codigo) itemIdx[docId + "¦c¦" + normalize(it.codigo)] = it.id;
-        if (it.titulo) itemIdx[docId + "¦t¦" + normalize(it.titulo)] = it.id;
-        itemIdx[docId + "¦l¦" + normalize(itemLabel(it))] = it.id;
-      };
-      itens.forEach((it) => addItemKey(it.documento_id, it));
-
-      let createdDocs = 0, createdItems = 0;
-      const toInsert = [];
-      for (const row of pendingImport) {
-        let documento_id = null, item_id = null;
-        const docName = (row.documento || "").trim();
-        if (docName) {
-          documento_id = docByName[normalize(docName)];
-          if (!documento_id) {
-            const nd = await DataStore.createDocumento({ nome: docName });
-            documento_id = nd.id; docByName[normalize(docName)] = nd.id; createdDocs++;
-          }
-        }
-        const itemTxt = (row.capitulo || "").trim();
-        if (documento_id && itemTxt) {
-          const parsed = parseItemText(itemTxt);
-          item_id = itemIdx[documento_id + "¦l¦" + normalize(itemTxt)]
-            || (parsed.codigo && itemIdx[documento_id + "¦c¦" + normalize(parsed.codigo)])
-            || (parsed.titulo && itemIdx[documento_id + "¦t¦" + normalize(parsed.titulo)])
-            || null;
-          if (!item_id) {
-            const ni = await DataStore.createItem({ documento_id, parent_id: null, codigo: parsed.codigo, titulo: parsed.titulo, ordem: 0 });
-            item_id = ni.id; addItemKey(documento_id, ni); createdItems++;
-          }
-        }
-        toInsert.push({
-          documento_id, item_id,
-          item_referente: row.item_referente || "",
-          classificacao: row.classificacao || "",
-          data_protocolo: row.data_protocolo || "",
-          orgao_responsavel: row.orgao_responsavel || "",
-          status: row.status || "",
-          pergunta: row.pergunta || "",
-          resposta: row.resposta || "",
-        });
-      }
-      const n = await DataStore.bulkCreate(toInsert);
+      const n = await DataStore.bulkCreate(pendingImport);
       $("importModal").hidden = true;
       $("importFileName").hidden = true;
-      const extra = (createdDocs || createdItems) ? ` · ${createdDocs} documento(s) e ${createdItems} item(ns) novos` : "";
-      toast(`${n} registro(s) importado(s)${extra}.`, "success");
+      toast(`${n} registro(s) importado(s) com sucesso.`, "success");
       pendingImport = [];
       await load();
       switchTab("view");
@@ -1035,20 +986,14 @@
     if (typeof XLSX === "undefined") { toast("A biblioteca de planilha não carregou.", "error"); return; }
     const list = getFiltered();
     if (!list.length) { toast("Não há registros para exportar.", "error"); return; }
-    const headers = ["Documento", "Item do documento", "Item referente", "Tipo da pergunta", "Data de protocolo", "Órgão responsável", "Status", "Pergunta", "Resposta"];
-    const rows = list.map((r) => ({
-      "Documento": r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "",
-      "Item do documento": r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "",
-      "Item referente": r.item_referente || "",
-      "Tipo da pergunta": r.classificacao || "",
-      "Data de protocolo": formatDate(r.data_protocolo),
-      "Órgão responsável": r.orgao_responsavel || "",
-      "Status": r.status || "",
-      "Pergunta": r.pergunta || "",
-      "Resposta": r.resposta || "",
-    }));
+    const headers = FIELDS.map((f) => f.label);
+    const rows = list.map((r) => {
+      const o = {};
+      FIELDS.forEach((f) => { o[f.label] = f.key === "data_protocolo" ? formatDate(r[f.key]) : (r[f.key] || ""); });
+      return o;
+    });
     const ws = XLSX.utils.json_to_sheet(rows, { header: headers });
-    ws["!cols"] = [{ wch: 30 }, { wch: 28 }, { wch: 12 }, { wch: 18 }, { wch: 14 }, { wch: 18 }, { wch: 14 }, { wch: 50 }, { wch: 50 }];
+    ws["!cols"] = FIELDS.map((f) => ({ wch: (f.key === "pergunta" || f.key === "resposta") ? 50 : (f.key === "capitulo" ? 28 : 20) }));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Registros");
     XLSX.writeFile(wb, `controle-perguntas-${ymd(new Date())}.xlsx`);
@@ -1058,8 +1003,8 @@
     if (typeof XLSX === "undefined") { toast("A biblioteca de planilha não carregou.", "error"); return; }
     const headers = FIELDS.map((f) => f.label);
     const example = {
-      documento: "Instruções de Cadastramento e Habilitação Técnica (SAE)",
-      capitulo: "4.4 Direito de Usar ou Dispor do Local",
+      documento: "LRCAP 2026 – Armazenamento",
+      capitulo: "Área > Georreferenciamento",
       item_referente: "1.1",
       classificacao: "Dúvida",
       data_protocolo: "2026-06-16",
@@ -1084,25 +1029,16 @@
 
     // Busca / filtros
     $("search").addEventListener("input", debounce((e) => { state.search = e.target.value; render(); }, 180));
-    $("filterDoc").onchange = (e) => { state.docFilter = e.target.value; render(); };
+    $("filterDoc").onchange = (e) => { state.documento = e.target.value; render(); };
     $("filterClass").onchange = (e) => { state.classificacao = e.target.value; render(); };
     $("filterOrgao").onchange = (e) => { state.orgao = e.target.value; render(); };
     $("filterStatus").onchange = (e) => { state.status = e.target.value; render(); };
     $("clearFilters").onclick = () => {
-      state.search = state.docFilter = state.classificacao = state.orgao = state.status = state.answered = "";
+      state.search = state.classificacao = state.orgao = state.status = state.answered = state.documento = "";
       $("search").value = "";
       populateFilters();
       render();
     };
-    $("activeFilters").addEventListener("click", (e) => {
-      const b = e.target.closest("[data-clear]"); if (!b) return;
-      const k = b.dataset.clear;
-      if (k === "search") { state.search = ""; $("search").value = ""; }
-      else if (k === "answered") state.answered = "";
-      else state[k] = "";
-      populateFilters();
-      render();
-    });
     $("refreshBtn").onclick = () => load();
     $("exportBtn").onclick = exportExcel;
     $("printBtn").onclick = printView;
