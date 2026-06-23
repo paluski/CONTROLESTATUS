@@ -85,6 +85,7 @@
             <select id="filterClass" class="select filter-select" aria-label="Filtrar por tipo"><option value="">Tipo: todos</option></select>
             <select id="filterOrgao" class="select filter-select" aria-label="Filtrar por órgão"><option value="">Órgão: todos</option></select>
             <select id="filterStatus" class="select filter-select" aria-label="Filtrar por status"><option value="">Status: todos</option></select>
+            <select id="filterResp" class="select filter-select" aria-label="Filtrar por responsável"><option value="">Responsável: todos</option></select>
             <button id="clearFilters" class="btn btn-ghost filter-clear" type="button">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
               Limpar
@@ -182,6 +183,11 @@
                   <label for="f_orgao">Órgão responsável</label>
                   <input id="f_orgao" name="orgao_responsavel" type="text" list="dl_orgao" placeholder="Ex.: Secretaria…" />
                   <datalist id="dl_orgao"></datalist>
+                </div>
+                <div class="field">
+                  <label for="f_responsavel">Responsável pela pergunta</label>
+                  <input id="f_responsavel" name="responsavel" type="text" list="dl_responsavel" placeholder="Ex.: Bruno Brambilla…" />
+                  <datalist id="dl_responsavel"></datalist>
                 </div>
                 <div class="field">
                   <label for="f_status">Status</label>

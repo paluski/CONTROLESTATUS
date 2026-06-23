@@ -15,6 +15,7 @@
     { key: "status",            label: "Status",                    match: ["status", "situacao", "situacao atual"] },
     { key: "pergunta",          label: "Pergunta",                  match: ["pergunta", "questao", "duvida"] },
     { key: "resposta",          label: "Resposta",                  match: ["resposta", "retorno"] },
+    { key: "responsavel",       label: "Responsável pela pergunta", match: ["responsavel pela pergunta", "responsavel", "responsável", "autor", "autor da pergunta"] },
   ];
   const PATH_SEP = /\s*[>›]\s*/; // separadores de nível (caminho de texto, usado na importação): ">" ou "›"
   function splitPath(capitulo) {
@@ -37,7 +38,7 @@
   let hashChecked = false;
   let docModalDocId = null;
   const docModalCollapsed = new Set();
-  const state = { search: "", classificacao: "", orgao: "", status: "", documento: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
+  const state = { search: "", classificacao: "", orgao: "", status: "", documento: "", responsavel: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
 
   /* ---------- Utilidades --------------------------------------------- */
   function normalize(s) {
@@ -206,14 +207,16 @@
   }
   function populateFilters() {
     const docNames = documentos.slice().sort((a, b) => naturalCompare(a.nome, b.nome)).map((d) => d.nome);
-    fillSelect($("filterDoc"), docNames, "Documento: todos", state.documento);
-    fillSelect($("filterClass"), distinct("classificacao"), "Tipo: todos", state.classificacao);
-    fillSelect($("filterOrgao"), distinct("orgao_responsavel"), "Órgão: todos", state.orgao);
-    fillSelect($("filterStatus"), distinct("status"), "Status: todos", state.status);
+    fillSelect($("filterDoc"),   docNames,                        "Documento: todos",    state.documento);
+    fillSelect($("filterClass"), distinct("classificacao"),        "Tipo: todos",         state.classificacao);
+    fillSelect($("filterOrgao"), distinct("orgao_responsavel"),    "Órgão: todos",        state.orgao);
+    fillSelect($("filterStatus"),distinct("status"),               "Status: todos",       state.status);
+    fillSelect($("filterResp"),  distinct("responsavel"),          "Responsável: todos",  state.responsavel);
   }
   function populateDatalists() {
     $("dl_class").innerHTML = distinct("classificacao").map((v) => `<option value="${txt(v)}"></option>`).join("");
     $("dl_orgao").innerHTML = distinct("orgao_responsavel").map((v) => `<option value="${txt(v)}"></option>`).join("");
+    $("dl_responsavel").innerHTML = distinct("responsavel").map((v) => `<option value="${txt(v)}"></option>`).join("");
     const curDoc = $("f_documento").value, curItem = $("f_item_link").value;
     fillDocSelect();
     fillItemSelect(curDoc, curItem);
@@ -226,6 +229,7 @@
       if (state.classificacao && (r.classificacao || "") !== state.classificacao) return false;
       if (state.orgao && (r.orgao_responsavel || "") !== state.orgao) return false;
       if (state.status && (r.status || "") !== state.status) return false;
+      if (state.responsavel && (r.responsavel || "") !== state.responsavel) return false;
       if (state.documento) {
         const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
         if (docNome !== state.documento) return false;
@@ -233,7 +237,7 @@
       if (q) {
         const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
         const itemTxt = r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "";
-        const hay = normalize([r.item_referente, r.classificacao, r.orgao_responsavel, r.status, r.pergunta, r.resposta, docNome, itemTxt].join(" "));
+        const hay = normalize([r.item_referente, r.classificacao, r.orgao_responsavel, r.status, r.responsavel, r.pergunta, r.resposta, docNome, itemTxt].join(" "));
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -769,6 +773,7 @@
       ["Tipo da pergunta", r.classificacao],
       ["Data de protocolo", formatDate(r.data_protocolo)],
       ["Órgão responsável", r.orgao_responsavel],
+      ["Responsável", r.responsavel],
     ].map(([k, v]) => `<div class="meta-item"><div class="k">${k}</div><div class="v">${v ? txt(v) : "—"}</div></div>`).join("");
     $("modalPergunta").innerHTML = r.pergunta ? highlight(r.pergunta, q) : "";
     $("modalResposta").innerHTML = r.resposta ? highlight(r.resposta, q) : "";
@@ -892,6 +897,7 @@
       classificacao: $("f_classificacao").value.trim(),
       data_protocolo: $("f_data").value || "",
       orgao_responsavel: $("f_orgao").value.trim(),
+      responsavel: $("f_responsavel").value.trim(),
       status: $("f_status").value.trim(),
       pergunta: $("f_pergunta").value.trim(),
       resposta: $("f_resposta").value.trim(),
@@ -926,6 +932,7 @@
     $("f_classificacao").value = "";
     $("f_data").value = "";
     $("f_orgao").value = "";
+    $("f_responsavel").value = "";
     $("f_status").value = "";
     $("f_pergunta").value = "";
     $("f_resposta").value = "";
@@ -944,6 +951,7 @@
     $("f_data").value = r.data_protocolo || "";
     $("f_item").value = r.item_referente || "";
     $("f_orgao").value = r.orgao_responsavel || "";
+    $("f_responsavel").value = r.responsavel || "";
     $("f_status").value = r.status || "";
     $("f_pergunta").value = r.pergunta || "";
     $("f_resposta").value = r.resposta || "";
@@ -1100,6 +1108,7 @@
       status: "Pendente",
       pergunta: "Texto da pergunta de exemplo…",
       resposta: "Texto da resposta de exemplo…",
+      responsavel: "Bruno Brambilla",
     };
     const exampleRow = FIELDS.map((f) => example[f.key] || "");
     const ws = XLSX.utils.aoa_to_sheet([headers, exampleRow]);
@@ -1117,12 +1126,13 @@
 
     // Busca / filtros
     $("search").addEventListener("input", debounce((e) => { state.search = e.target.value; render(); }, 180));
-    $("filterDoc").onchange = (e) => { state.documento = e.target.value; render(); };
-    $("filterClass").onchange = (e) => { state.classificacao = e.target.value; render(); };
-    $("filterOrgao").onchange = (e) => { state.orgao = e.target.value; render(); };
-    $("filterStatus").onchange = (e) => { state.status = e.target.value; render(); };
+    $("filterDoc").onchange    = (e) => { state.documento    = e.target.value; render(); };
+    $("filterClass").onchange  = (e) => { state.classificacao = e.target.value; render(); };
+    $("filterOrgao").onchange  = (e) => { state.orgao        = e.target.value; render(); };
+    $("filterStatus").onchange = (e) => { state.status       = e.target.value; render(); };
+    $("filterResp").onchange   = (e) => { state.responsavel  = e.target.value; render(); };
     $("clearFilters").onclick = () => {
-      state.search = state.classificacao = state.orgao = state.status = state.answered = state.documento = "";
+      state.search = state.classificacao = state.orgao = state.status = state.answered = state.documento = state.responsavel = "";
       state.navDoc = null;
       state.navItems = [];
       $("search").value = "";
