@@ -744,12 +744,13 @@ mark { background: #fde68a; color: #713f12; border-radius: 3px; padding: 0 2px; 
   .s-value { font-size: 26px; }
 
   .view-row { flex-wrap: wrap; gap: 6px; }
-  .view-row-left, .view-row-right { flex-wrap: wrap; }
+  .view-row-left  { flex-wrap: wrap; flex: 1 1 auto; }
+  .view-row-right { flex-wrap: nowrap; flex-shrink: 0; }
 
   /* Filtros: 2 colunas */
   .filter-row { gap: 6px; }
   .filter-selects { flex-wrap: wrap; gap: 6px; }
-  .filter-selects .filter-select { flex: 1 1 calc(50% - 6px); min-width: 140px; font-size: 13px; }
+  .filter-selects .filter-select { flex: 1 1 calc(50% - 4px); min-width: 0; font-size: 13px; }
   .filter-selects .filter-clear { order: 99; width: 100%; justify-content: center; }
 
   .form-grid { grid-template-columns: 1fr; }
@@ -774,7 +775,12 @@ mark { background: #fde68a; color: #713f12; border-radius: 3px; padding: 0 2px; 
 
 @media (max-width: 480px) {
   .summary { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .filter-selects .filter-select { flex: 1 1 100%; }
+  /* Selects: 2 colunas compactas no celular */
+  .filter-selects .filter-select {
+    flex: 1 1 calc(50% - 4px); min-width: 0;
+    font-size: 12px; padding: 7px 22px 7px 9px;
+  }
+  .filter-selects .filter-clear { width: 100%; justify-content: center; }
   .modal-meta { grid-template-columns: 1fr; }
   .modal-foot { flex-direction: column-reverse; }
   .modal-foot .btn { width: 100%; justify-content: center; }
