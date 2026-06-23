@@ -747,6 +747,11 @@ mark { background: #fde68a; color: #713f12; border-radius: 3px; padding: 0 2px; 
   .view-row-left  { flex-wrap: wrap; flex: 1 1 auto; }
   .view-row-right { flex-wrap: nowrap; flex-shrink: 0; }
 
+  /* Chips e viewtoggle em linhas separadas no mobile */
+  .filter-right { flex-direction: column; align-items: flex-start; width: 100%; gap: 8px; }
+  .filter-right .chips { flex-wrap: wrap; }
+  .filter-right .viewtoggle { align-self: flex-start; }
+
   /* Filtros: 2 colunas */
   .filter-row { gap: 6px; }
   .filter-selects { flex-wrap: wrap; gap: 6px; }
