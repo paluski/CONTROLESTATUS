@@ -118,6 +118,14 @@
         if (error) throw error;
         return data || [];
       },
+      async uploadAnexo(file, docId) {
+        const ext = file.name.split(".").pop();
+        const path = `${docId || Date.now()}-${Date.now()}.${ext}`;
+        const { error } = await client.storage.from("documentos").upload(path, file, { upsert: true });
+        if (error) throw error;
+        const { data: pub } = client.storage.from("documentos").getPublicUrl(path);
+        return { url: pub.publicUrl, nome: file.name };
+      },
       async createDocumento(doc) {
         const { data, error } = await client.from("documentos").insert(doc).select().single();
         if (error) throw error;
@@ -216,6 +224,15 @@
       async createDocumento(doc) {
         const a = await this.listDocumentos(); const row = { ...doc, id: uid(), created_at: new Date().toISOString() };
         a.push(row); localStorage.setItem("controle_documentos_v1", JSON.stringify(a)); emitChange(); return row;
+      },
+      async uploadAnexo(file) {
+        return new Promise((resolve, reject) => {
+          if (file.size > 5 * 1024 * 1024) { reject(new Error("Arquivo muito grande para modo local (máx 5 MB). Use o modo Supabase para arquivos maiores.")); return; }
+          const reader = new FileReader();
+          reader.onload = (e) => resolve({ url: e.target.result, nome: file.name });
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
       },
       async updateDocumento(id, doc) {
         const a = await this.listDocumentos(); const i = a.findIndex((x) => x.id === id);

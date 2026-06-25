@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=8" />
+  <link rel="stylesheet" href="css/styles.css?v=4" />
 </head>
 <body>
   <div id="app">
@@ -59,54 +59,62 @@
     <main>
       <!-- ===================== VISUALIZAÇÃO ===================== -->
       <section id="view" class="panel active" role="tabpanel">
-        <div class="statstrip" id="summary"></div>
+        <div class="summary" id="summary"></div>
 
-        <div class="controls">
+        <div class="view-row">
           <div class="search">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input id="search" type="search" placeholder="Buscar perguntas, documentos, órgãos…" autocomplete="off" />
+            <input id="search" type="search" placeholder="Buscar em todos os campos…" autocomplete="off" />
           </div>
-          <div class="viewtoggle" id="viewToggle">
-            <button class="vt active" type="button" data-view="navigate" title="Navegar por documentos">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-              <span>Navegar</span>
+          <div class="view-actions">
+            <button id="refreshBtn" class="btn btn-ghost" type="button" title="Atualizar">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              <span>Atualizar</span>
             </button>
-            <button class="vt" type="button" data-view="table" title="Ver em tabela">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M3 15h18M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-              <span>Tabela</span>
+            <button id="exportBtn" class="btn btn-ghost" type="button" title="Exportar Excel">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              <span>Exportar</span>
             </button>
-          </div>
-          <div class="control-actions">
-            <button id="refreshBtn" class="icon-btn" type="button" title="Atualizar" aria-label="Atualizar">
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
-            </button>
-            <button id="exportBtn" class="icon-btn" type="button" title="Exportar Excel" aria-label="Exportar Excel">
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-            </button>
-            <button id="printBtn" class="icon-btn" type="button" title="Imprimir / Salvar em PDF" aria-label="Imprimir">
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+            <button id="printBtn" class="btn btn-ghost" type="button" title="Imprimir / Salvar em PDF">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+              <span>Imprimir</span>
             </button>
           </div>
         </div>
 
-        <div class="filterbar">
-          <div class="chips" id="statusChips">
-            <button class="chip active" type="button" data-ans="">Todas <b id="cnt-all">0</b></button>
-            <button class="chip" type="button" data-ans="yes">Respondidas <b id="cnt-yes">0</b></button>
-            <button class="chip" type="button" data-ans="no">Pendentes <b id="cnt-no">0</b></button>
-          </div>
+        <div class="filter-row">
           <div class="filter-selects">
-            <select id="filterDoc" class="select" aria-label="Filtrar por documento"><option value="">Documento: todos</option></select>
-            <select id="filterClass" class="select" aria-label="Filtrar por tipo"><option value="">Tipo: todos</option></select>
-            <select id="filterOrgao" class="select" aria-label="Filtrar por órgão"><option value="">Órgão: todos</option></select>
-            <select id="filterStatus" class="select" aria-label="Filtrar por status"><option value="">Status: todos</option></select>
+            <select id="filterDoc" class="select filter-select" aria-label="Filtrar por documento"><option value="">Documento: todos</option></select>
+            <select id="filterClass" class="select filter-select" aria-label="Filtrar por tipo"><option value="">Tipo: todos</option></select>
+            <select id="filterOrgao" class="select filter-select" aria-label="Filtrar por órgão"><option value="">Órgão: todos</option></select>
+            <select id="filterStatus" class="select filter-select" aria-label="Filtrar por status"><option value="">Status: todos</option></select>
+            <select id="filterResp" class="select filter-select" aria-label="Filtrar por responsável"><option value="">Responsável: todos</option></select>
+            <button id="clearFilters" class="btn btn-ghost filter-clear" type="button">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              Limpar
+            </button>
+          </div>
+          <div class="filter-right">
+            <div class="chips" id="statusChips">
+              <button class="chip active" type="button" data-ans="">Todas <b id="cnt-all">0</b></button>
+              <button class="chip" type="button" data-ans="yes">Respondidas <b id="cnt-yes">0</b></button>
+              <button class="chip" type="button" data-ans="no">Pendentes <b id="cnt-no">0</b></button>
+            </div>
+            <div class="viewtoggle" id="viewToggle">
+              <button class="vt active" type="button" data-view="navigate">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Navegar
+              </button>
+              <button class="vt" type="button" data-view="table">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M3 15h18M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                Tabela
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="stats">
+        <div class="view-meta">
           <span id="resultCount" class="result-count">0 registros</span>
-          <div id="activeFilters" class="active-filters"></div>
-          <button id="clearFilters" class="btn-clear" type="button" hidden>Limpar filtros</button>
         </div>
 
         <div class="table-wrap" id="tableWrap">
@@ -114,7 +122,7 @@
             <thead>
               <tr>
                 <th class="sortable" data-sort="documento">Documento</th>
-                <th>Item do doc.</th>
+                <th class="sortable" data-sort="capitulo">Capítulo</th>
                 <th class="sortable" data-sort="item_referente">Item</th>
                 <th class="sortable" data-sort="classificacao">Tipo</th>
                 <th class="sortable" data-sort="data_protocolo">Data protocolo</th>
@@ -180,6 +188,11 @@
                   <datalist id="dl_orgao"></datalist>
                 </div>
                 <div class="field">
+                  <label for="f_responsavel">Responsável pela pergunta</label>
+                  <input id="f_responsavel" name="responsavel" type="text" list="dl_responsavel" placeholder="Ex.: Bruno Brambilla…" />
+                  <datalist id="dl_responsavel"></datalist>
+                </div>
+                <div class="field">
                   <label for="f_status">Status</label>
                   <input id="f_status" name="status" type="text" list="dl_status" placeholder="Ex.: Pendente, Respondida…" />
                   <datalist id="dl_status">
@@ -222,9 +235,9 @@
             </div>
             <p class="import-help">
               Colunas aceitas (a ordem não importa):
-              <b>Documento</b>, <b>Item do documento</b>, <b>Item referente</b>, <b>Tipo da pergunta</b>,
+              <b>Documento</b>, <b>Capítulo</b>, <b>Item referente</b>, <b>Tipo da pergunta</b>,
               <b>Data de protocolo</b>, <b>Órgão responsável</b>, <b>Status</b>, <b>Pergunta</b> e <b>Resposta</b>.
-              O <b>Documento</b> e o <b>Item</b> são criados automaticamente se ainda não existirem (ex.: Item = <i>4.4 Direito de Usar…</i> ou só <i>4.4</i>).
+              No <b>Capítulo</b>, use <code>&gt;</code> para criar níveis (ex.: <i>Área &gt; Georreferenciamento</i>).
             </p>
             <label id="dropzone" class="dropzone" for="fileInput">
               <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
@@ -310,7 +323,7 @@
           <table>
             <thead>
               <tr>
-                <th>Documento</th><th>Item do doc.</th><th>Item</th><th>Tipo</th><th>Status</th><th>Pergunta</th><th>Resposta</th>
+                <th>Documento</th><th>Capítulo</th><th>Item</th><th>Tipo</th><th>Status</th><th>Pergunta</th><th>Resposta</th>
               </tr>
             </thead>
             <tbody id="importPreviewBody"></tbody>
@@ -338,11 +351,11 @@
     </div>
   </div>
 
-  <!-- ===================== MODAL: NOVO DOCUMENTO ===================== -->
+  <!-- ===================== MODAL: NOVO / EDITAR DOCUMENTO ===================== -->
   <div id="newDocModal" class="modal-backdrop" hidden>
     <div class="modal modal-sm" role="dialog" aria-modal="true">
       <div class="modal-head">
-        <h3 class="modal-title" style="font-size:16px">Novo documento</h3>
+        <h3 id="newDocModalTitle" class="modal-title" style="font-size:16px">Novo documento</h3>
         <button class="icon-btn modal-close" id="newDocClose" aria-label="Fechar">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
@@ -359,8 +372,17 @@
             <div class="field"><label for="d_orgao">Órgão</label><input id="d_orgao" type="text" placeholder="Ex.: ANEEL" /></div>
             <div class="field"><label for="d_ano">Ano</label><input id="d_ano" type="number" placeholder="Ex.: 2026" /></div>
           </div>
+          <div class="field">
+            <label for="d_anexo">Anexo <span class="hint">PDF, Word, Excel…</span></label>
+            <div id="d_anexo_info" class="doc-anexo-current" hidden></div>
+            <label class="dropzone dropzone-sm" for="d_anexo" id="d_anexo_zone">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+              <span id="d_anexo_label">Clique para selecionar arquivo</span>
+              <input id="d_anexo" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" hidden />
+            </label>
+          </div>
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Criar documento</button>
+            <button type="submit" class="btn btn-primary"><span id="newDocSubmitLabel">Criar documento</span></button>
             <button type="button" class="btn btn-ghost" id="newDocCancel">Cancelar</button>
           </div>
         </form>
@@ -450,8 +472,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Aplicação -->
-  <script src="js/config.js?v=8"></script>
-  <script src="js/data.js?v=8"></script>
-  <script src="js/app.js?v=8"></script>
+  <script src="js/config.js?v=4"></script>
+  <script src="js/data.js?v=4"></script>
+  <script src="js/app.js?v=4"></script>
 </body>
 </html>
