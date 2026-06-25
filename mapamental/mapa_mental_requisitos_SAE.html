@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mapa Mental — Requisitos Regulatórios SAE</title>
+<title>SAE — Requisitos Regulatórios | Mapa Mental & Fluxograma</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -25,6 +25,7 @@
   --green:#5ed68f;    --green-soft:rgba(94,214,143,.14);   --green-text:#c4f3da;
   --amber:#ffb45e;    --amber-soft:rgba(255,180,94,.14);   --amber-text:#ffdfb8;
   --gray:#9aa6c2;     --gray-soft:rgba(154,166,194,.14);   --gray-text:#dde2ee;
+  --purple:#c792ff;   --purple-soft:rgba(199,146,255,.14); --purple-text:#e7d2ff;
   --root:#7c8cff;     --root-soft:rgba(124,140,255,.18);
 }
 
@@ -47,12 +48,12 @@ body{
     linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
   background-size:auto, auto, auto, 42px 42px, 42px 42px;
   background-position:0 0,0 0,0 0,center,center;
-  padding:34px 18px 80px;
+  padding:34px 18px 90px;
 }
 
 /* ---------------- Header ---------------- */
 .mm-header{
-  max-width:1180px; margin:0 auto 28px; text-align:center;
+  max-width:1180px; margin:0 auto 22px; text-align:center;
   display:flex; flex-direction:column; align-items:center; gap:14px;
 }
 .mm-eyebrow{
@@ -66,6 +67,24 @@ h1.mm-title{
   line-height:1.15;
 }
 .mm-subtitle{ font-size:14.5px; color:var(--text-2); max-width:680px; line-height:1.55; }
+
+/* view switch (mapa mental / fluxograma) */
+.view-switch{
+  display:flex; gap:4px; background:var(--surface); border:1px solid var(--border-strong);
+  border-radius:999px; padding:4px; margin-top:4px;
+}
+.view-switch button{
+  appearance:none; border:none; cursor:pointer; border-radius:999px;
+  padding:9px 20px; font-size:13.5px; font-weight:700; letter-spacing:.01em;
+  color:var(--text-2); background:transparent; display:flex; align-items:center; gap:7px;
+  transition:color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.view-switch button svg{ width:15px; height:15px; }
+.view-switch button.active{
+  color:#0b1220; background:linear-gradient(135deg,#dfe6ff,#bfe9d3);
+  box-shadow:var(--shadow-sm);
+}
+.view-switch button:not(.active):hover{ color:var(--text-1); background:var(--surface-strong); }
 
 .mm-controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
 .mm-btn{
@@ -87,15 +106,29 @@ h1.mm-title{
 .leg-dot.c-green{color:var(--green-soft); background:var(--green);}
 .leg-dot.c-amber{color:var(--amber-soft); background:var(--amber);}
 .leg-dot.c-gray{color:var(--gray-soft); background:var(--gray);}
+.leg-dot.c-purple{color:var(--purple-soft); background:var(--purple);}
 
-/* ---------------- Tree shell ---------------- */
-.mm-tree{ max-width:1180px; margin:0 auto; display:flex; flex-direction:column; align-items:center; }
+/* type selector (fluxograma) */
+.type-switch{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
+.type-pill{
+  appearance:none; cursor:pointer; border-radius:14px; padding:10px 18px;
+  font-size:13.5px; font-weight:700; color:var(--text-2);
+  background:var(--surface); border:1px solid var(--border-strong);
+  display:flex; align-items:center; gap:8px; transition:all .2s ease;
+}
+.type-pill .tp-dot{ width:9px; height:9px; border-radius:50%; }
+.type-pill:hover{ color:var(--text-1); background:var(--surface-strong); transform:translateY(-1px); }
+.type-pill.active{ color:var(--text-1); box-shadow:var(--shadow-sm); }
+.type-pill.active[data-type="bateria"]{ background:linear-gradient(135deg, var(--blue-soft), rgba(94,214,143,.10)); border-color:rgba(77,163,255,.55); }
+.type-pill.active[data-type="uhr"]{ background:linear-gradient(135deg, var(--purple-soft), rgba(199,146,255,.10)); border-color:rgba(199,146,255,.55); }
 
-.connector-v{ width:2px; background:linear-gradient(var(--border-strong), transparent); position:relative; }
-.connector-v.long{ height:30px; }
-.connector-v::after{ content:''; }
+/* ---------------- Views ---------------- */
+.view{ display:none; }
+.view.active{ display:block; }
 
-/* root */
+/* ---------------- Mind map tree ---------------- */
+.mm-tree{ max-width:1180px; margin:0 auto; display:flex; flex-direction:column; align-items:center; animation:fadeUp .4s ease both; }
+
 .root-card{
   position:relative; z-index:2;
   background:linear-gradient(155deg, rgba(124,140,255,.35), rgba(124,140,255,.12));
@@ -109,7 +142,6 @@ h1.mm-title{
 .root-card .rc-label{ font-size:22px; font-weight:800; letter-spacing:-.01em; }
 .root-card .rc-sub{ font-size:12.5px; color:var(--text-2); margin-top:4px; }
 
-/* branches row */
 .branches-row{
   display:flex; gap:26px; flex-wrap:wrap; justify-content:center;
   position:relative; padding-top:30px; width:100%;
@@ -119,19 +151,11 @@ h1.mm-title{
   background:linear-gradient(var(--border-strong), transparent); transform:translateX(-50%);
 }
 
-.branch{
-  width:255px; display:flex; flex-direction:column; align-items:center;
-}
+.branch{ width:255px; display:flex; flex-direction:column; align-items:center; }
 
 .node-card{
-  width:100%;
-  position:relative;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:14px 16px;
-  cursor:pointer;
-  user-select:none;
+  width:100%; position:relative; background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:14px 16px; cursor:pointer; user-select:none;
   transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
   box-shadow:var(--shadow-sm);
 }
@@ -154,7 +178,6 @@ h1.mm-title{
 }
 .node-card.open .nc-tip{ max-height:80px; opacity:1; margin-top:8px; }
 
-/* color themes via data-color */
 .branch[data-color="blue"] .node-card{ border-color:rgba(77,163,255,.22); }
 .branch[data-color="blue"] .node-card.open, .branch[data-color="blue"] .node-card:hover{ border-color:rgba(77,163,255,.55); background:var(--blue-soft); }
 .branch[data-color="blue"] .nc-dot{ background:var(--blue); color:var(--blue); }
@@ -175,17 +198,10 @@ h1.mm-title{
 .branch[data-color="gray"] .nc-dot{ background:var(--gray); color:var(--gray); }
 .branch[data-color="gray"] .nc-label{ color:var(--gray-text); }
 
-/* children wrap (grid-rows trick for smooth height) */
-.children-wrap{
-  display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .38s ease;
-  width:100%; margin-top:0;
-}
+.children-wrap{ display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .38s ease; width:100%; margin-top:0; }
 .branch.expanded > .children-wrap{ grid-template-rows:1fr; }
 .children-inner{ min-height:0; overflow:hidden; display:flex; flex-direction:column; align-items:center; }
-.children-inner::before{
-  content:''; width:2px; height:22px; margin-top:6px;
-  background:linear-gradient(var(--border-strong), transparent);
-}
+.children-inner::before{ content:''; width:2px; height:22px; margin-top:6px; background:linear-gradient(var(--border-strong), transparent); }
 .children-stack{ display:flex; flex-direction:column; gap:12px; width:100%; padding-top:8px; }
 
 .child-card{ width:100%; }
@@ -193,42 +209,211 @@ h1.mm-title{
 .child-card .nc-label{ font-size:13.5px; }
 .child-card .nc-sub{ font-size:11px; }
 
-/* leaves */
-.leaves-wrap{
-  display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .32s ease;
-}
+.leaves-wrap{ display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .32s ease; }
 .child-card.open > .leaves-wrap{ grid-template-rows:1fr; }
 .leaves-inner{ min-height:0; overflow:hidden; }
-.leaves-list{
-  display:flex; flex-wrap:wrap; gap:6px; padding:10px 4px 4px 20px;
-}
+.leaves-list{ display:flex; flex-wrap:wrap; gap:6px; padding:10px 4px 4px 20px; }
 .leaf-chip{
-  font-size:11px; font-weight:500; padding:6px 10px; border-radius:9px;
-  background:rgba(255,255,255,.06); border:1px solid var(--border);
-  color:var(--text-2); line-height:1.3;
-  transition:background .15s ease, color .15s ease, border-color .15s ease;
+  font-size:11px; font-weight:500; padding:6px 8px 6px 10px; border-radius:9px;
+  background:rgba(255,255,255,.06); border:1px solid var(--border); color:var(--text-2); line-height:1.3;
+  transition:background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+  cursor:pointer; display:inline-flex; align-items:center; gap:5px;
 }
-.leaf-chip:hover{ background:rgba(255,255,255,.12); color:var(--text-1); border-color:var(--border-strong); }
+.leaf-chip:hover{ background:rgba(255,255,255,.14); color:var(--text-1); border-color:rgba(124,140,255,.5); transform:translateY(-1px); }
+.leaf-chip:active{ transform:translateY(0) scale(.97); }
+.leaf-chip .leaf-arrow{ width:11px; height:11px; flex-shrink:0; opacity:.55; transition:opacity .15s ease, transform .15s ease; }
+.leaf-chip:hover .leaf-arrow{ opacity:1; transform:translateX(1px); }
+
+/* ---------------- Leaf detail modal ---------------- */
+#leaf-modal-overlay{
+  position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center;
+  padding:24px; background:rgba(5,8,16,.65); backdrop-filter:blur(6px);
+  animation:fadeIn .2s ease both;
+}
+#leaf-modal-overlay.active{ display:flex; }
+@keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+.leaf-modal{
+  width:100%; max-width:620px; max-height:84vh; overflow-y:auto;
+  background:linear-gradient(165deg, rgba(22,30,48,.97), rgba(13,18,30,.98));
+  border:1px solid var(--border-strong); border-radius:20px;
+  box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.05) inset;
+  padding:26px 28px 28px; position:relative;
+  animation:modalUp .25s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes modalUp{ from{opacity:0; transform:translateY(14px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);} }
+.leaf-modal::-webkit-scrollbar{ width:8px; }
+.leaf-modal::-webkit-scrollbar-thumb{ background:var(--border-strong); border-radius:8px; }
+.leaf-modal-close{
+  position:absolute; top:18px; right:18px; width:32px; height:32px; border-radius:10px;
+  background:var(--surface); border:1px solid var(--border-strong); color:var(--text-2);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  transition:background .15s ease, color .15s ease, transform .15s ease;
+}
+.leaf-modal-close:hover{ background:var(--surface-strong); color:var(--text-1); transform:rotate(90deg); }
+.leaf-modal-close svg{ width:16px; height:16px; }
+.leaf-modal-source{
+  display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800;
+  letter-spacing:.06em; text-transform:uppercase; padding:5px 11px; border-radius:8px;
+  margin-bottom:12px;
+}
+.leaf-modal-title{ font-size:19px; font-weight:800; letter-spacing:-.01em; padding-right:34px; line-height:1.3; margin-bottom:14px; }
+.leaf-modal-summary{
+  font-size:13.5px; line-height:1.65; color:var(--text-1); padding:14px 16px; border-radius:14px;
+  background:var(--surface); border:1px solid var(--border); margin-bottom:18px;
+}
+.leaf-modal-section-title{
+  font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text-3);
+  margin:0 0 10px; display:flex; align-items:center; gap:8px;
+}
+.leaf-modal-section-title::after{ content:''; flex:1; height:1px; background:var(--border); }
+.leaf-modal-detail{ display:flex; flex-direction:column; gap:10px; margin-bottom:4px; }
+.leaf-modal-detail p{ font-size:13px; line-height:1.65; color:var(--text-2); padding-left:16px; position:relative; }
+.leaf-modal-detail p::before{ content:'›'; position:absolute; left:0; color:var(--text-3); font-weight:800; }
+.leaf-modal-detail p b, .leaf-modal-detail p strong{ color:var(--text-1); font-weight:700; }
+.leaf-modal-detail p i, .leaf-modal-detail p em{ color:var(--text-1); font-style:normal; border-left:2px solid var(--border-strong); padding-left:8px; display:inline; }
+
+/* ---------------- Flowchart ---------------- */
+.flow-wrap{ max-width:760px; margin:0 auto; animation:fadeUp .4s ease both; }
+
+.flow-phase{ position:relative; margin-bottom:6px; }
+.phase-head{
+  display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:14px;
+  margin-bottom:14px; font-size:13px; font-weight:800; letter-spacing:.02em; text-transform:uppercase;
+  cursor:pointer; user-select:none; transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.phase-head:hover{ transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+.phase-head .ph-dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 12px 2px currentColor; flex-shrink:0; }
+.phase-head .ph-note{ font-size:11px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--text-3); margin-left:auto; text-align:right; }
+.phase-head .ph-chevron{ width:17px; height:17px; flex-shrink:0; transition:transform .25s ease; }
+.flow-phase.collapsed .phase-head .ph-chevron{ transform:rotate(-90deg); }
+.flow-phase.collapsed .phase-head{ margin-bottom:0; }
+.phase-body{ display:grid; grid-template-rows:1fr; overflow:hidden; transition:grid-template-rows .38s ease; }
+.flow-phase.collapsed .phase-body{ grid-template-rows:0fr; }
+.phase-body-inner{ min-height:0; overflow:hidden; }
+
+.phase-head[data-color="blue"]{ background:var(--blue-soft); border:1px solid rgba(77,163,255,.3); color:var(--blue-text); }
+.phase-head[data-color="blue"] .ph-dot{ background:var(--blue); color:var(--blue); }
+.phase-head[data-color="green"]{ background:var(--green-soft); border:1px solid rgba(94,214,143,.3); color:var(--green-text); }
+.phase-head[data-color="green"] .ph-dot{ background:var(--green); color:var(--green); }
+.phase-head[data-color="amber"]{ background:var(--amber-soft); border:1px solid rgba(255,180,94,.3); color:var(--amber-text); }
+.phase-head[data-color="amber"] .ph-dot{ background:var(--amber); color:var(--amber); }
+.phase-head[data-color="gray"]{ background:var(--gray-soft); border:1px solid rgba(154,166,194,.3); color:var(--gray-text); }
+.phase-head[data-color="gray"] .ph-dot{ background:var(--gray); color:var(--gray); }
+.phase-head[data-color="purple"]{ background:var(--purple-soft); border:1px solid rgba(199,146,255,.3); color:var(--purple-text); }
+.phase-head[data-color="purple"] .ph-dot{ background:var(--purple); color:var(--purple); }
+
+.steps-col{ display:flex; flex-direction:column; align-items:stretch; gap:0; }
+
+.step{ position:relative; padding-left:46px; padding-bottom:14px; }
+.step:last-child{ padding-bottom:4px; }
+.step::before{ /* vertical connector line */
+  content:''; position:absolute; left:17px; top:34px; bottom:-2px; width:2px;
+  background:linear-gradient(var(--border-strong), var(--border-strong));
+}
+.step:last-child::before{ display:none; }
+.step .step-num{
+  position:absolute; left:0; top:0; width:36px; height:36px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800;
+  background:var(--surface-strong); border:1.5px solid var(--border-strong); color:var(--text-1);
+  z-index:2; flex-shrink:0;
+}
+.step[data-color="blue"] .step-num{ border-color:var(--blue); color:var(--blue-text); box-shadow:0 0 14px -2px var(--blue); }
+.step[data-color="green"] .step-num{ border-color:var(--green); color:var(--green-text); box-shadow:0 0 14px -2px var(--green); }
+.step[data-color="amber"] .step-num{ border-color:var(--amber); color:var(--amber-text); box-shadow:0 0 14px -2px var(--amber); }
+.step[data-color="gray"] .step-num{ border-color:var(--gray); color:var(--gray-text); box-shadow:0 0 14px -2px var(--gray); }
+.step[data-color="purple"] .step-num{ border-color:var(--purple); color:var(--purple-text); box-shadow:0 0 14px -2px var(--purple); }
+
+.step.optional .step-card{ border-style:dashed; }
+.step.optional .opt-tag{
+  display:inline-block; font-size:9.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  padding:2px 7px; border-radius:6px; background:rgba(255,255,255,.1); color:var(--text-2); margin-left:8px;
+  vertical-align:middle;
+}
+
+.step-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:13px 16px; cursor:pointer; user-select:none; box-shadow:var(--shadow-sm);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+  position:relative;
+}
+.step-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+.step[data-color="blue"] .step-card.open, .step[data-color="blue"] .step-card:hover{ border-color:rgba(77,163,255,.55); background:var(--blue-soft); }
+.step[data-color="green"] .step-card.open, .step[data-color="green"] .step-card:hover{ border-color:rgba(94,214,143,.55); background:var(--green-soft); }
+.step[data-color="amber"] .step-card.open, .step[data-color="amber"] .step-card:hover{ border-color:rgba(255,180,94,.55); background:var(--amber-soft); }
+.step[data-color="gray"] .step-card.open, .step[data-color="gray"] .step-card:hover{ border-color:rgba(154,166,194,.55); background:var(--gray-soft); }
+.step[data-color="purple"] .step-card.open, .step[data-color="purple"] .step-card:hover{ border-color:rgba(199,146,255,.55); background:var(--purple-soft); }
+
+.step-card .sc-label{ font-size:14.5px; font-weight:700; letter-spacing:-.01em; padding-right:24px; }
+.step-card .sc-sub{ font-size:12px; color:var(--text-2); margin-top:3px; }
+.step-card .sc-chevron{ position:absolute; right:14px; top:16px; width:17px; height:17px; color:var(--text-2); transition:transform .25s ease, color .2s ease; }
+.step-card.open .sc-chevron{ transform:rotate(90deg); color:var(--text-1); }
+.step-card .sc-tip{
+  font-size:11.5px; color:var(--text-3); line-height:1.5;
+  max-height:0; opacity:0; overflow:hidden; transition:max-height .3s ease, opacity .25s ease, margin .3s ease;
+}
+.step-card.open .sc-tip{ max-height:100px; opacity:1; margin-top:8px; }
+.step-card .sc-leaves{
+  display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .3s ease;
+}
+.step-card.open .sc-leaves{ grid-template-rows:1fr; }
+.sc-leaves-inner{ min-height:0; overflow:hidden; }
+.sc-leaves-list{ display:flex; flex-wrap:wrap; gap:6px; padding-top:9px; }
+
+/* decision / branch fork */
+.decision-label{
+  position:relative; padding-left:46px; margin:-2px 0 12px; font-size:11px; font-weight:700;
+  letter-spacing:.05em; text-transform:uppercase; color:var(--text-3);
+  display:flex; align-items:center; gap:6px;
+}
+.decision-label svg{ width:13px; height:13px; }
+.branch-fork{ position:relative; padding-left:46px; padding-bottom:14px; }
+.branch-fork::before{ content:''; position:absolute; left:17px; top:0; bottom:-2px; width:2px; background:var(--border-strong); }
+.fork-row{ display:flex; gap:12px; flex-wrap:wrap; }
+.fork-card{ flex:1 1 220px; min-width:200px; }
+.fork-card .step-card{ border-radius:14px; }
+.fork-card .sc-label{ font-size:13px; }
+
+/* small intro / closing note cards inside flow */
+.flow-note{
+  max-width:760px; margin:18px auto 0; padding:13px 18px; border-radius:14px;
+  background:var(--surface); border:1px dashed var(--border-strong); font-size:12px; color:var(--text-2); line-height:1.6;
+}
+.flow-note b{ color:var(--text-1); }
 
 /* responsive */
 @media (max-width:880px){
   .branches-row{ gap:18px; }
   .branch{ width:100%; max-width:340px; }
+  .fork-row{ flex-direction:column; }
 }
 
-/* subtle fade-in */
-.mm-tree{ animation:fadeUp .5s ease both; }
 @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-
 ::selection{ background:rgba(124,140,255,.35); }
 </style>
 </head>
 <body>
 
 <div class="mm-header">
-  <div class="mm-eyebrow">Mapa mental interativo</div>
+  <div class="mm-eyebrow">SAE · ANEEL RN 1.161/2026 · EPE-DEE-RE-079</div>
   <h1 class="mm-title">Requisitos Regulatórios — SAE</h1>
-  <p class="mm-subtitle">Sistemas de Armazenamento de Energia · ANEEL RN 1.161/2026 e EPE-DEE-RE-079. Clique em qualquer etapa para revelar os próximos níveis.</p>
+  <p class="mm-subtitle">Sistemas de Armazenamento de Energia. Clique em qualquer etapa para revelar os próximos níveis.</p>
+
+  <div class="view-switch" id="view-switch">
+    <button class="active" data-view="mindmap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5V12M12 12L6.5 17M12 12L17.5 17"/></svg>
+      Mapa mental
+    </button>
+    <button data-view="flow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="6" rx="1.5"/><rect x="14" y="3" width="7" height="6" rx="1.5"/><rect x="8.5" y="15" width="7" height="6" rx="1.5"/><path d="M6.5 9v3a2 2 0 0 0 2 2h0M17.5 9v3a2 2 0 0 0-2 2h0M12 14v1"/></svg>
+      Fluxograma
+    </button>
+  </div>
+
+  <div class="type-switch" id="type-switch" style="display:none">
+    <button class="type-pill active" data-type="bateria"><span class="tp-dot" style="background:var(--blue)"></span>SAE Bateria Eletroquímica</button>
+    <button class="type-pill" data-type="uhr"><span class="tp-dot" style="background:var(--purple)"></span>SAE UHR (Hidrelétrica Reversível)</button>
+  </div>
+
   <div class="mm-controls">
     <button class="mm-btn primary" id="btn-expand">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m11 0h3a2 2 0 0 0 2-2v-3"/></svg>
@@ -239,17 +424,46 @@ h1.mm-title{
       Recolher tudo
     </button>
   </div>
-  <div class="mm-legend">
+
+  <div class="mm-legend" id="legend-mindmap">
     <div class="leg-item"><div class="leg-dot c-blue"></div>ANEEL — autorização</div>
     <div class="leg-item"><div class="leg-dot c-green"></div>EPE — habilitação técnica</div>
     <div class="leg-item"><div class="leg-dot c-amber"></div>Tipo de conexão</div>
     <div class="leg-item"><div class="leg-dot c-gray"></div>Prazos e operação</div>
   </div>
+  <div class="mm-legend" id="legend-flow" style="display:none">
+    <div class="leg-item"><div class="leg-dot c-blue"></div>ANEEL — outorga</div>
+    <div class="leg-item"><div class="leg-dot c-green"></div>EPE — leilão (opcional)</div>
+    <div class="leg-item"><div class="leg-dot c-amber"></div>Conexão à rede</div>
+    <div class="leg-item"><div class="leg-dot c-gray"></div>Operação / pós-outorga</div>
+  </div>
 </div>
 
-<div class="mm-tree" id="tree"></div>
+<div class="view active" id="view-mindmap">
+  <div class="mm-tree" id="tree"></div>
+</div>
+
+<div class="view" id="view-flow">
+  <div class="flow-wrap" id="flow-container"></div>
+</div>
+
+<div id="leaf-modal-overlay">
+  <div class="leaf-modal" id="leaf-modal" role="dialog" aria-modal="true">
+    <button class="leaf-modal-close" id="leaf-modal-close" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div id="leaf-modal-source" class="leaf-modal-source"></div>
+    <div class="leaf-modal-title" id="leaf-modal-title"></div>
+    <div class="leaf-modal-summary" id="leaf-modal-summary"></div>
+    <div class="leaf-modal-section-title">Conforme o documento</div>
+    <div class="leaf-modal-detail" id="leaf-modal-detail"></div>
+  </div>
+</div>
 
 <script>
+/* =========================================================
+   DADOS — MAPA MENTAL
+   ========================================================= */
 const DATA = {
   label:'SAE', sub:'Requisitos regulatórios',
   branches:[
@@ -274,8 +488,11 @@ const DATA = {
       ]
     },
     { id:'epe', color:'green', label:'EPE', sub:'Habilitação técnica\nEPE-DEE-RE-079',
-      tip:'Requisitos para habilitação técnica nos leilões de energia e/ou potência.',
+      tip:'Requisitos para habilitação técnica nos leilões de energia e/ou potência (ex.: LRCAP-2026).',
       children:[
+        { id:'aege', label:'Acesso ao AEGE', sub:'Adesão, login e inscrição',
+          tip:'Plataforma onde se realiza toda a inscrição, o cadastramento e a habilitação técnica no leilão (Manual do Empreendedor — AEGE).',
+          leaves:['Adesão: https://aege-adesao.epe.gov.br','Aprovação da EPE em até 5 dias úteis','Login e senha por e-mail (Usuário Responsável)','Senha: https://sen.epe.gov.br (mín. 12 caracteres)','Designar Representante Legal e Interlocutor','Inscrição → selecionar o leilão (ex.: LRCAP-2026)'] },
         { id:'mema', label:'Memorial A', sub:'Tecnologia',
           tip:'Identificação do empreendimento: tecnologia, dimensionamento e desempenho.',
           leaves:['Química do cátodo e ânodo','Potência (kW) e capacidade (kWh)','Todos os fatores de perda (RTE, PCS, consumo)','Simulação diária do estado de carga','Estudo de degradação','RTE remanescente ao longo do contrato','Estratégia de augmentation','Plano de descarte/reciclagem'] },
@@ -321,60 +538,802 @@ const DATA = {
   ]
 };
 
+/* =========================================================
+   DETALHAMENTO DAS ETAPAS FINAIS (conteúdo dos documentos)
+   ========================================================= */
+const ANEEL_SRC = 'RN ANEEL 1.161/2026';
+const EPE_SRC = 'EPE-DEE-RE-079/2024-R2';
+const MANUAL_SRC = 'Manual do Empreendedor — EPE-DEE-RE-028/2009';
+
+const DECL_ATENDIMENTO = {
+  source:`${ANEEL_SRC} — Anexo III`,
+  summary:'Declaração assinada pelo representante legal, sob responsabilidade civil, penal e administrativa, atestando posse da área, regularidade do responsável técnico e ciência de regras específicas do SAE. É pré-requisito tanto do DRO-SAE quanto da outorga definitiva.',
+  detail:[
+    'A pessoa jurídica requerente declara, em relação à usina SAE, respondendo nas instâncias civil, penal (art. 299 do Código Penal) e administrativa pela veracidade das informações prestadas.',
+    '<b>1.</b> Que possui propriedade, posse direta ou usufruto das áreas necessárias à implantação da usina, indicando município e estado.',
+    '<b>2.</b> Que as informações técnicas prestadas à ANEEL foram assinadas por responsável técnico em situação regular perante o Crea.',
+    '<b>3a.</b> Ciência dos critérios de individualização de empreendimentos adjacentes (art. 13 da RN 1.071/2023).',
+    '<b>3b.</b> Ciência da proibição de implantação de centrais geradoras ou SAE na Área de Desenvolvimento da Subestação (ADS), em conexões à Rede Básica/DIT (RN 1.055/2022).',
+    '<b>3c.</b> Ciência de que pode, por sua conta e risco, alterar características técnicas necessárias para viabilizar o empreendimento, validando a alteração junto à ANEEL em até 90 dias antes do pedido de operação em teste — sem que isso gere excludente de responsabilidade.',
+    '<b>3d.</b> Ciência de que as informações e documentos estão sujeitos à fiscalização da ANEEL, inclusive após a emissão da outorga.',
+  ]
+};
+
+const LEAF_DETAILS = {
+  // ---------- AEGE · Adesão, login e inscrição (Manual do Empreendedor) ----------
+  'Adesão: https://aege-adesao.epe.gov.br':{
+    source:`${MANUAL_SRC} — Item 4`,
+    summary:'Primeiro passo de todo o processo: antes de cadastrar qualquer empreendimento, a empresa precisa "aderir" ao Sistema AEGE, registrando seus dados e definindo o Usuário Responsável pela interface de segurança com a EPE.',
+    detail:[
+      '"A Adesão ao AEGE visa registrar os dados da empresa e o estabelecimento de um Usuário Responsável pela interface de segurança entre a EPE e o empreendedor, e deverá ser realizada eletronicamente pelo endereço: https://aege-adesao.epe.gov.br."',
+      'Abra esse endereço no navegador e preencha o Formulário de Adesão com os dados da empresa.',
+      'O Usuário Responsável é automaticamente quem realiza a adesão; ele poderá cadastrar/excluir outros usuários, inscrever empreendimentos nos leilões e editar os dados de todos os empreendimentos da empresa no AEGE.',
+    ]
+  },
+  'Aprovação da EPE em até 5 dias úteis':{
+    source:`${MANUAL_SRC} — Item 4`,
+    summary:'Após enviar o Formulário de Adesão, é preciso aguardar a verificação da EPE antes de receber as credenciais de acesso.',
+    detail:[
+      '"Após o preenchimento do formulário e do envio à EPE, os dados informados serão verificados em até 5 (cinco) dias úteis."',
+      'Quando a adesão for autorizada, o login e a senha são encaminhados por e-mail ao Usuário Responsável.',
+    ]
+  },
+  'Login e senha por e-mail (Usuário Responsável)':{
+    source:`${MANUAL_SRC} — Item 4`,
+    summary:'Forma como as credenciais de acesso ao AEGE chegam ao empreendedor — não há criação manual de senha nesta etapa inicial.',
+    detail:[
+      '"Quando a adesão for autorizada, serão encaminhados ao Usuário Responsável, via e-mail, o login e a senha para acesso ao Sistema AEGE."',
+      'Com login e senha em mãos, o usuário acessa a Tela Inicial do AEGE e pode navegar pelos menus "Cadastro", "Empreendimentos" e "Inscrição".',
+    ]
+  },
+  'Senha: https://sen.epe.gov.br (mín. 12 caracteres)':{
+    source:`${MANUAL_SRC} — Item 5.6`,
+    summary:'Endereço e regras para alteração da senha de acesso ao AEGE, sempre que necessário, distinto do endereço de adesão.',
+    detail:[
+      '"Caso seja necessário alterar a senha de acesso, o usuário deverá acessar o endereço https://sen.epe.gov.br e efetuar os procedimentos necessários, indicados na tela."',
+      'Critérios obrigatórios da nova senha: mínimo de 12 caracteres; ao menos uma letra maiúscula, uma minúscula, um número e um caractere especial; não pode conter trechos do login ou do nome do usuário.',
+    ]
+  },
+  'Designar Representante Legal e Interlocutor':{
+    source:`${MANUAL_SRC} — Item 5.3`,
+    summary:'Dois papéis-chave cadastrados pelo Usuário Responsável: o Representante Legal (signatário dos documentos de habilitação) e o Interlocutor (ponto de contato técnico) — recomenda-se que sejam pessoas distintas.',
+    detail:[
+      'Ambos são usuários credenciados que recebem login e senha próprios e são designados nas fichas de dados dos projetos.',
+      'Durante a análise técnica, apenas esses dois usuários recebem as notificações da EPE referentes aos projetos vinculados.',
+      'O Representante Legal é também o signatário dos documentos apresentados à EPE para a Habilitação Técnica.',
+      'Recomenda-se cadastrar pessoas distintas para os dois papéis, para garantir o recebimento das comunicações da EPE — a desatualização dos contatos pode acarretar inabilitação.',
+    ]
+  },
+  'Inscrição → selecionar o leilão (ex.: LRCAP-2026)':{
+    source:`${MANUAL_SRC} — Item 5.5`,
+    summary:'A Inscrição é apenas a intenção de participar de um leilão específico (ex.: LRCAP-2026) — ainda não é o Cadastramento, que só se efetiva com a apresentação da documentação completa.',
+    detail:[
+      'A fase de inscrição começa após a publicação da Portaria do MME e se estende até a data limite de cadastramento definida na própria Portaria.',
+      'Passo a passo no AEGE: clicar em "Inscrição" → selecionar o empreendimento com número de inscrição "0" na lista de busca → clicar em "Editar" → no campo "Leilão", selecionar o leilão desejado (ex.: LRCAP-2026) → designar o Representante Legal na lista suspensa → clicar em "Salvar".',
+      'Após salvar, o empreendimento recebe um "Número de Inscrição" específico para aquele leilão, exibido na lista de busca.',
+      'É também nesta tela que se declara a aderência do projeto às diretrizes das Instruções do leilão (guia "Verificação e Finalização").',
+    ]
+  },
+
+  // ---------- ANEEL · DRO-SAE ----------
+  'Formulário de requerimento (Anexo I)':{
+    source:`${ANEEL_SRC} — Art. 4º e Anexo I`,
+    summary:'Documento-base do pedido de registro da outorga (DRO-SAE), apresentado pelo representante legal da empresa diretamente no sistema informatizado da ANEEL. É o primeiro documento de todo o processo, ainda na fase facultativa que antecede a outorga definitiva.',
+    detail:[
+      '<b>Art. 4º:</b> "Empresas que pretendam explorar SAE podem solicitar à ANEEL o registro do requerimento de outorga, por meio do representante legal, mediante apresentação dos documentos do Anexo I, via sistema informatizado ou conforme instruções disponíveis no sítio da ANEEL."',
+      '<b>Anexo I, item 1:</b> "Formulário de Requerimento de Outorga."',
+      '<b>Art. 4º, §1º:</b> a ausência de documentos previstos no Anexo I, ou solicitados pela ANEEL, implica arquivamento do processo até o cumprimento integral das exigências.',
+    ]
+  },
+  'Declaração de atendimento (Anexo III)':DECL_ATENDIMENTO,
+  'Declaração de Atendimento (Anexo III)':DECL_ATENDIMENTO,
+  'Regularidade fiscal: FGTS + Fazendas':{
+    source:`${ANEEL_SRC} — Art. 4º, §2º`,
+    summary:'Condição permanente: a empresa deve estar fiscalmente regular não apenas no momento do pedido, mas durante toda a instrução do processo e ao longo de toda a vigência da outorga (35 anos).',
+    detail:[
+      '<b>Art. 4º, §2º:</b> "O interessado deve manter regularidade fiscal perante contribuições previdenciárias, FGTS e Fazendas Municipal, Estadual e Federal durante a instrução e a vigência da outorga."',
+    ]
+  },
+
+  // ---------- ANEEL · Qualificação Jurídica (Anexo II) ----------
+  'Regularidade fiscal completa':{
+    source:`${ANEEL_SRC} — Anexo II, item 1`,
+    summary:'Mesma exigência de regularidade fiscal do DRO-SAE, porém reapresentada (ou confirmada) no momento do pedido de outorga definitiva, cobrindo FGTS e as três esferas de Fazenda Pública.',
+    detail:[
+      '<b>Anexo II, item 1:</b> "Comprovação de regularidade fiscal para com o FGTS e para com as Fazendas Municipal, Estadual e Federal do domicílio ou sede do interessado."',
+    ]
+  },
+  'Organograma societário (>5%)':{
+    source:`${ANEEL_SRC} — Anexo II, item 2`,
+    summary:'Mapa completo da cadeia societária do requerente, exigido para que a ANEEL identifique quem efetivamente controla a empresa, incluindo participações minoritárias relevantes e eventuais acordos de acionistas.',
+    detail:[
+      '<b>Item 2:</b> organograma do grupo societário, com abertura do quadro de acionistas até a participação final, inclusive pessoa física, com nome/razão social e CNPJ.',
+      '<b>2.1</b> Apresentar participações diretas e indiretas até o último nível.',
+      '<b>2.2</b> Considerar toda participação, inclusive minoritária, superior a 5%.',
+      '<b>2.3</b> Participações inferiores a 5% também devem ser informadas quando o acionista integrar o Grupo de Controle via Acordo de Acionistas.',
+      '<b>2.4</b> Sinalizar quem exerce controle societário direto sobre a requerente (art. 3º, III, Anexo III da RN 948/2021).',
+      '<b>2.5</b> Dispensado se a requerente tiver cadastro atualizado nos sistemas da ANEEL (art. 4º, Anexo II – Módulo II da RN 948/2021).',
+    ]
+  },
+  'Ato constitutivo + adm. atual':{
+    source:`${ANEEL_SRC} — Anexo II, item 3`,
+    summary:'Comprova a existência legal da empresa e quem a administra atualmente, exigindo que o objeto social descreva expressamente as atividades relacionadas ao SAE.',
+    detail:[
+      '<b>Item 3:</b> "Ato constitutivo, estatuto ou contrato social em vigor, devidamente registrado no órgão competente, acompanhado do ato que instituiu a atual administração", observada a Lei nº 6.404/1976.',
+      '<b>3.1</b> O objeto social deve descrever de forma precisa e completa as atividades vinculadas à autorização (art. 2º, §2º, Lei 6.404/1976).',
+    ]
+  },
+  'Representação legal':{
+    source:`${ANEEL_SRC} — Anexo II, item 4`,
+    summary:'Comprova que quem assina o requerimento tem poderes legais para representar a empresa diante da ANEEL.',
+    detail:[
+      '<b>Item 4:</b> "Comprovação de representação legal da pessoa que assina os requerimentos."',
+    ]
+  },
+  'Contrato de consórcio (se houver)':{
+    source:`${ANEEL_SRC} — Anexo II, item 5`,
+    summary:'Exigido apenas quando o SAE é explorado por mais de uma empresa em consórcio; formaliza participação percentual e define a empresa líder responsável perante a ANEEL, sem afastar a responsabilidade solidária das demais.',
+    detail:[
+      '<b>Item 5:</b> contrato de constituição de consórcio, por instrumento público ou particular (art. 279 da Lei 6.404/1976 e art. 33 da Lei 8.666/1993), subscrito pelos representantes legais das consorciadas.',
+      '<b>5.1</b> Indicação da participação percentual de cada empresa.',
+      '<b>5.2</b> Designação da empresa líder do consórcio, com quem a ANEEL se relacionará e que responderá pelo cumprimento das obrigações do ato autorizativo, sem prejuízo da responsabilidade solidária das demais consorciadas.',
+    ]
+  },
+
+  // ---------- ANEEL · Qualificação Técnica BATERIA (Anexo II, itens 6-7) ----------
+  'Arranjo Geral + rede de interesse restrito':{
+    source:`${ANEEL_SRC} — Anexo II, item 6`,
+    summary:'Planta geral do empreendimento delimitando a poligonal do SAE e toda a rede de interesse restrito — desde a subestação coletora até o ponto de conexão — no formato exigido pelo sítio da ANEEL.',
+    detail:[
+      '<b>Item 6:</b> "Arranjo Geral do empreendimento contendo a delimitação da poligonal do sistema de armazenamento de energia, e rede de interesse restrito do armazenador, partindo da subestação coletora da central até o ponto de conexão, no formato estabelecido no sítio da ANEEL."',
+    ]
+  },
+  'Estudo técnico: injeção anual':{
+    source:`${ANEEL_SRC} — Anexo II, item 7`,
+    summary:'Estudo técnico completo de desempenho do SAE de bateria: estima a energia injetada anualmente e detalha os parâmetros de projeto que sustentam essa estimativa.',
+    detail:[
+      '<b>Item 7:</b> "Estudo técnico contendo a estimativa de injeção anual de energia elétrica associada ao empreendimento, com base nos critérios de projeto do sistema de armazenamento de energia, incluindo o perfil de operação previsto, a eficiência global do sistema, a potência de descarga, a capacidade de armazenamento, bem como a descrição da tecnologia e dos equipamentos adotados."',
+    ]
+  },
+  'Potência de descarga + capacidade':{
+    source:`${ANEEL_SRC} — Anexo II, item 7`,
+    summary:'Componentes obrigatórios do mesmo estudo técnico do item 7: a potência de descarga (kW) e a capacidade de armazenamento (kWh) do sistema de bateria.',
+    detail:[
+      '<b>Item 7</b> exige que o estudo técnico detalhe "a potência de descarga, a capacidade de armazenamento, bem como a descrição da tecnologia e dos equipamentos adotados", junto da estimativa de injeção anual e do perfil de operação previsto.',
+    ]
+  },
+  'Eficiência global + tecnologia':{
+    source:`${ANEEL_SRC} — Anexo II, item 7`,
+    summary:'Outro componente do estudo técnico: a eficiência global do sistema de armazenamento e a descrição da tecnologia e dos equipamentos efetivamente adotados no projeto.',
+    detail:[
+      '<b>Item 7</b> exige expressamente "a eficiência global do sistema... bem como a descrição da tecnologia e dos equipamentos adotados", como parte do mesmo estudo técnico de injeção anual.',
+    ]
+  },
+
+  // ---------- ANEEL · Qualificação Técnica UHR (Anexo II, itens 8-10) ----------
+  'Arranjo Geral com reservatórios e dutos':{
+    source:`${ANEEL_SRC} — Anexo II, item 8`,
+    summary:'Equivalente ao arranjo geral da bateria, mas para usina hidrelétrica reversível: delimita reservatórios, dutos forçados, casa de força e a rede de interesse restrito até o ponto de conexão.',
+    detail:[
+      '<b>Item 8:</b> "Arranjo Geral do empreendimento contendo a delimitação da poligonal do sistema de armazenamento de energia, incluindo a delimitação dos reservatórios, dos dutos forçados, da casa de força, e rede de interesse restrito do armazenador, partindo da subestação coletora da usina até o ponto de conexão, no formato estabelecido no sítio da ANEEL."',
+    ]
+  },
+  'Outorga de uso de recursos hídricos':{
+    source:`${ANEEL_SRC} — Anexo II, item 9`,
+    summary:'Documento específico de UHR sem equivalente na bateria: comprova o direito de uso dos recursos hídricos necessários ao bombeamento/geração, emitido pelo órgão competente (ou sua dispensa formal).',
+    detail:[
+      '<b>Item 9:</b> "Outorga de uso dos recursos hídricos, ou documentos do órgão competente dispensando a outorga."',
+    ]
+  },
+  'Potência injetável e bombeável':{
+    source:`${ANEEL_SRC} — Anexo II, item 10`,
+    summary:'Parte do estudo técnico da UHR: quantifica tanto a potência que o sistema injeta na rede (geração) quanto a potência que consome para bombear água de volta ao reservatório superior.',
+    detail:[
+      '<b>Item 10:</b> estudo técnico com estimativa de injeção anual de energia, incluindo "a capacidade de armazenamento, a potência injetável, a potência bombeável... bem como a descrição da tecnologia e dos equipamentos adotados".',
+    ]
+  },
+  'Altura de queda + vazão + eficiência':{
+    source:`${ANEEL_SRC} — Anexo II, item 10`,
+    summary:'Demais parâmetros hidráulicos exigidos no mesmo estudo técnico da UHR: altura de queda, vazão de projeto e eficiência global do sistema, que juntos definem a viabilidade energética do aproveitamento reversível.',
+    detail:[
+      '<b>Item 10</b> exige ainda "a altura de queda, a vazão de projeto, a eficiência global do sistema e o perfil de operação previsto" como parte do estudo técnico da usina hidrelétrica reversível em ciclo fechado.',
+    ]
+  },
+
+  // ---------- ANEEL · Documentos adicionais (Anexo II, itens 11-14) ----------
+  'Licença ambiental':{
+    source:`${ANEEL_SRC} — Anexo II, item 11`,
+    summary:'Documento ambiental obrigatório para a emissão da outorga definitiva — distinto da fase de DRO-SAE, em que a licença ainda está em obtenção.',
+    detail:[ '<b>Item 11:</b> "Licença ambiental."' ]
+  },
+  'CUST (ONS) ou CUSD (distribuidora)':{
+    source:`${ANEEL_SRC} — Anexo II, item 12`,
+    summary:'Contrato de uso da rede elétrica, que varia conforme o ponto de conexão: CUST com o ONS para Rede Básica/DIT, ou CUSD com a distribuidora para conexões na rede de distribuição.',
+    detail:[
+      '<b>Item 12:</b> "CUST celebrado junto ao ONS e, no caso de acesso às Demais Instalações de Transmissão – DIT ou as instalações de distribuição, o Contrato de Uso do Sistema de Distribuição – CUSD celebrado com a concessionária ou permissionária de distribuição de energia elétrica."',
+      '<b>12.2</b> Para usinas com energia comercializada no Ambiente de Contratação Regulado (ACR), aceita-se, para fins de alteração de característica técnica, documento de acesso emitido pelo ONS ou o CUSD celebrado com a distribuidora.',
+    ]
+  },
+  'Parecer de acesso':{
+    source:`${ANEEL_SRC} — Anexo II, item 12.1`,
+    summary:'Documento técnico que deve acompanhar obrigatoriamente o contrato de uso da rede (CUST/CUSD), atestando as condições de acesso definidas pelo operador da rede.',
+    detail:[
+      '<b>Item 12.1:</b> "O correspondente parecer de acesso, ou documento equivalente, deve ser encaminhado junto do contrato de uso da rede elétrica."',
+    ]
+  },
+  'Sumário Executivo':{
+    source:`${ANEEL_SRC} — Anexo II, item 13`,
+    summary:'Documento-síntese do empreendimento exigido especificamente para a emissão do ato de outorga, consolidando as informações do pedido.',
+    detail:[ '<b>Item 13:</b> "Sumário Executivo para emissão de outorga."' ]
+  },
+
+  // ---------- EPE · Memorial A (item 4.1, letras a-j) ----------
+  'Química do cátodo e ânodo':{
+    source:`${EPE_SRC} — Item 4.1-A, letra a`,
+    summary:'Primeiro elemento do Memorial Descritivo A: identifica a tecnologia eletroquímica do projeto, base para toda a análise de desempenho, degradação e eficiência que vem a seguir.',
+    detail:[
+      '<b>Letra a:</b> "Descrição da tecnologia considerada, incluindo informações sobre a química do catodo e do anodo."',
+    ]
+  },
+  'Potência (kW) e capacidade (kWh)':{
+    source:`${EPE_SRC} — Item 4.1-A, letra b`,
+    summary:'Dimensionamento elétrico-energético do projeto, exigindo análise de ciclo completo considerando suprimento à rede, perdas e autoconsumo.',
+    detail:[
+      '<b>Letra b:</b> "Dimensionamento do sistema em termos de potência (kW) e capacidade de armazenamento (kWh) para determinado regime de descarga, detalhando a análise energética com ciclo completo, considerando o suprimento à rede, perdas e autoconsumo."',
+    ]
+  },
+  'Todos os fatores de perda (RTE, PCS, consumo)':{
+    source:`${EPE_SRC} — Item 4.1-A, letra c`,
+    summary:'Discriminação técnica de cada perda considerada no cálculo de potência/capacidade, permitindo à EPE auditar a memória de cálculo do dimensionamento.',
+    detail:[
+      '<b>Letra c:</b> devem ser discriminados e quantificados todos os parâmetros e fatores de perda, "tais como: eficiência de carga/descarga da bateria (Battery Round Trip Efficiency), limites máximo e mínimo de profundidade de carga e descarga, eficiência dos conversores, consumo interno do sistema de armazenamento, entre outros a critério do projetista."',
+    ]
+  },
+  'Simulação diária do estado de carga':{
+    source:`${EPE_SRC} — Item 4.1-A, letra d`,
+    summary:'Simulação operacional que demonstra como a bateria carrega e descarrega ao longo de um dia médio durante todo o período contratual.',
+    detail:[
+      '<b>Letra d:</b> "Simulação do perfil diário médio anual do estado de carga da bateria considerando os ciclos de carga e descarga durante o período contratual."',
+    ]
+  },
+  'Estudo de degradação':{
+    source:`${EPE_SRC} — Item 4.1-A, letra e`,
+    summary:'Estudo de envelhecimento da bateria ao longo da vida útil, considerando ciclagem, profundidade de carga/descarga e temperatura.',
+    detail:[
+      '<b>Letra e:</b> "Estudo detalhando o processo de degradação da bateria considerando: o número de ciclos, as profundidades de carga e descarga, os efeitos de temperatura e outras variáveis que interfiram na degradação."',
+    ]
+  },
+  'RTE remanescente ao longo do contrato':{
+    source:`${EPE_SRC} — Item 4.1-A, letra f`,
+    summary:'Projeção de como a eficiência de ciclo completo (Round-Trip Efficiency) cai ao longo dos anos de contrato, com memória de cálculo e gráfico, compatível com a Ficha de Dados do AEGE.',
+    detail:[
+      '<b>Letra f:</b> estimativas de RTE em função do número de ciclos, profundidades de carga/descarga, temperatura e demais perdas (ôhmicas, trafo, auxiliares, stand-by). "O estudo deve indicar a RTE remanescente mínima projetada ao longo dos anos previstos no contrato de suprimento e estar compatível com os parâmetros declarados na ficha de dados do Sistema AEGE", com memória de cálculo e representação gráfica.',
+    ]
+  },
+  'Estratégia de augmentation':{
+    source:`${EPE_SRC} — Item 4.1-A, letra g`,
+    summary:'Plano de como o empreendedor manterá o desempenho contratado ao longo do tempo — seja instalando novos conjuntos, substituindo equipamentos ou atualizando packs de bateria/PCS.',
+    detail:[
+      '<b>Letra g:</b> detalhar a estratégia de "Augmentation", indicando "se o processo será realizado com a instalação de novos conjuntos e em que momento ocorrerá; ou se serão substituídos equipamentos existentes... se serão atualizados os packs de baterias e os sistemas de conversão de energia", além de outros aspectos relevantes.',
+    ]
+  },
+  'Plano de descarte/reciclagem':{
+    source:`${EPE_SRC} — Item 4.1-A, letra h`,
+    summary:'Encerra o Memorial A com a destinação ambientalmente adequada dos equipamentos ao fim da vida útil do projeto.',
+    detail:[
+      '<b>Letra h:</b> "Plano de descarte/reciclagem ao final da vida útil dos equipamentos."',
+    ]
+  },
+
+  // ---------- EPE · Memorial B-F ----------
+  'DWG em UTM/SIRGAS 2000 com RGI':{
+    source:`${EPE_SRC} — Item 4.1-B (Desenhos de Localização)`,
+    summary:'Desenho técnico georreferenciado que ancora todo o restante da documentação de localização: poligonal da(s) propriedade(s), matrícula no RGI e compatibilidade com as coordenadas declaradas no AEGE.',
+    detail:[
+      'Desenho de localização em formato "dwg", projeção UTM, com grade de coordenadas, meridiano central do fuso e referencial SIRGAS 2000.',
+      '<b>a)</b> Poligonal da(s) propriedade(s) com número de matrícula no RGI, consistente com o georreferenciamento averbado.',
+      '<b>c)</b> Localização e identificação das unidades do SAE, compatíveis com as coordenadas declaradas na Guia Empreendimento do AEGE.',
+      '<b>d)</b> O projeto deve estar integralmente contido na poligonal; áreas adjacentes usadas exigem comprovação adicional de direito de uso.',
+      '<b>e)</b> Localização de estradas, acessos, subestação e demais edificações.',
+    ]
+  },
+  'Planilha Excel com vértices (UTM)':{
+    source:`${EPE_SRC} — Item 4.1-C (Poligonal da Área Ocupada)`,
+    summary:'Planilha que materializa numericamente a poligonal do desenho de localização, permitindo à EPE detectar sobreposições entre empreendimentos vizinhos.',
+    detail:[
+      'Planilha em Excel ("xls"/"xlsx"), conforme modelo do Anexo IV, com as coordenadas UTM dos vértices que delimitam a área do empreendimento, identificada pelo nome do projeto.',
+      'O polígono deve estar contido nas propriedades comprovadas; o ponto da Guia "Empreendimento" do AEGE deve estar dentro da poligonal do projeto.',
+      'A falta de informação de um vértice compartilhado pode indicar sobreposição não identificada entre projetos.',
+    ]
+  },
+  'Plano de emergência/incêndio':{
+    source:`${EPE_SRC} — Item 4.1-D (Segurança e Prevenção a Incêndio)`,
+    summary:'Documento de segurança operacional, que deve ser coerente com a tecnologia e o arranjo do projeto, incluindo eventual integração com planos de empreendimentos vizinhos.',
+    detail:[
+      'Plano de resposta a emergência: detecção, isolamento, contenção de incêndios e procedimentos de supressão.',
+      'Procedimentos de operação e manutenção preventivos, detalhando sistemas de refrigeração e ventilação, quando aplicáveis.',
+      'O documento deve ser aderente à tecnologia e ao arranjo adotados, contemplando projetos vizinhos quando os planos de emergência forem associados.',
+    ]
+  },
+  'Diagrama Unifilar completo':{
+    source:`${EPE_SRC} — Item 4.1-E (Diagrama Unifilar)`,
+    summary:'Representação elétrica completa do sistema, da subestação até o ponto de conexão na rede da concessionária, incluindo compartilhamento de infraestrutura com outros projetos.',
+    detail:[
+      '<b>a)</b> Identificação dos barramentos CC e CA e demais componentes (controlador de carga, inversor etc.).',
+      '<b>b)</b> Subestação elevadora e rede de interesse restrito, com quantidade/potência dos transformadores, níveis de tensão e compartilhamento com outros projetos.',
+      '<b>c)</b> Conexão à rede de distribuição, Rede Básica ou DIT, com extensão e bitola dos condutores.',
+      '<b>d)</b> Ponto de conexão na rede da concessionária, identificando claramente a subestação ou linhas a seccionar.',
+    ]
+  },
+  'ART com comprovante de recolhimento':{
+    source:`${EPE_SRC} — Item 4.1-F (ART)`,
+    summary:'Responsabilização técnica formal do projeto e da certificação, conforme legislação do sistema Confea/Crea.',
+    detail:[
+      'ART e respectivo comprovante de recolhimento, conforme Lei 6.496/1977, Resolução Confea 1.025/2009 e Resolução Confea 218/1973, dos responsáveis pelo projeto e pela certificação.',
+      'Devem constar: empresas contratante e contratada, nome e registro do profissional, título profissional, nome do empreendimento, potência instalada e endereço de construção.',
+    ]
+  },
+
+  // ---------- EPE · Documentos de acesso ----------
+  'Parecer de Acesso ONS (Rede Básica/DIT)':{
+    source:`${EPE_SRC} — Item 4.2-B.1`,
+    summary:'Documento de acesso aceito para conexões à Rede Básica, DIT ou ICG, sujeito a prazos e janelas de validade rígidas para ser aceito pela EPE.',
+    detail:[
+      'Válido quando: a data de início de suprimento do leilão for ≤ 5 anos; as características técnicas (capacidade e ponto de conexão) forem compatíveis com o cadastramento.',
+      'Deve ser encaminhado à EPE até 75 dias antes do leilão (Portaria MME 102/2016) e estar dentro do prazo de validade de 90 dias dos Procedimentos de Rede no momento do envio.',
+      'Obrigatório para leilões sem disputa de margem.',
+    ]
+  },
+  'Orçamento Estimado DAL (distribuição)':{
+    source:`${EPE_SRC} — Item 4.2-B.2`,
+    summary:'Documento de Acesso para Leilão (DAL) emitido pela distribuidora, válido apenas para o leilão específico em que foi solicitado.',
+    detail:[
+      'Deve seguir as diretrizes da RN ANEEL 1000/2021 (art. 60 — escopo mínimo do orçamento estimado).',
+      'Deve ter sido emitido exclusivamente para fins de participação e habilitação técnica no leilão do cadastramento.',
+      'Prazo de envio à EPE: até 75 dias antes da data do leilão (Portaria MME 102/2016).',
+    ]
+  },
+  'Orçamento de Conexão (distribuição)':{
+    source:`${EPE_SRC} — Item 4.2-B.3`,
+    summary:'Equivalente ao Parecer de Acesso do ONS, mas emitido por distribuidora; também sujeito a prazo de envio e validade.',
+    detail:[
+      'Envio à EPE até 75 dias antes do leilão; características técnicas compatíveis com o cadastramento.',
+      'Validade conforme o art. 83 da RN ANEEL 1000/2021, observada no momento do encaminhamento formal à EPE.',
+    ]
+  },
+  'CUST/CUSD + CCT/CCD (contratos)':{
+    source:`${EPE_SRC} — Item 4.2-B.4`,
+    summary:'Quando já existentes, os contratos de uso e conexão da rede (e seus aditivos) também são aceitos como documento de acesso, desde que compatíveis com o cadastramento.',
+    detail:[
+      'As informações de MUST/MUSD contratado devem ser compatíveis com a capacidade instalada e a potência injetável do projeto.',
+      'O ponto de conexão indicado no contrato deve corresponder ao ponto indicado no cadastramento.',
+    ]
+  },
+  'Protocolo (se sem doc. definitivo)':{
+    source:`${EPE_SRC} — Item 4.2-C (Documentação Complementar)`,
+    summary:'Quando o documento de acesso definitivo está fora de validade, vencido ou em processo de atualização, é necessária documentação complementar (aditivo contratual ou novo documento de acesso) — meros atestados de viabilidade física de transmissoras não bastam isoladamente.',
+    detail:[
+      'Ampliação de capacidade ou alteração de característica técnica que altere parâmetros contratuais exige aditivo ao CUST/CUSD e CCT/CCD, ou um Documento de Acesso complementar.',
+      'Se a Documentação de Acesso estiver fora do prazo de validade dos Procedimentos de Rede ou do PRODIST, é necessário apresentar nova documentação.',
+      'Atestados de viabilidade física emitidos por transmissoras só têm validade para habilitação técnica quando acompanhados de um dos documentos de acesso reconhecidos (Parecer, DAL, Orçamento de Conexão ou contratos).',
+    ]
+  },
+
+  // ---------- EPE · Ficha de dados, declarações ----------
+  'Ficha de Dados — AEGE (PDF)':{
+    source:`${EPE_SRC} — Item 4.3`,
+    summary:'Documento gerado automaticamente pelo Sistema AEGE a partir dos dados inseridos pelo empreendedor — não é preenchido manualmente, mas todos os campos do sistema devem estar completos antes da geração.',
+    detail:[
+      '"A Ficha de Dados é o documento que apresenta os dados técnicos, cronograma, orçamento e características operacionais de um empreendimento, sendo gerada automaticamente a partir dos dados inseridos pelo empreendedor no Sistema AEGE."',
+      'Deve ser a última versão verificada do AEGE no momento do pedido de cadastramento e habilitação técnica (modelo no Anexo V).',
+    ]
+  },
+  'Requerimento de Cadastramento (Anexo III)':{
+    source:`${EPE_SRC} — Item 3.3`,
+    summary:'Formaliza o pedido de cadastramento e habilitação técnica junto à EPE, enviado por upload junto com os demais documentos exigidos pela portaria do leilão.',
+    detail:[
+      'A solicitação de Cadastramento e Habilitação Técnica é feita por requerimento à EPE, via upload, junto aos documentos das Portarias específicas do leilão e destas Instruções.',
+      'É de responsabilidade exclusiva do empreendedor garantir que todos os arquivos foram corretamente carregados — arquivos corrompidos podem invalidar o cadastro.',
+      'É vedada a alteração de características técnicas do projeto após o prazo final de cadastramento, sob pena de não habilitação.',
+    ]
+  },
+  'Declaração de Conteúdo Nacional (Anexo VII)':{
+    source:`${EPE_SRC} — Item 4.5`,
+    summary:'Declaração formal de ciência sobre os requisitos de conteúdo nacional do produto do leilão, assinada com firma reconhecida ou assinatura digital.',
+    detail:[
+      '"Deverá ser apresentada declaração, com assinatura com reconhecimento de firma ou assinatura digital do Representante Legal, conforme modelo do Anexo VII, por meio da qual o empreendedor declara, sob as penas da lei, que está ciente dos requisitos para participação em produto do leilão, conforme especificidades da Portaria de Diretrizes."',
+    ]
+  },
+  'Declaração automática AEGE':{
+    source:`${EPE_SRC} — Item 4.6`,
+    summary:'Diferente da Declaração de Conteúdo Nacional, esta é gerada automaticamente pelo próprio AEGE na guia "Verificação e Finalização" — o simples ato de cadastrar o projeto já implica concordância com seus termos, sem necessidade de assinatura manual.',
+    detail:[
+      'O cadastramento do projeto no leilão implica concordância automática com os termos da Declaração, que passa a integrar a Ficha de Dados.',
+      '<b>a) Equipamentos novos e Procedimentos de Rede:</b> declara que os equipamentos são novos (sem uso anterior em testes ou produção) e cumprirão os Procedimentos de Rede do ONS.',
+      '<b>b) Área de Desenvolvimento da Subestação (ADS):</b> ciência da necessidade de respeitar a distância à ADS, conforme regulamentação da ANEEL.',
+      '<b>c) Requisitos mínimos de conexão:</b> atesta atendimento aos requisitos mínimos da Nota Técnica ONS/EPE para conexão de SAE via baterias, incluindo requisitos de grid-forming.',
+    ]
+  },
+  'Direito de uso do local (Anexo VI)':{
+    source:`${EPE_SRC} — Item 4.4`,
+    summary:'Prova de que o empreendedor tem o direito de usar/dispor do terreno onde o SAE será instalado, exigindo uma única declaração por empreendimento mesmo quando há múltiplos imóveis envolvidos.',
+    detail:[
+      'Declaração nos termos exatos do Anexo VI, acompanhada de certidões de inteiro teor de todos os imóveis utilizados.',
+      'Se o imóvel for de terceiro, exige-se promessa de compra e venda, direito real de uso ou contrato (locação, arrendamento, comodato etc.) averbado na matrícula.',
+      'Os instrumentos devem assegurar o direito de uso por todo o prazo de suprimento de energia/potência do leilão.',
+      'Casos especiais: imóvel em inventário (exige outorga judicial), Porto Organizado ou Terminal de Uso Privado (TUP) têm regras específicas de comprovação.',
+    ]
+  },
+  'Certidão RGI (até 30 dias)':{
+    source:`${EPE_SRC} — Item 4.4`,
+    summary:'Certidão cartorial que comprova e atualiza a situação registral do imóvel, com prazo de emissão curto para garantir informação recente no momento do cadastramento.',
+    detail:[
+      '"A data da emissão das certidões do RGI não pode exceder a 30 (trinta) dias da data de cadastramento do empreendimento na EPE."',
+      'A certidão deve conter obrigatoriamente a averbação do georreferenciamento do imóvel, descrevendo toda a área da matrícula.',
+      'Em caso de recusa do cartório em averbar (por ausência de previsão legal), admite-se comprovação alternativa via Cartório de Títulos e Documentos.',
+    ]
+  },
+
+  // ---------- Conexão — Rede Básica / Distribuição / Info. Acesso EPE ----------
+  'Parecer de Acesso ONS':{
+    source:`${EPE_SRC} — Item 4.2-B.1`,
+    summary:'Mesmo Parecer de Acesso do ONS detalhado nos Documentos de Acesso — aqui organizado sob a ótica do tipo de conexão "Rede Básica/DIT".',
+    detail:[
+      'Emitido pelo ONS para acesso à Rede Básica, às DIT ou ICG.',
+      'Válido se a data de início de suprimento do leilão for ≤ 5 anos e as características técnicas forem compatíveis com o cadastramento.',
+    ]
+  },
+  'Suprimento ≤ 5 anos da data do leilão':{
+    source:`${EPE_SRC} — Item 4.2-B.1`,
+    summary:'Condição de validade temporal do Parecer de Acesso do ONS: só é aceito se o início do fornecimento contratado ocorrer em até 5 anos a partir do leilão.',
+    detail:[ '"A data de início de suprimento do leilão seja inferior ou igual a cinco anos."' ]
+  },
+  'Validade 90 dias (Proc. de Rede)':{
+    source:`${EPE_SRC} — Item 4.2-B.1`,
+    summary:'Janela de validade do documento emitido pelo ONS, definida pelos Procedimentos de Rede, contada da data de emissão até o envio formal à EPE.',
+    detail:[ '"A data de emissão do documento esteja dentro do prazo de validade estabelecido pelos Procedimentos de Rede (90 dias) quando do encaminhamento formal desse documento à EPE."' ]
+  },
+  'Até 75 dias antes do leilão para EPE':{
+    source:`${EPE_SRC} — Item 4.2-B.1 / Portaria MME 102/2016`,
+    summary:'Prazo regulatório comum a praticamente todos os documentos de acesso: devem chegar à EPE até 75 dias antes da realização do leilão.',
+    detail:[ '"O documento seja encaminhado à EPE dentro do prazo limite estabelecido na Portaria MME n. 102/2016 (até 75 dias antes da data de realização do leilão)."' ]
+  },
+  'Obrigatório em leilões sem disputa de margem':{
+    source:`${EPE_SRC} — Item 4.2-B.1`,
+    summary:'Regra específica: nos leilões em que não há disputa por margem de conexão, a apresentação do Parecer de Acesso do ONS deixa de ser opcional e passa a ser obrigatória.',
+    detail:[ '"Obrigatório para leilões sem disputa de margem."' ]
+  },
+  'Orçamento Estimado (DAL) — exclusivo por leilão':{
+    source:`${EPE_SRC} — Item 4.2-B.2`,
+    summary:'O DAL não é reutilizável: deve ter sido emitido especificamente para o leilão em questão, refletindo as diretrizes da RN ANEEL 1000/2021.',
+    detail:[ '"O documento tenha sido emitido exclusivamente para fins de participação e habilitação técnica no leilão para o qual houve o cadastramento."' ]
+  },
+  'Orçamento de Conexão — prazo da distribuidora':{
+    source:`${EPE_SRC} — Item 4.2-B.3`,
+    summary:'Documento de acesso equivalente ao Parecer do ONS, mas no universo das distribuidoras, com validade definida pelas regras de prazo da própria distribuidora (art. 83, RN ANEEL 1000/2021).',
+    detail:[ '"A data de emissão do documento esteja dentro do prazo de validade estabelecido pela distribuidora, conforme o art. 83 da Resolução Normativa ANEEL n. 1000/2021."' ]
+  },
+  'CUSD + CCD (contratos assinados)':{
+    source:`${EPE_SRC} — Item 4.2-B.4`,
+    summary:'Quando o empreendedor já possui os contratos de uso e conexão da distribuição assinados, eles substituem os demais documentos de acesso, desde que compatíveis com o projeto cadastrado.',
+    detail:[ 'As informações de MUSD contratado devem ser compatíveis com a capacidade instalada e potência injetável; o ponto de conexão do contrato deve coincidir com o do cadastramento.' ]
+  },
+  'Prazo: até 75 dias antes do leilão':{
+    source:`${EPE_SRC} — Portaria MME 102/2016`,
+    summary:'Mesma janela regulatória de 75 dias aplicada aos documentos de acesso de distribuição.',
+    detail:[ 'Documento deve ser encaminhado à EPE dentro do prazo limite estabelecido pela Portaria MME nº 102/2016 (até 75 dias antes da data de realização do leilão).' ]
+  },
+  'Solicitada pelo cadastro no AEGE':{
+    source:`${EPE_SRC} — Item 4.2-D.5`,
+    summary:'A Informação de Acesso da EPE não exige pedido separado: o próprio cadastramento e o preenchimento da ficha de dados no AEGE já configuram a solicitação formal.',
+    detail:[ '"O ato do cadastramento na EPE e o preenchimento da ficha de dados do Sistema AEGE com as informações de conexão já se configuram como uma solicitação formal de acesso à EPE."' ]
+  },
+  'Somente Rede Básica / DIT / ICG':{
+    source:`${EPE_SRC} — Item 4.2-D.2`,
+    summary:'A EPE só emite Informação de Acesso para projetos cujo ponto de conexão esteja classificado como Rede Básica, DIT ou ICG — nunca para distribuição.',
+    detail:[ '"A EPE só emite uma Informação de Acesso para projetos cadastrados com pontos de conexão em instalações classificadas como Rede Básica, Demais Instalações de Transmissão – DIT ou ICG."' ]
+  },
+  'Exclusiva por leilão — não reutilizável':{
+    source:`${EPE_SRC} — Item 4.2-D.7`,
+    summary:'Cada Informação de Acesso vale apenas para o leilão em que foi emitida, não podendo ser aproveitada em certames futuros.',
+    detail:[ '"Os documentos equivalentes de acesso emitidos pela EPE são exclusivos para cada leilão e, portanto, não podem ser reutilizados em diferentes certames."' ]
+  },
+  'Não substitui solicitação ao ONS pós-leilão':{
+    source:`${EPE_SRC} — Item 4.2-D.8`,
+    summary:'A Informação de Acesso da EPE é apenas uma avaliação preliminar; o empreendedor vencedor do leilão ainda precisa percorrer o processo formal de acesso junto ao ONS.',
+    detail:[ '"A obtenção do documento equivalente de acesso não substitui quaisquer etapas associadas aos processos de solicitação de acesso junto ao ONS, que deverá ocorrer normalmente após a realização do leilão."' ]
+  },
+
+  // ---------- Prazos e operação ----------
+  'DRO-SAE: 4 anos sem prorrogação':{
+    source:`${ANEEL_SRC} — Art. 5º, §4º`,
+    summary:'Vigência fixa do Despacho de Registro do Requerimento de Outorga, sem possibilidade de prorrogação — esgotado o prazo, é preciso seguir com o pedido de outorga ou solicitar um novo DRO.',
+    detail:[
+      '"O DRO-SAE terá validade de 4 (quatro) anos, sem prorrogação, e perderá vigência automaticamente independentemente de manifestação da ANEEL."',
+      'Após a perda de vigência, o titular pode seguir com o pedido de outorga ou solicitar novo DRO (art. 5º, §5º, II).',
+    ]
+  },
+  'Autorização ANEEL: 35 anos':{
+    source:`${ANEEL_SRC} — Art. 8º, §2º`,
+    summary:'Prazo de vigência da outorga definitiva de exploração do SAE, contado a partir da publicação do ato autorizativo.',
+    detail:[ '"As outorgas de autorização terão vigência de 35 (trinta e cinco) anos, contados da data de suas publicações."' ]
+  },
+  'Operação comercial: 54 meses após outorga':{
+    source:`${ANEEL_SRC} — Art. 11`,
+    summary:'Prazo máximo para que todas as unidades armazenadoras entrem em operação comercial, contado da publicação da outorga — com acompanhamento de marcos intermediários para projetos maiores.',
+    detail:[
+      '"Os atos autorizativos fixarão prazo limite de 54 (cinquenta e quatro) meses para entrada em operação comercial de todas as unidades armazenadoras de energia, contado da data de publicação do ato de outorga."',
+      'Para potência instalada superior a 5.000 kW, os marcos intermediários são acompanhados pela fiscalização da ANEEL via sistema de acompanhamento de obras.',
+      'A ANEEL só analisa pedidos de prazo maior quando a distribuidora/ONS tiver data de disponibilização das instalações de acesso superior a 54 meses.',
+    ]
+  },
+  'Prorrogação: solicitar com ≥ 6 meses de antecedência':{
+    source:`${ANEEL_SRC} — Art. 16, parágrafo único`,
+    summary:'Janela mínima para pedir a prorrogação do prazo da outorga, avaliando qualificação jurídico-fiscal, adimplência setorial, cumprimento de contratos regulados e histórico do requerente.',
+    detail:[
+      '"Os pedidos de prorrogação devem ser requeridos pelo autorizado com antecedência mínima de 6 (seis) meses antes do término da vigência da autorização."',
+      'A ANEEL analisa: qualificação jurídica e fiscal, adimplência intrassetorial, cumprimento de contratos no ambiente regulado e histórico de penalidades (art. 16, I a IV).',
+    ]
+  },
+  'Obras podem iniciar antes da outorga (risco do agente)':{
+    source:`${ANEEL_SRC} — Art. 6º`,
+    summary:'A ANEEL não exige autorização prévia para começar a implantação física do SAE — mas todo o risco regulatório e jurídico dessa antecipação é do próprio agente.',
+    detail:[
+      '"O interessado pode iniciar a implantação do SAE sem ato prévio da ANEEL."',
+      '§1º: o início das obras antes da outorga se dá por conta e risco do agente, que deve atender obrigações ambientais e exigências de órgãos públicos federais, estaduais, municipais ou do DF.',
+      '§2º: a ausência de outorga não gera qualquer responsabilidade à ANEEL ou ao Poder Concedente.',
+    ]
+  },
+  'Conexão só após contratos + outorga emitida':{
+    source:`${ANEEL_SRC} — Art. 7º`,
+    summary:'Diferente do início das obras, a conexão física à rede tem barreira regulatória clara: só pode ocorrer depois de celebrados os contratos de conexão/uso da rede e emitida a outorga.',
+    detail:[
+      '"O SAE somente poderá ser conectado ao sistema elétrico após a celebração dos contratos de conexão e uso da rede elétrica... e a emissão da outorga."',
+      'Parágrafo único: a conexão não implica, por si só, liberação para operação em teste ou comercial — é preciso ainda atender à RN 1.029/2022.',
+    ]
+  },
+  'Operação em teste: seguir RN 1.029/2022':{
+    source:`${ANEEL_SRC} — Art. 7º, parágrafo único`,
+    summary:'A conexão física não autoriza automaticamente a operação — a entrada em operação em teste segue regras próprias e específicas estabelecidas na RN 1.029/2022.',
+    detail:[ '"A conexão... não implica liberação para operação em teste ou comercial, sendo necessário atender aos requisitos previstos na Resolução Normativa 1.029, de 25 de julho de 2022."' ]
+  },
+  'SAE adjacentes: sem compartilhamento de medição':{
+    source:`${ANEEL_SRC} — Art. 12`,
+    summary:'Regra de individualização: SAE instalados de forma adjacente entre si devem operar com sistemas próprios e independentes de medição, controle e supervisão.',
+    detail:[
+      '"Dois ou mais SAE instalados de forma adjacente entre si devem dispor de sistemas próprios de medição, controle, supervisão e serviços auxiliares, sendo vedado o compartilhamento desses sistemas entre eles."',
+      'A ANEEL pode solicitar documentos ou esclarecimentos adicionais na análise do caso concreto.',
+    ]
+  },
+  'Pedidos já protocolados: 90 dias para atualizar':{
+    source:`${ANEEL_SRC} — Art. 18 (Disposições Transitórias)`,
+    summary:'Regra de transição da própria RN 1.161/2026: quem já tinha processo em andamento na ANEEL precisa se adequar às novas exigências dentro de uma janela curta.',
+    detail:[
+      '"A partir da data de publicação desta Resolução Normativa, os pedidos protocolados na ANEEL terão 90 (noventa) dias para atualizarem seus pedidos aos novos requisitos ou para apresentarem a desistência."',
+      'A atualização deve usar obrigatoriamente os sistemas de informação da ANEEL ou seguir as orientações publicadas no sítio da Agência.',
+    ]
+  },
+  'Prazo conta da publicação: 24/06/2026':{
+    source:`${ANEEL_SRC} — Publicação D.O.U.`,
+    summary:'Marco temporal exato a partir do qual a contagem dos 90 dias de adequação começa a correr.',
+    detail:[ 'A Resolução Normativa ANEEL nº 1.161 foi publicada no D.O.U., Seção 1, em 24/06/2026 — data que serve de marco inicial para o prazo transitório do art. 18.' ]
+  },
+  'Não atualizar = indeferimento automático':{
+    source:`${ANEEL_SRC} — Art. 18, §2º`,
+    summary:'Consequência objetiva do descumprimento do prazo transitório: não há nova notificação ou tolerância — o requerimento é automaticamente indeferido.',
+    detail:[ '"O não cumprimento dos prazos e requisitos implicará no indeferimento do requerimento."' ]
+  },
+};
+
+function getLeafDetail(label){
+  return LEAF_DETAILS[label] || {
+    source:'Documento de referência',
+    summary:'Detalhamento específico não disponível para este item — consulte o documento oficial correspondente (RN ANEEL 1.161/2026 ou EPE-DEE-RE-079) para o texto integral.',
+    detail:[]
+  };
+}
+
+function openLeafModal(label){
+  const info = getLeafDetail(label);
+  const colorVarMatch = label && (info.source.includes('EPE') ? 'green' : (info.source.includes('ANEEL') ? 'blue' : 'gray'));
+  document.getElementById('leaf-modal-title').textContent = label;
+  const srcEl = document.getElementById('leaf-modal-source');
+  srcEl.textContent = info.source;
+  srcEl.style.background = colorVarMatch==='green' ? 'var(--green-soft)' : colorVarMatch==='blue' ? 'var(--blue-soft)' : 'var(--gray-soft)';
+  srcEl.style.color = colorVarMatch==='green' ? 'var(--green-text)' : colorVarMatch==='blue' ? 'var(--blue-text)' : 'var(--gray-text)';
+  document.getElementById('leaf-modal-summary').textContent = info.summary;
+  document.getElementById('leaf-modal-detail').innerHTML = info.detail.map(d=>`<p>${d}</p>`).join('');
+  const overlay = document.getElementById('leaf-modal-overlay');
+  overlay.classList.add('active');
+  document.getElementById('leaf-modal').scrollTop = 0;
+}
+function closeLeafModal(){
+  document.getElementById('leaf-modal-overlay').classList.remove('active');
+}
+document.getElementById('leaf-modal-close').addEventListener('click', closeLeafModal);
+document.getElementById('leaf-modal-overlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'leaf-modal-overlay') closeLeafModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closeLeafModal();
+});
+
+/* =========================================================
+   DADOS — FLUXOGRAMA (passo a passo por tipo de geração)
+   ========================================================= */
+const QUALIF_JURIDICA = {
+  id:'jur', color:'blue', label:'Qualificação Jurídica', sub:'Documentos societários e fiscais',
+  tip:'Exigida para qualquer requerente, independente da tecnologia de SAE.',
+  leaves:['Regularidade fiscal: FGTS + Fazendas Municipal/Estadual/Federal','Organograma societário (participações >5%)','Ato constitutivo/estatuto + administração atual','Comprovação de representação legal','Contrato de Constituição de Consórcio (se houver)']
+};
+const DOCS_ADICIONAIS = {
+  id:'adoc', color:'blue', label:'Documentos adicionais', sub:'Para emissão da outorga',
+  tip:'Completam o pedido de outorga após a qualificação jurídica e técnica.',
+  leaves:['Licença ambiental','CUST (ONS) e/ou CUSD (distribuidora)','Parecer de acesso correspondente','Sumário Executivo para emissão de outorga','Declaração de Atendimento (Anexo III)']
+};
+const ANALISE_HISTORICO = {
+  id:'hist', color:'blue', label:'Análise de histórico do requerente', sub:'ANEEL examina penalidades e adimplência',
+  tip:'A ANEEL avalia o histórico do interessado e de seus controladores diretos quanto a penalidades e obrigações setoriais (art. 10).'
+};
+const OUTORGA_PUBLICADA = {
+  id:'outorga', color:'blue', label:'Outorga de autorização publicada', sub:'Vigência de 35 anos',
+  tip:'Publicada no D.O.U.; pedido pode ser indeferido/arquivado se faltar documentação dos Anexos I e II.',
+  leaves:['Vigência: 35 anos a partir da publicação','Prazo de implantação: 54 meses para operação comercial de todas as unidades','Marcos intermediários acompanhados pela fiscalização (potência > 5.000 kW)']
+};
+const CONEXAO_DECISION = {
+  id:'conexao-fork', color:'amber',
+  branches:[
+    { id:'rb', label:'Rede Básica / DIT', sub:'Acesso via ONS', tip:'Conexão na Rede Básica ou Demais Instalações de Transmissão, operada pelo ONS.',
+      leaves:['Parecer de Acesso ONS','Suprimento ≤ 5 anos da data do leilão (quando aplicável)','Validade 90 dias (Procedimentos de Rede)','Envio até 75 dias antes do leilão (Portaria MME 102/2016)'] },
+    { id:'dist', label:'Distribuição', sub:'Acesso via distribuidora', tip:'Conexão na rede de distribuição da concessionária ou permissionária.',
+      leaves:['Orçamento Estimado (DAL) — exclusivo por leilão','Orçamento de Conexão — prazo da distribuidora','CUSD + CCD (contratos assinados)','Envio até 75 dias antes do leilão'] },
+  ]
+};
+const OBRAS = {
+  id:'obras', color:'gray', label:'Início das obras de implantação', sub:'Pode ocorrer antes da outorga',
+  tip:'Por conta e risco do agente; a ausência de outorga não gera responsabilidade da ANEEL (art. 6º).'
+};
+const CONEXAO_REDE = {
+  id:'conexao-rede', color:'gray', label:'Conexão ao sistema elétrico', sub:'Somente após contratos + outorga',
+  tip:'A conexão exige contratos de uso/conexão da rede celebrados e a outorga emitida (art. 7º). Não autoriza, por si, operação em teste ou comercial.'
+};
+const OPERACAO = {
+  id:'operacao', color:'gray', label:'Operação em teste → Operação comercial', sub:'Conforme RN 1.029/2022',
+  tip:'Operação comercial deve iniciar dentro do prazo de 54 meses da outorga. SAE adjacentes não podem compartilhar medição/controle (art. 12).'
+};
+const POS_OUTORGA_NOTE = '<b>Procedimentos sob demanda (pós-outorga):</b> alteração de características técnicas (Anexo II atualizado), prorrogação de prazo (requerer ≥ 6 meses antes do vencimento), transferência de titularidade e revogação a pedido — todos via sistema informatizado da ANEEL.';
+
+const FLOWS = {
+  bateria: {
+    label:'SAE Bateria Eletroquímica',
+    phases:[
+      { id:'aneel', color:'blue', title:'ANEEL — Outorga de autorização', note:'RN 1.161/2026',
+        steps:[
+          { id:'dro', optional:true, label:'DRO-SAE', sub:'Opcional · facilita licenças e financiamento',
+            tip:'Despacho de Registro do Requerimento de Outorga. Não garante exclusividade nem direito de preferência. Validade de 4 anos, sem prorrogação.',
+            leaves:['Formulário de Requerimento de Outorga (Anexo I)','Declaração de Atendimento (Anexo III)'] },
+          QUALIF_JURIDICA,
+          { id:'tecbat', color:'blue', label:'Qualificação Técnica — Bateria', sub:'Arranjo geral + estudo técnico',
+            tip:'Documentação técnica específica para SAE de bateria eletroquímica (Anexo II, itens 6 e 7).',
+            leaves:['Arranjo Geral + rede de interesse restrito (subestação coletora → ponto de conexão)','Estudo técnico de estimativa de injeção anual','Perfil de operação, eficiência global e potência de descarga','Capacidade de armazenamento, tecnologia e equipamentos'] },
+          DOCS_ADICIONAIS,
+          ANALISE_HISTORICO,
+          OUTORGA_PUBLICADA,
+        ],
+        decision: CONEXAO_DECISION,
+        tailSteps:[ OBRAS, CONEXAO_REDE, OPERACAO ]
+      },
+      { id:'epe', color:'green', title:'EPE — Cadastro e habilitação técnica', note:'Leilão LRCAP-2026 · Sistema AEGE',
+        steps:[
+          { id:'adesao', label:'Aderir ao Sistema AEGE', sub:'Abra: https://aege-adesao.epe.gov.br',
+            tip:'Formulário eletrônico de Adesão da empresa ao AEGE — é o primeiro passo, antes de existir qualquer login.',
+            leaves:['Abrir https://aege-adesao.epe.gov.br','Preencher os dados da empresa no Formulário de Adesão','Enviar o formulário à EPE','Aguardar verificação da EPE (até 5 dias úteis)'] },
+          { id:'login-aege', label:'Acessar o Sistema AEGE', sub:'Login e senha recebidos por e-mail',
+            tip:'O login e a senha são enviados por e-mail ao Usuário Responsável após a adesão ser aprovada. Para trocar a senha depois, use https://sen.epe.gov.br.',
+            leaves:['Abrir o AEGE e entrar com login e senha recebidos por e-mail','Se precisar trocar a senha: acessar https://sen.epe.gov.br','Senha deve ter ≥ 12 caracteres, com maiúscula, minúscula, número e símbolo'] },
+          { id:'cadastro-usuarios', label:'Menu "Cadastro" — identificar o empreendedor', sub:'Dados da empresa + usuários',
+            tip:'Tela onde o Usuário Responsável preenche Razão Social/CNPJ e inclui os demais usuários do sistema.',
+            leaves:['Clicar no menu "Cadastro"','Preencher a tela "Dados do Empreendedor" (Razão Social, CNPJ)','Clicar em "Incluir" para cada novo usuário','Se já existir cadastro em outro sistema EPE: informar o CPF e clicar em "Trazer os dados do CPF"','Designar o Representante Legal e o Interlocutor'] },
+          { id:'incluir-empreendimento', label:'Menu "Empreendimentos" — incluir o projeto', sub:'Selecionar o tipo de fonte e nomear',
+            tip:'Quem inclui o empreendimento se torna automaticamente o Interlocutor do projeto.',
+            leaves:['Clicar no menu "Empreendimentos"','Selecionar o tipo de empreendimento no menu vertical','Clicar em "Incluir"','Digitar o nome do empreendimento (sem siglas como "EOL", "UEE" etc.)','Clicar em "Salvar"'] },
+          { id:'inscricao', label:'Menu "Inscrição" — vincular ao leilão LRCAP-2026', sub:'Inscrição ≠ cadastramento',
+            tip:'A inscrição é apenas a intenção de participar; o Cadastramento só se efetiva com a apresentação da documentação completa e a obtenção do número de processo.',
+            leaves:['Clicar em "Inscrição" no menu do AEGE','Selecionar o empreendimento com número de inscrição "0" na lista de busca','Clicar em "Editar"','No campo "Leilão", selecionar LRCAP-2026','Designar o Representante Legal na lista suspensa','Clicar em "Salvar" → o sistema gera o Número de Inscrição'] },
+          { id:'campos-azuis', label:'Preencher os campos azuis do leilão', sub:'Liberados só após a inscrição',
+            tip:'Campos amarelos = núcleo do empreendimento (valem para todos os leilões); campos azuis = específicos do LRCAP-2026.',
+            leaves:['Guia Empreendimento → Representante Legal','Guia Conexão → Subestação Elevadora (tipo, tensão, transformadores)','Guia Conexão → Instalação Conexão (UF do ponto de conexão, submercado, tipo de conexão)','Guia Leilão → Cronograma, Motorização, Orçamento, REIDI'] },
+          { id:'mema', label:'Memorial Descritivo A — Tecnologia', sub:'Dimensionamento e desempenho',
+            tip:'Identificação do empreendimento e estudos de desempenho da bateria, enviados por upload junto ao requerimento de cadastramento.',
+            leaves:['Química do cátodo e do ânodo','Potência (kW) e capacidade (kWh)','Fatores de perda: RTE, eficiência de conversores, autoconsumo','Simulação diária do estado de carga','Estudo de degradação da bateria','RTE remanescente ao longo do contrato','Estratégia de "Augmentation"','Plano de descarte/reciclagem','Catálogo dos equipamentos (BESS + PCS)'] },
+          { id:'memb', label:'Memorial Descritivo B–F', sub:'Localização, segurança, unifilar, ART',
+            tip:'Conjunto de desenhos e documentos técnicos complementares, também enviados por upload.',
+            leaves:['B: Desenho de localização DWG (UTM/SIRGAS 2000) com matrícula RGI','C: Planilha de coordenadas da poligonal (Anexo IV)','D: Plano de emergência e prevenção a incêndio','E: Diagrama Unifilar completo (CC/CA, subestação, ponto de conexão)','F: ART dos responsáveis técnicos + comprovante de recolhimento'] },
+          { id:'docacesso-epe', label:'Documento de Acesso', sub:'Conforme tipo de conexão',
+            tip:'Obrigatório para distribuidoras; pode ser dispensado para Rede Básica/DIT a depender da portaria do leilão.' },
+        ],
+        decision:{ id:'acesso-epe-fork', color:'green', branches:[
+          { id:'ons', label:'Parecer de Acesso ONS', sub:'Rede Básica / DIT / ICG', tip:'Válido se suprimento ≤ 5 anos, dentro da validade de 90 dias e enviado até 75 dias antes do leilão.' },
+          { id:'dal', label:'DAL / Orçamento de Conexão', sub:'Distribuição', tip:'Orçamento Estimado (DAL) ou Orçamento de Conexão emitido pela distribuidora, conforme RN ANEEL 1000/2021.' },
+          { id:'infacesso', label:'Informação de Acesso EPE', sub:'Suprimento > 3 anos', tip:'Emitida apenas para Rede Básica/DIT/ICG; exclusiva por leilão, não substitui solicitação ao ONS pós-leilão.' },
+        ]},
+        tailSteps:[
+          { id:'direito', label:'Direito de Uso do Local', sub:'+ Certidão RGI ≤ 30 dias', tip:'Declaração nos termos do Anexo VI, acompanhada de certidão de inteiro teor com georreferenciamento averbado.' },
+          { id:'declcn', label:'Declaração de Conteúdo Nacional', sub:'Anexo VII', tip:'Assinatura do Representante Legal, com firma reconhecida ou assinatura digital.' },
+          { id:'verificacao', label:'Guia Leilão → Verificação e Finalização', sub:'Checagem automática + declaração automática',
+            tip:'O AEGE roda críticas automáticas nos dados e exibe a íntegra da declaração do item 4.6 (equipamentos novos, ADS, requisitos mínimos de conexão/grid-forming). Status "N" (não verificado) não impede a inscrição, mas erros não corrigidos podem levar à inabilitação.',
+            leaves:['Abrir a guia "Leilão" → subguia "Verificação e Finalização"','Corrigir os campos sinalizados em vermelho (preenchimento obrigatório)','Confirmar a Declaração automática gerada pelo AEGE','Repetir a verificação até o status ficar "V" (Verificado)'] },
+          { id:'ficha', label:'Imprimir a Ficha de Dados', sub:'Botão "F. Dados" no AEGE', tip:'Gera o PDF com todos os dados preenchidos no AEGE — documento indispensável para instruir o processo de Habilitação Técnica (Anexo V).' },
+          { id:'analise-epe', label:'Análise técnica da EPE', sub:'Pode solicitar complementação', tip:'Verifica sobreposição física de projetos; documentação incompleta torna o cadastramento ineficaz. Após aceito, o botão "Comprovante" é liberado no AEGE para impressão do protocolo de cadastramento.' },
+        ],
+        decision2:{ id:'habilitacao-fork', color:'green', branches:[
+          { id:'habilitado', label:'Habilitação Técnica concedida', sub:'Botão "Habilitação Técnica" no AEGE', tip:'Disponível até a data do leilão: imprime Habilitação Técnica, Ficha de Dados, Ofício de COP/CEC e Parecer de Acesso da EPE. Gera o CEG, que identifica o empreendimento durante todo o ciclo de vida.' },
+          { id:'inabilitado', label:'Inabilitado → Recurso', sub:'5 dias úteis, até 2ª instância', tip:'Recurso ao Superintendente de Geração; decisão final ao Diretor de Estudos de Energia Elétrica.' },
+        ]}
+      },
+    ]
+  },
+  uhr: {
+    label:'SAE UHR — Hidrelétrica Reversível',
+    phases:[
+      { id:'aneel', color:'purple', title:'ANEEL — Outorga de autorização', note:'RN 1.161/2026 · não há rito específico de leilão na EPE para UHR',
+        steps:[
+          { id:'dro', optional:true, label:'DRO-SAE', sub:'Opcional · facilita licenças e financiamento',
+            tip:'Despacho de Registro do Requerimento de Outorga. Não garante exclusividade. Validade de 4 anos, sem prorrogação.',
+            leaves:['Formulário de Requerimento de Outorga (Anexo I)','Declaração de Atendimento (Anexo III)'] },
+          { ...QUALIF_JURIDICA, color:'purple' },
+          { id:'tecuhr', color:'purple', label:'Qualificação Técnica — UHR', sub:'Reservatórios, dutos e estudo hídrico',
+            tip:'Documentação técnica específica para usina hidrelétrica reversível em ciclo fechado (Anexo II, itens 8 a 10).',
+            leaves:['Arranjo Geral com reservatórios, dutos forçados e casa de força','Outorga de uso dos recursos hídricos (ou dispensa do órgão competente)','Estudo técnico: potência injetável e potência bombeável','Altura de queda, vazão de projeto e eficiência global','Capacidade de armazenamento e perfil de operação previsto'] },
+          { ...DOCS_ADICIONAIS, color:'purple' },
+          { ...ANALISE_HISTORICO, color:'purple' },
+          { ...OUTORGA_PUBLICADA, color:'purple' },
+        ],
+        decision:{ ...CONEXAO_DECISION, color:'amber' },
+        tailSteps:[ OBRAS, CONEXAO_REDE, OPERACAO ]
+      },
+    ]
+  }
+};
+
+/* =========================================================
+   RENDER — MAPA MENTAL
+   ========================================================= */
 const chevronSVG = `<svg class="nc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
 
+function escAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+
 function buildChild(child){
-  const leaves = (child.leaves||[]).map(l=>`<div class="leaf-chip">${l}</div>`).join('');
+  const leaves = (child.leaves||[]).map(l=>`<div class="leaf-chip" data-leaf="${escAttr(l)}">${l}<svg class="leaf-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>`).join('');
   return `
   <div class="child-card" data-id="${child.id}">
     <div class="node-card child-toggle">
-      <div class="nc-top">
-        <div class="nc-label">${child.label}</div>
-      </div>
+      <div class="nc-top"><div class="nc-label">${child.label}</div></div>
       <div class="nc-sub">${child.sub}</div>
       ${chevronSVG}
       <div class="nc-tip">${child.tip}</div>
     </div>
-    <div class="leaves-wrap">
-      <div class="leaves-inner">
-        <div class="leaves-list">${leaves}</div>
-      </div>
-    </div>
+    <div class="leaves-wrap"><div class="leaves-inner"><div class="leaves-list">${leaves}</div></div></div>
   </div>`;
 }
-
 function buildBranch(branch){
   const children = (branch.children||[]).map(buildChild).join('');
   return `
   <div class="branch" data-color="${branch.color}" data-id="${branch.id}">
     <div class="node-card branch-toggle">
-      <div class="nc-top">
-        <div class="nc-dot"></div>
-        <div class="nc-label">${branch.label}</div>
-      </div>
+      <div class="nc-top"><div class="nc-dot"></div><div class="nc-label">${branch.label}</div></div>
       <div class="nc-sub">${branch.sub}</div>
       ${chevronSVG}
       <div class="nc-tip">${branch.tip}</div>
     </div>
-    <div class="children-wrap">
-      <div class="children-inner">
-        <div class="children-stack">${children}</div>
-      </div>
-    </div>
+    <div class="children-wrap"><div class="children-inner"><div class="children-stack">${children}</div></div></div>
   </div>`;
 }
-
-function render(){
+function renderMindmap(){
   const root = document.getElementById('tree');
   root.innerHTML = `
-    <div class="root-card">
-      <div class="rc-label">${DATA.label}</div>
-      <div class="rc-sub">${DATA.sub}</div>
-    </div>
-    <div class="branches-row">
-      ${DATA.branches.map(buildBranch).join('')}
-    </div>
-  `;
+    <div class="root-card"><div class="rc-label">${DATA.label}</div><div class="rc-sub">${DATA.sub}</div></div>
+    <div class="branches-row">${DATA.branches.map(buildBranch).join('')}</div>`;
 
   root.querySelectorAll('.branch-toggle').forEach(el=>{
     el.addEventListener('click', ()=>{
@@ -383,7 +1342,6 @@ function render(){
       el.classList.toggle('open', isOpen);
     });
   });
-
   root.querySelectorAll('.child-toggle').forEach(el=>{
     el.addEventListener('click', (e)=>{
       e.stopPropagation();
@@ -392,23 +1350,151 @@ function render(){
       el.classList.toggle('open', isOpen);
     });
   });
+  root.querySelectorAll('.leaf-chip').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openLeafModal(el.dataset.leaf);
+    });
+  });
 }
 
+/* =========================================================
+   RENDER — FLUXOGRAMA
+   ========================================================= */
+let stepCounter = 0;
+
+function buildStep(step){
+  const leaves = (step.leaves||[]).map(l=>`<div class="leaf-chip">${l}</div>`).join('');
+  stepCounter++;
+  const optTag = step.optional ? `<span class="opt-tag">Opcional</span>` : '';
+  return `
+  <div class="step ${step.optional?'optional':''}" data-color="${step.color}">
+    <div class="step-num">${stepCounter}</div>
+    <div class="step-card flow-toggle">
+      <div class="sc-label">${step.label}${optTag}</div>
+      <div class="sc-sub">${step.sub||''}</div>
+      ${chevronSVG.replace('nc-chevron','sc-chevron')}
+      <div class="sc-tip">${step.tip||''}</div>
+      ${leaves?`<div class="sc-leaves"><div class="sc-leaves-inner"><div class="sc-leaves-list">${leaves}</div></div></div>`:''}
+    </div>
+  </div>`;
+}
+
+function buildForkCard(b, color){
+  const leaves = (b.leaves||[]).map(l=>`<div class="leaf-chip">${l}</div>`).join('');
+  return `
+  <div class="fork-card" data-color="${color}">
+    <div class="step-card flow-toggle">
+      <div class="sc-label">${b.label}</div>
+      <div class="sc-sub">${b.sub||''}</div>
+      ${chevronSVG.replace('nc-chevron','sc-chevron')}
+      <div class="sc-tip">${b.tip||''}</div>
+      ${leaves?`<div class="sc-leaves"><div class="sc-leaves-inner"><div class="sc-leaves-list">${leaves}</div></div></div>`:''}
+    </div>
+  </div>`;
+}
+
+function buildDecision(decision, defaultColor){
+  if(!decision) return '';
+  const color = decision.color||defaultColor;
+  return `
+  <div class="decision-label">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9 9-9z"/></svg>
+    Decisão — tipo de conexão / documento de acesso
+  </div>
+  <div class="branch-fork">
+    <div class="fork-row">${decision.branches.map(b=>buildForkCard(b,color)).join('')}</div>
+  </div>`;
+}
+
+function buildPhase(phase){
+  const stepsHtml = phase.steps.map(buildStep).join('');
+  const decisionHtml = buildDecision(phase.decision, phase.color);
+  const tailHtml = (phase.tailSteps||[]).map(buildStep).join('');
+  const decision2Html = buildDecision(phase.decision2, phase.color);
+  return `
+  <div class="flow-phase" data-id="${phase.id}">
+    <div class="phase-head phase-toggle" data-color="${phase.color}">
+      <div class="ph-dot"></div>${phase.title}
+      ${phase.note?`<div class="ph-note">${phase.note}</div>`:''}
+      ${chevronSVG.replace('nc-chevron','ph-chevron').replace('M9 6l6 6-6 6','M6 9l6 6 6-6')}
+    </div>
+    <div class="phase-body"><div class="phase-body-inner">
+      <div class="steps-col">${stepsHtml}</div>
+      ${decisionHtml}
+      <div class="steps-col">${tailHtml}</div>
+      ${decision2Html}
+    </div></div>
+  </div>`;
+}
+
+const MANUAL_NOTE = '<b>Manual do Empreendedor — Sistema AEGE:</b> os passos de Adesão, login, cadastro de usuários e Inscrição (fase ANEEL/EPE acima) seguem o Manual do Empreendedor (EPE-DEE-RE-028/2009). Sessões do AEGE expiram em 30 minutos de inatividade — salve cada guia periodicamente para não perder dados.';
+const UHR_AEGE_NOTE = '<b>Se vier a participar de leilão:</b> a EPE-DEE-RE-079 trata apenas de SAE em bateria eletroquímica. Caso uma UHR venha a ser ofertada em leilão, a mecânica de acesso ao AEGE (Adesão, login, Cadastro, Inscrição) do Manual do Empreendedor se aplicaria de forma análoga, mas sob instruções específicas a serem publicadas pela EPE/MME para esse tipo de fonte.';
+
+function renderFlow(type){
+  stepCounter = 0;
+  const data = FLOWS[type];
+  const container = document.getElementById('flow-container');
+  const extraNote = type==='bateria' ? MANUAL_NOTE : UHR_AEGE_NOTE;
+  container.innerHTML = data.phases.map(buildPhase).join('') +
+    `<div class="flow-note">${POS_OUTORGA_NOTE}<br><br><b>Disposição transitória (RN 1.161/2026):</b> pedidos já protocolados antes de 24/06/2026 têm 90 dias para se adequar aos novos requisitos, sob pena de indeferimento automático.</div>` +
+    `<div class="flow-note">${extraNote}</div>`;
+
+  container.querySelectorAll('.flow-toggle').forEach(el=>{
+    el.addEventListener('click', ()=>{ el.classList.toggle('open'); });
+  });
+  container.querySelectorAll('.phase-toggle').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      el.closest('.flow-phase').classList.toggle('collapsed');
+    });
+  });
+}
+
+/* =========================================================
+   CONTROLES GERAIS (expandir / recolher / alternar views)
+   ========================================================= */
 function setAll(expand){
-  document.querySelectorAll('.branch').forEach(b=>{
-    b.classList.toggle('expanded', expand);
-    b.querySelector('.branch-toggle').classList.toggle('open', expand);
-  });
-  document.querySelectorAll('.child-card').forEach(c=>{
-    c.classList.toggle('open', expand);
-    c.querySelector('.child-toggle').classList.toggle('open', expand);
-  });
+  const activeView = document.querySelector('.view.active');
+  if(activeView.id === 'view-mindmap'){
+    activeView.querySelectorAll('.branch').forEach(b=>{
+      b.classList.toggle('expanded', expand);
+      b.querySelector('.branch-toggle').classList.toggle('open', expand);
+    });
+    activeView.querySelectorAll('.child-card').forEach(c=>{
+      c.classList.toggle('open', expand);
+      c.querySelector('.child-toggle').classList.toggle('open', expand);
+    });
+  } else {
+    activeView.querySelectorAll('.flow-toggle').forEach(el=>{ el.classList.toggle('open', expand); });
+    activeView.querySelectorAll('.flow-phase').forEach(el=>{ el.classList.toggle('collapsed', !expand); });
+  }
 }
-
 document.getElementById('btn-expand').addEventListener('click', ()=>setAll(true));
 document.getElementById('btn-collapse').addEventListener('click', ()=>setAll(false));
 
-render();
+let currentFlowType = 'bateria';
+document.getElementById('view-switch').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-view]');
+  if(!btn) return;
+  document.querySelectorAll('.view-switch button').forEach(b=>b.classList.toggle('active', b===btn));
+  const view = btn.dataset.view;
+  document.getElementById('view-mindmap').classList.toggle('active', view==='mindmap');
+  document.getElementById('view-flow').classList.toggle('active', view==='flow');
+  document.getElementById('type-switch').style.display = view==='flow' ? 'flex' : 'none';
+  document.getElementById('legend-mindmap').style.display = view==='mindmap' ? 'flex' : 'none';
+  document.getElementById('legend-flow').style.display = view==='flow' ? 'flex' : 'none';
+  if(view==='flow' && !document.getElementById('flow-container').innerHTML){ renderFlow(currentFlowType); }
+});
+
+document.getElementById('type-switch').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-type]');
+  if(!btn) return;
+  document.querySelectorAll('.type-pill').forEach(b=>b.classList.toggle('active', b===btn));
+  currentFlowType = btn.dataset.type;
+  renderFlow(currentFlowType);
+});
+
+renderMindmap();
 </script>
 </body>
 </html>
