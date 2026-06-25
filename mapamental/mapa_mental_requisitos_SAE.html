@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Requisitos Regulatórios SAE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg-1:#0b1220;
+  --bg-2:#0f1b2e;
+  --bg-grid: rgba(255,255,255,.035);
+  --surface: rgba(255,255,255,.055);
+  --surface-strong: rgba(255,255,255,.09);
+  --border: rgba(255,255,255,.10);
+  --border-strong: rgba(255,255,255,.18);
+  --text-1:#f3f5f9;
+  --text-2:#aab3c5;
+  --text-3:#76819a;
+  --shadow-lg: 0 24px 60px -20px rgba(0,0,0,.55), 0 4px 18px rgba(0,0,0,.35);
+  --shadow-sm: 0 6px 18px -8px rgba(0,0,0,.45);
+
+  --blue:#4da3ff;     --blue-soft:rgba(77,163,255,.14);    --blue-text:#bfe0ff;
+  --green:#5ed68f;    --green-soft:rgba(94,214,143,.14);   --green-text:#c4f3da;
+  --amber:#ffb45e;    --amber-soft:rgba(255,180,94,.14);   --amber-text:#ffdfb8;
+  --gray:#9aa6c2;     --gray-soft:rgba(154,166,194,.14);   --gray-text:#dde2ee;
+  --root:#7c8cff;     --root-soft:rgba(124,140,255,.18);
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{
+  min-height:100%;
+  background:
+    radial-gradient(1100px 600px at 15% -10%, rgba(124,140,255,.16), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(94,214,143,.10), transparent 55%),
+    linear-gradient(160deg, var(--bg-1), var(--bg-2) 60%, #0a0f1a);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  color:var(--text-1);
+}
+body{
+  background-image:
+    radial-gradient(1100px 600px at 15% -10%, rgba(124,140,255,.16), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(94,214,143,.10), transparent 55%),
+    linear-gradient(160deg, var(--bg-1), var(--bg-2) 60%, #0a0f1a),
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+  background-size:auto, auto, auto, 42px 42px, 42px 42px;
+  background-position:0 0,0 0,0 0,center,center;
+  padding:34px 18px 80px;
+}
+
+/* ---------------- Header ---------------- */
+.mm-header{
+  max-width:1180px; margin:0 auto 28px; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+}
+.mm-eyebrow{
+  font-size:11.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--root); opacity:.9;
+}
+h1.mm-title{
+  font-size:clamp(24px,3.4vw,38px); font-weight:800; letter-spacing:-0.02em;
+  background:linear-gradient(95deg,#fff 10%, #b9c4ff 60%, #8fd9b3 110%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  line-height:1.15;
+}
+.mm-subtitle{ font-size:14.5px; color:var(--text-2); max-width:680px; line-height:1.55; }
+
+.mm-controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
+.mm-btn{
+  appearance:none; border:1px solid var(--border-strong); border-radius:999px;
+  padding:9px 18px; font-size:13px; font-weight:600; color:var(--text-1);
+  background:var(--surface); cursor:pointer; letter-spacing:.01em;
+  display:flex; align-items:center; gap:7px;
+  transition:transform .15s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.mm-btn:hover{ background:var(--surface-strong); border-color:rgba(124,140,255,.5); transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+.mm-btn:active{ transform:translateY(0) scale(.97); }
+.mm-btn svg{ width:14px; height:14px; }
+.mm-btn.primary{ background:linear-gradient(135deg, rgba(124,140,255,.35), rgba(94,214,143,.25)); border-color:rgba(124,140,255,.5); }
+
+.mm-legend{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin-top:4px; }
+.leg-item{ display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-2); }
+.leg-dot{ width:9px; height:9px; border-radius:50%; box-shadow:0 0 0 4px currentColor inset; flex-shrink:0; }
+.leg-dot.c-blue{color:var(--blue-soft); background:var(--blue);}
+.leg-dot.c-green{color:var(--green-soft); background:var(--green);}
+.leg-dot.c-amber{color:var(--amber-soft); background:var(--amber);}
+.leg-dot.c-gray{color:var(--gray-soft); background:var(--gray);}
+
+/* ---------------- Tree shell ---------------- */
+.mm-tree{ max-width:1180px; margin:0 auto; display:flex; flex-direction:column; align-items:center; }
+
+.connector-v{ width:2px; background:linear-gradient(var(--border-strong), transparent); position:relative; }
+.connector-v.long{ height:30px; }
+.connector-v::after{ content:''; }
+
+/* root */
+.root-card{
+  position:relative; z-index:2;
+  background:linear-gradient(155deg, rgba(124,140,255,.35), rgba(124,140,255,.12));
+  border:1px solid rgba(124,140,255,.45);
+  border-radius:22px;
+  padding:20px 38px;
+  text-align:center;
+  box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.04) inset;
+  backdrop-filter:blur(6px);
+}
+.root-card .rc-label{ font-size:22px; font-weight:800; letter-spacing:-.01em; }
+.root-card .rc-sub{ font-size:12.5px; color:var(--text-2); margin-top:4px; }
+
+/* branches row */
+.branches-row{
+  display:flex; gap:26px; flex-wrap:wrap; justify-content:center;
+  position:relative; padding-top:30px; width:100%;
+}
+.branches-row::before{
+  content:''; position:absolute; top:0; left:50%; width:2px; height:30px;
+  background:linear-gradient(var(--border-strong), transparent); transform:translateX(-50%);
+}
+
+.branch{
+  width:255px; display:flex; flex-direction:column; align-items:center;
+}
+
+.node-card{
+  width:100%;
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px 16px;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+  box-shadow:var(--shadow-sm);
+}
+.node-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lg); border-color:var(--border-strong); }
+.node-card:active{ transform:translateY(-1px) scale(.99); }
+
+.node-card .nc-top{ display:flex; align-items:center; gap:10px; }
+.node-card .nc-dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; box-shadow:0 0 12px 2px currentColor; }
+.node-card .nc-label{ font-size:14.5px; font-weight:700; letter-spacing:-.01em; }
+.node-card .nc-sub{ font-size:11.5px; color:var(--text-2); white-space:pre-line; margin-top:2px; margin-left:20px; }
+.node-card .nc-chevron{
+  position:absolute; right:14px; top:50%; transform:translateY(-50%) rotate(0deg);
+  width:18px; height:18px; color:var(--text-2);
+  transition:transform .25s ease, color .2s ease;
+}
+.node-card.open .nc-chevron{ transform:translateY(-50%) rotate(90deg); color:var(--text-1); }
+.node-card .nc-tip{
+  font-size:11px; color:var(--text-3); margin-top:8px; margin-left:20px; line-height:1.5;
+  max-height:0; opacity:0; overflow:hidden; transition:max-height .3s ease, opacity .25s ease, margin .3s ease;
+}
+.node-card.open .nc-tip{ max-height:80px; opacity:1; margin-top:8px; }
+
+/* color themes via data-color */
+.branch[data-color="blue"] .node-card{ border-color:rgba(77,163,255,.22); }
+.branch[data-color="blue"] .node-card.open, .branch[data-color="blue"] .node-card:hover{ border-color:rgba(77,163,255,.55); background:var(--blue-soft); }
+.branch[data-color="blue"] .nc-dot{ background:var(--blue); color:var(--blue); }
+.branch[data-color="blue"] .nc-label{ color:var(--blue-text); }
+
+.branch[data-color="green"] .node-card{ border-color:rgba(94,214,143,.22); }
+.branch[data-color="green"] .node-card.open, .branch[data-color="green"] .node-card:hover{ border-color:rgba(94,214,143,.55); background:var(--green-soft); }
+.branch[data-color="green"] .nc-dot{ background:var(--green); color:var(--green); }
+.branch[data-color="green"] .nc-label{ color:var(--green-text); }
+
+.branch[data-color="amber"] .node-card{ border-color:rgba(255,180,94,.22); }
+.branch[data-color="amber"] .node-card.open, .branch[data-color="amber"] .node-card:hover{ border-color:rgba(255,180,94,.55); background:var(--amber-soft); }
+.branch[data-color="amber"] .nc-dot{ background:var(--amber); color:var(--amber); }
+.branch[data-color="amber"] .nc-label{ color:var(--amber-text); }
+
+.branch[data-color="gray"] .node-card{ border-color:rgba(154,166,194,.22); }
+.branch[data-color="gray"] .node-card.open, .branch[data-color="gray"] .node-card:hover{ border-color:rgba(154,166,194,.55); background:var(--gray-soft); }
+.branch[data-color="gray"] .nc-dot{ background:var(--gray); color:var(--gray); }
+.branch[data-color="gray"] .nc-label{ color:var(--gray-text); }
+
+/* children wrap (grid-rows trick for smooth height) */
+.children-wrap{
+  display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .38s ease;
+  width:100%; margin-top:0;
+}
+.branch.expanded > .children-wrap{ grid-template-rows:1fr; }
+.children-inner{ min-height:0; overflow:hidden; display:flex; flex-direction:column; align-items:center; }
+.children-inner::before{
+  content:''; width:2px; height:22px; margin-top:6px;
+  background:linear-gradient(var(--border-strong), transparent);
+}
+.children-stack{ display:flex; flex-direction:column; gap:12px; width:100%; padding-top:8px; }
+
+.child-card{ width:100%; }
+.child-card .node-card{ padding:12px 14px; border-radius:14px; }
+.child-card .nc-label{ font-size:13.5px; }
+.child-card .nc-sub{ font-size:11px; }
+
+/* leaves */
+.leaves-wrap{
+  display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .32s ease;
+}
+.child-card.open > .leaves-wrap{ grid-template-rows:1fr; }
+.leaves-inner{ min-height:0; overflow:hidden; }
+.leaves-list{
+  display:flex; flex-wrap:wrap; gap:6px; padding:10px 4px 4px 20px;
+}
+.leaf-chip{
+  font-size:11px; font-weight:500; padding:6px 10px; border-radius:9px;
+  background:rgba(255,255,255,.06); border:1px solid var(--border);
+  color:var(--text-2); line-height:1.3;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.leaf-chip:hover{ background:rgba(255,255,255,.12); color:var(--text-1); border-color:var(--border-strong); }
+
+/* responsive */
+@media (max-width:880px){
+  .branches-row{ gap:18px; }
+  .branch{ width:100%; max-width:340px; }
+}
+
+/* subtle fade-in */
+.mm-tree{ animation:fadeUp .5s ease both; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+::selection{ background:rgba(124,140,255,.35); }
+</style>
+</head>
+<body>
+
+<div class="mm-header">
+  <div class="mm-eyebrow">Mapa mental interativo</div>
+  <h1 class="mm-title">Requisitos Regulatórios — SAE</h1>
+  <p class="mm-subtitle">Sistemas de Armazenamento de Energia · ANEEL RN 1.161/2026 e EPE-DEE-RE-079. Clique em qualquer etapa para revelar os próximos níveis.</p>
+  <div class="mm-controls">
+    <button class="mm-btn primary" id="btn-expand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m11 0h3a2 2 0 0 0 2-2v-3"/></svg>
+      Expandir tudo
+    </button>
+    <button class="mm-btn" id="btn-collapse">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg>
+      Recolher tudo
+    </button>
+  </div>
+  <div class="mm-legend">
+    <div class="leg-item"><div class="leg-dot c-blue"></div>ANEEL — autorização</div>
+    <div class="leg-item"><div class="leg-dot c-green"></div>EPE — habilitação técnica</div>
+    <div class="leg-item"><div class="leg-dot c-amber"></div>Tipo de conexão</div>
+    <div class="leg-item"><div class="leg-dot c-gray"></div>Prazos e operação</div>
+  </div>
+</div>
+
+<div class="mm-tree" id="tree"></div>
+
+<script>
+const DATA = {
+  label:'SAE', sub:'Requisitos regulatórios',
+  branches:[
+    { id:'aneel', color:'blue', label:'ANEEL', sub:'Autorização SAE\nRN 1.161/2026',
+      tip:'Requisitos para obter a autorização de exploração de SAE junto à ANEEL.',
+      children:[
+        { id:'dro', label:'DRO-SAE', sub:'Opcional · 4 anos',
+          tip:'Despacho de Registro do Requerimento — facultativo, válido por 4 anos sem prorrogação.',
+          leaves:['Formulário de requerimento (Anexo I)','Declaração de atendimento (Anexo III)','Regularidade fiscal: FGTS + Fazendas'] },
+        { id:'jur', label:'Qualificação', sub:'Jurídica',
+          tip:'Documentos societários e fiscais exigidos para o pedido de outorga.',
+          leaves:['Regularidade fiscal completa','Organograma societário (>5%)','Ato constitutivo + adm. atual','Representação legal','Contrato de consórcio (se houver)'] },
+        { id:'tecbat', label:'Técnica', sub:'Bateria',
+          tip:'Qualificação técnica específica para SAE de bateria eletroquímica.',
+          leaves:['Arranjo Geral + rede de interesse restrito','Estudo técnico: injeção anual','Potência de descarga + capacidade','Eficiência global + tecnologia'] },
+        { id:'tecuhr', label:'Técnica', sub:'UHR',
+          tip:'Qualificação técnica para usina hidrelétrica reversível em ciclo fechado.',
+          leaves:['Arranjo Geral com reservatórios e dutos','Outorga de uso de recursos hídricos','Potência injetável e bombeável','Altura de queda + vazão + eficiência'] },
+        { id:'adoc', label:'Docs adicionais', sub:'Para autorização',
+          tip:'Documentos adicionais necessários para emissão do ato de autorização.',
+          leaves:['Licença ambiental','CUST (ONS) ou CUSD (distribuidora)','Parecer de acesso','Sumário Executivo','Declaração de Atendimento (Anexo III)'] },
+      ]
+    },
+    { id:'epe', color:'green', label:'EPE', sub:'Habilitação técnica\nEPE-DEE-RE-079',
+      tip:'Requisitos para habilitação técnica nos leilões de energia e/ou potência.',
+      children:[
+        { id:'mema', label:'Memorial A', sub:'Tecnologia',
+          tip:'Identificação do empreendimento: tecnologia, dimensionamento e desempenho.',
+          leaves:['Química do cátodo e ânodo','Potência (kW) e capacidade (kWh)','Todos os fatores de perda (RTE, PCS, consumo)','Simulação diária do estado de carga','Estudo de degradação','RTE remanescente ao longo do contrato','Estratégia de augmentation','Plano de descarte/reciclagem'] },
+        { id:'memb', label:'Memorial B–F', sub:'Localização e docs',
+          tip:'Desenhos de localização, poligonal, segurança, unifilar e ART.',
+          leaves:['DWG em UTM/SIRGAS 2000 com RGI','Planilha Excel com vértices (UTM)','Plano de emergência/incêndio','Diagrama Unifilar completo','ART com comprovante de recolhimento'] },
+        { id:'acesso', label:'Docs de acesso', sub:'À rede',
+          tip:'Documento de acesso à rede exigido conforme tipo de conexão.',
+          leaves:['Parecer de Acesso ONS (Rede Básica/DIT)','Orçamento Estimado DAL (distribuição)','Orçamento de Conexão (distribuição)','CUST/CUSD + CCT/CCD (contratos)','Protocolo (se sem doc. definitivo)'] },
+        { id:'decl', label:'Declarações', sub:'e ficha',
+          tip:'Declarações obrigatórias e ficha de dados do AEGE.',
+          leaves:['Ficha de Dados — AEGE (PDF)','Requerimento de Cadastramento (Anexo III)','Declaração de Conteúdo Nacional (Anexo VII)','Declaração automática AEGE','Direito de uso do local (Anexo VI)','Certidão RGI (até 30 dias)'] },
+      ]
+    },
+    { id:'conn', color:'amber', label:'Conexão', sub:'Tipo × documentos',
+      tip:'Matriz de documentos de acesso por tipo de conexão à rede elétrica.',
+      children:[
+        { id:'rb', label:'Rede Básica', sub:'/ DIT — ONS',
+          tip:'Conexão na Rede Básica ou DIT operada pelo ONS.',
+          leaves:['Parecer de Acesso ONS','Suprimento ≤ 5 anos da data do leilão','Validade 90 dias (Proc. de Rede)','Até 75 dias antes do leilão para EPE','Obrigatório em leilões sem disputa de margem'] },
+        { id:'dist', label:'Distribuição', sub:'(distribuidora)',
+          tip:'Conexão na rede de distribuição da concessionária ou permissionária.',
+          leaves:['Orçamento Estimado (DAL) — exclusivo por leilão','Orçamento de Conexão — prazo da distribuidora','CUSD + CCD (contratos assinados)','Prazo: até 75 dias antes do leilão'] },
+        { id:'epeinf', label:'Info. Acesso', sub:'EPE (>3 anos)',
+          tip:'Informação de Acesso emitida pela EPE para suprimento acima de 3 anos.',
+          leaves:['Solicitada pelo cadastro no AEGE','Somente Rede Básica / DIT / ICG','Exclusiva por leilão — não reutilizável','Não substitui solicitação ao ONS pós-leilão'] },
+      ]
+    },
+    { id:'prazos', color:'gray', label:'Prazos', sub:'e operação',
+      tip:'Prazos regulatórios e regras de conexão e operação comercial.',
+      children:[
+        { id:'prazo1', label:'Autorizações', sub:'Vigências',
+          tip:'Prazos de vigência dos atos regulatórios.',
+          leaves:['DRO-SAE: 4 anos sem prorrogação','Autorização ANEEL: 35 anos','Operação comercial: 54 meses após outorga','Prorrogação: solicitar com ≥ 6 meses de antecedência'] },
+        { id:'prazo2', label:'Obras e', sub:'conexão',
+          tip:'Regras para início de obras e conexão ao sistema elétrico.',
+          leaves:['Obras podem iniciar antes da outorga (risco do agente)','Conexão só após contratos + outorga emitida','Operação em teste: seguir RN 1.029/2022','SAE adjacentes: sem compartilhamento de medição'] },
+        { id:'prazo3', label:'Transitório', sub:'ANEEL 2026',
+          tip:'Disposição transitória da RN 1.161/2026.',
+          leaves:['Pedidos já protocolados: 90 dias para atualizar','Prazo conta da publicação: 24/06/2026','Não atualizar = indeferimento automático'] },
+      ]
+    },
+  ]
+};
+
+const chevronSVG = `<svg class="nc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
+
+function buildChild(child){
+  const leaves = (child.leaves||[]).map(l=>`<div class="leaf-chip">${l}</div>`).join('');
+  return `
+  <div class="child-card" data-id="${child.id}">
+    <div class="node-card child-toggle">
+      <div class="nc-top">
+        <div class="nc-label">${child.label}</div>
+      </div>
+      <div class="nc-sub">${child.sub}</div>
+      ${chevronSVG}
+      <div class="nc-tip">${child.tip}</div>
+    </div>
+    <div class="leaves-wrap">
+      <div class="leaves-inner">
+        <div class="leaves-list">${leaves}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildBranch(branch){
+  const children = (branch.children||[]).map(buildChild).join('');
+  return `
+  <div class="branch" data-color="${branch.color}" data-id="${branch.id}">
+    <div class="node-card branch-toggle">
+      <div class="nc-top">
+        <div class="nc-dot"></div>
+        <div class="nc-label">${branch.label}</div>
+      </div>
+      <div class="nc-sub">${branch.sub}</div>
+      ${chevronSVG}
+      <div class="nc-tip">${branch.tip}</div>
+    </div>
+    <div class="children-wrap">
+      <div class="children-inner">
+        <div class="children-stack">${children}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const root = document.getElementById('tree');
+  root.innerHTML = `
+    <div class="root-card">
+      <div class="rc-label">${DATA.label}</div>
+      <div class="rc-sub">${DATA.sub}</div>
+    </div>
+    <div class="branches-row">
+      ${DATA.branches.map(buildBranch).join('')}
+    </div>
+  `;
+
+  root.querySelectorAll('.branch-toggle').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const branch = el.closest('.branch');
+      const isOpen = branch.classList.toggle('expanded');
+      el.classList.toggle('open', isOpen);
+    });
+  });
+
+  root.querySelectorAll('.child-toggle').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const card = el.closest('.child-card');
+      const isOpen = card.classList.toggle('open');
+      el.classList.toggle('open', isOpen);
+    });
+  });
+}
+
+function setAll(expand){
+  document.querySelectorAll('.branch').forEach(b=>{
+    b.classList.toggle('expanded', expand);
+    b.querySelector('.branch-toggle').classList.toggle('open', expand);
+  });
+  document.querySelectorAll('.child-card').forEach(c=>{
+    c.classList.toggle('open', expand);
+    c.querySelector('.child-toggle').classList.toggle('open', expand);
+  });
+}
+
+document.getElementById('btn-expand').addEventListener('click', ()=>setAll(true));
+document.getElementById('btn-collapse').addEventListener('click', ()=>setAll(false));
+
+render();
+</script>
+</body>
+</html>
