@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LRCAP 2026 — Fluxograma Completo | Do Início à Operação</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg-1:#0b1220; --bg-2:#0f1b2e;
+  --bg-grid:rgba(255,255,255,.032);
+  --surface:rgba(255,255,255,.055);
+  --surface-hover:rgba(255,255,255,.09);
+  --border:rgba(255,255,255,.10);
+  --border-strong:rgba(255,255,255,.18);
+  --text-1:#f3f5f9; --text-2:#aab3c5; --text-3:#76819a;
+  --shadow-lg:0 24px 60px -20px rgba(0,0,0,.55),0 4px 18px rgba(0,0,0,.35);
+  --shadow-sm:0 6px 18px -8px rgba(0,0,0,.45);
+
+  --c-orange:#ff8c42;  --c-orange-soft:rgba(255,140,66,.13);   --c-orange-border:rgba(255,140,66,.35);
+  --c-blue:#4da3ff;    --c-blue-soft:rgba(77,163,255,.13);     --c-blue-border:rgba(77,163,255,.35);
+  --c-green:#5ed68f;   --c-green-soft:rgba(94,214,143,.13);    --c-green-border:rgba(94,214,143,.35);
+  --c-amber:#ffb45e;   --c-amber-soft:rgba(255,180,94,.13);    --c-amber-border:rgba(255,180,94,.35);
+  --c-purple:#c792ff;  --c-purple-soft:rgba(199,146,255,.13);  --c-purple-border:rgba(199,146,255,.35);
+  --c-red:#ff6b6b;     --c-red-soft:rgba(255,107,107,.13);     --c-red-border:rgba(255,107,107,.35);
+  --c-teal:#4ecdc4;    --c-teal-soft:rgba(78,205,196,.13);     --c-teal-border:rgba(78,205,196,.35);
+  --c-pink:#f78fb3;    --c-pink-soft:rgba(247,143,179,.13);    --c-pink-border:rgba(247,143,179,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{
+  min-height:100%;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  color:var(--text-1);
+  background:#0b1220;
+}
+body{
+  background-image:
+    radial-gradient(1100px 600px at 20% -10%,rgba(77,163,255,.12),transparent 60%),
+    radial-gradient(800px 400px at 90% 10%,rgba(94,214,143,.08),transparent 55%),
+    radial-gradient(900px 500px at 50% 100%,rgba(199,146,255,.07),transparent 55%),
+    linear-gradient(160deg,var(--bg-1),var(--bg-2) 60%,#0a0f1a),
+    linear-gradient(var(--bg-grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--bg-grid) 1px,transparent 1px);
+  background-size:auto,auto,auto,auto,44px 44px,44px 44px;
+  padding:36px 20px 100px;
+}
+
+/* ── Header ── */
+.hdr{max-width:860px;margin:0 auto 36px;text-align:center;}
+.hdr-eyebrow{font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--c-blue);opacity:.85;margin-bottom:10px;}
+.hdr h1{font-size:clamp(22px,3.2vw,36px);font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(95deg,#fff 5%,#bfd6ff 55%,#a3f0d0 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.2;margin-bottom:10px;}
+.hdr p{font-size:14px;color:var(--text-2);max-width:640px;margin:0 auto;line-height:1.6;}
+
+/* ── Back button ── */
+.back-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--surface);border:1px solid var(--border-strong);border-radius:999px;
+  padding:9px 18px;font-size:13px;font-weight:600;color:var(--text-2);cursor:pointer;
+  text-decoration:none;transition:all .2s ease;margin-bottom:28px;
+}
+.back-btn:hover{background:var(--surface-hover);color:var(--text-1);transform:translateY(-1px);}
+.back-btn svg{width:14px;height:14px;}
+
+/* ── Flowchart ── */
+.flow{max-width:780px;margin:0 auto;position:relative;}
+
+/* central spine */
+.flow::before{
+  content:'';position:absolute;left:35px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,transparent 0%,var(--border-strong) 8%,var(--border-strong) 92%,transparent 100%);
+  z-index:0;
+}
+
+/* ── Step card ── */
+.step{position:relative;display:flex;gap:0;margin-bottom:10px;z-index:1;}
+
+.step-num{
+  width:70px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;
+  padding-top:16px;
+}
+.step-badge{
+  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;letter-spacing:-.01em;border:2px solid;
+  flex-shrink:0;position:relative;z-index:2;
+}
+
+.step-body{
+  flex:1;background:var(--surface);border:1px solid var(--border);border-radius:18px;
+  padding:16px 18px 16px;cursor:pointer;user-select:none;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
+  box-shadow:var(--shadow-sm);
+}
+.step-body:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.step-body:active{transform:translateY(-1px);}
+
+.step-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.step-label{font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1.3;}
+.step-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
+.step-sub{font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.5;}
+.step-arrow{width:16px;height:16px;color:var(--text-3);flex-shrink:0;transition:transform .25s ease,color .2s ease;}
+.step-body.open .step-arrow{transform:rotate(90deg);color:var(--text-1);}
+
+.step-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.pill{
+  font-size:11.5px;font-weight:500;padding:5px 10px;border-radius:8px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  color:var(--text-2);cursor:pointer;transition:all .15s ease;
+  display:inline-flex;align-items:center;gap:5px;line-height:1.3;
+}
+.pill:hover{background:rgba(255,255,255,.13);color:var(--text-1);border-color:rgba(124,140,255,.45);transform:translateY(-1px);}
+.pill svg{width:10px;height:10px;opacity:.5;}
+
+/* color variants */
+.step[data-color="orange"] .step-badge{background:var(--c-orange-soft);border-color:var(--c-orange);color:var(--c-orange);}
+.step[data-color="orange"] .step-body{border-color:rgba(255,140,66,.2);}
+.step[data-color="orange"] .step-body:hover,.step[data-color="orange"] .step-body.open{border-color:var(--c-orange-border);background:var(--c-orange-soft);}
+.step[data-color="orange"] .step-label{color:#ffd5b0;}
+.step[data-color="orange"] .step-tag{background:var(--c-orange-soft);border:1px solid var(--c-orange-border);color:#ffd5b0;}
+
+.step[data-color="blue"] .step-badge{background:var(--c-blue-soft);border-color:var(--c-blue);color:var(--c-blue);}
+.step[data-color="blue"] .step-body{border-color:rgba(77,163,255,.2);}
+.step[data-color="blue"] .step-body:hover,.step[data-color="blue"] .step-body.open{border-color:var(--c-blue-border);background:var(--c-blue-soft);}
+.step[data-color="blue"] .step-label{color:#bfe0ff;}
+.step[data-color="blue"] .step-tag{background:var(--c-blue-soft);border:1px solid var(--c-blue-border);color:#bfe0ff;}
+
+.step[data-color="green"] .step-badge{background:var(--c-green-soft);border-color:var(--c-green);color:var(--c-green);}
+.step[data-color="green"] .step-body{border-color:rgba(94,214,143,.2);}
+.step[data-color="green"] .step-body:hover,.step[data-color="green"] .step-body.open{border-color:var(--c-green-border);background:var(--c-green-soft);}
+.step[data-color="green"] .step-label{color:#c4f3da;}
+.step[data-color="green"] .step-tag{background:var(--c-green-soft);border:1px solid var(--c-green-border);color:#c4f3da;}
+
+.step[data-color="amber"] .step-badge{background:var(--c-amber-soft);border-color:var(--c-amber);color:var(--c-amber);}
+.step[data-color="amber"] .step-body{border-color:rgba(255,180,94,.2);}
+.step[data-color="amber"] .step-body:hover,.step[data-color="amber"] .step-body.open{border-color:var(--c-amber-border);background:var(--c-amber-soft);}
+.step[data-color="amber"] .step-label{color:#ffdfb8;}
+.step[data-color="amber"] .step-tag{background:var(--c-amber-soft);border:1px solid var(--c-amber-border);color:#ffdfb8;}
+
+.step[data-color="purple"] .step-badge{background:var(--c-purple-soft);border-color:var(--c-purple);color:var(--c-purple);}
+.step[data-color="purple"] .step-body{border-color:rgba(199,146,255,.2);}
+.step[data-color="purple"] .step-body:hover,.step[data-color="purple"] .step-body.open{border-color:var(--c-purple-border);background:var(--c-purple-soft);}
+.step[data-color="purple"] .step-label{color:#e7d2ff;}
+.step[data-color="purple"] .step-tag{background:var(--c-purple-soft);border:1px solid var(--c-purple-border);color:#e7d2ff;}
+
+.step[data-color="teal"] .step-badge{background:var(--c-teal-soft);border-color:var(--c-teal);color:var(--c-teal);}
+.step[data-color="teal"] .step-body{border-color:rgba(78,205,196,.2);}
+.step[data-color="teal"] .step-body:hover,.step[data-color="teal"] .step-body.open{border-color:var(--c-teal-border);background:var(--c-teal-soft);}
+.step[data-color="teal"] .step-label{color:#b2f0ec;}
+.step[data-color="teal"] .step-tag{background:var(--c-teal-soft);border:1px solid var(--c-teal-border);color:#b2f0ec;}
+
+.step[data-color="red"] .step-badge{background:var(--c-red-soft);border-color:var(--c-red);color:var(--c-red);}
+.step[data-color="red"] .step-body{border-color:rgba(255,107,107,.2);}
+.step[data-color="red"] .step-body:hover,.step[data-color="red"] .step-body.open{border-color:var(--c-red-border);background:var(--c-red-soft);}
+.step[data-color="red"] .step-label{color:#ffd2d2;}
+.step[data-color="red"] .step-tag{background:var(--c-red-soft);border:1px solid var(--c-red-border);color:#ffd2d2;}
+
+.step[data-color="pink"] .step-badge{background:var(--c-pink-soft);border-color:var(--c-pink);color:var(--c-pink);}
+.step[data-color="pink"] .step-body{border-color:rgba(247,143,179,.2);}
+.step[data-color="pink"] .step-body:hover,.step[data-color="pink"] .step-body.open{border-color:var(--c-pink-border);background:var(--c-pink-soft);}
+.step[data-color="pink"] .step-label{color:#fdd5e4;}
+.step[data-color="pink"] .step-tag{background:var(--c-pink-soft);border:1px solid var(--c-pink-border);color:#fdd5e4;}
+
+/* ── Fork / Decision ── */
+.fork{
+  margin:4px 0 4px 70px;position:relative;z-index:1;
+  background:var(--c-amber-soft);border:1px solid var(--c-amber-border);border-radius:16px;
+  padding:14px 18px;
+}
+.fork-label{
+  display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--c-amber);margin-bottom:12px;
+}
+.fork-label svg{width:14px;height:14px;}
+.fork-row{display:flex;gap:10px;flex-wrap:wrap;}
+.fork-branch{
+  flex:1;min-width:200px;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;cursor:pointer;
+  transition:all .2s ease;
+}
+.fork-branch:hover{background:rgba(255,255,255,.10);border-color:var(--border-strong);transform:translateY(-1px);}
+.fork-branch-label{font-size:13px;font-weight:700;color:var(--text-1);margin-bottom:3px;}
+.fork-branch-sub{font-size:11px;color:var(--text-2);}
+
+/* ── Section divider ── */
+.divider{
+  margin:24px 0 14px 70px;display:flex;align-items:center;gap:12px;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);
+}
+.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── Modal Overlay ── */
+#modal-overlay{
+  position:fixed;inset:0;z-index:200;display:none;
+  align-items:center;justify-content:flex-end;
+  background:rgba(5,8,16,.6);backdrop-filter:blur(5px);
+}
+#modal-overlay.active{display:flex;}
+
+.modal-panel{
+  width:min(580px,96vw);height:100vh;overflow-y:auto;
+  background:linear-gradient(175deg,rgba(18,26,46,.98),rgba(10,14,24,.99));
+  border-left:1px solid var(--border-strong);
+  padding:28px 28px 48px;
+  animation:slideIn .25s cubic-bezier(.2,.8,.2,1) both;
+  display:flex;flex-direction:column;gap:0;
+}
+@keyframes slideIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
+
+.modal-panel::-webkit-scrollbar{width:6px;}
+.modal-panel::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
+
+.modal-close{
+  display:flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border-radius:10px;border:1px solid var(--border-strong);
+  background:var(--surface);color:var(--text-2);cursor:pointer;
+  transition:all .15s ease;flex-shrink:0;
+  margin-left:auto;margin-bottom:18px;
+}
+.modal-close:hover{background:var(--surface-hover);color:var(--text-1);transform:rotate(90deg);}
+.modal-close svg{width:16px;height:16px;}
+
+.modal-tag{
+  display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:8px;
+  margin-bottom:10px;
+}
+.modal-title{font-size:20px;font-weight:800;letter-spacing:-.01em;line-height:1.3;margin-bottom:6px;}
+.modal-subtitle{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:18px;}
+
+.modal-section{margin-bottom:20px;}
+.modal-section-title{
+  font-size:10.5px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.modal-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.doc-list{display:flex;flex-direction:column;gap:6px;}
+.doc-item{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:11px;
+  background:var(--surface);border:1px solid var(--border);
+  transition:all .15s ease;cursor:default;
+}
+.doc-item:hover{background:var(--surface-hover);border-color:var(--border-strong);}
+.doc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.doc-text{font-size:12.5px;color:var(--text-1);line-height:1.5;}
+.doc-text em{color:var(--text-2);font-style:normal;font-size:11.5px;}
+.doc-text strong{color:#fff;font-weight:700;}
+.doc-ref{font-size:10.5px;color:var(--text-3);margin-top:2px;}
+
+.modal-note{
+  background:rgba(255,180,94,.09);border:1px solid rgba(255,180,94,.2);border-radius:12px;
+  padding:12px 14px;font-size:12.5px;color:var(--c-amber);line-height:1.55;margin-top:6px;
+}
+.modal-note strong{color:#ffd5a0;}
+
+/* ── Legend ── */
+.legend{
+  max-width:780px;margin:36px auto 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
+}
+.leg{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-2);}
+.leg-dot{width:10px;height:10px;border-radius:50%;}
+
+/* ── Optional badge ── */
+.opt-badge{
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;
+  background:rgba(154,166,194,.15);border:1px solid rgba(154,166,194,.3);color:var(--text-3);
+  margin-left:8px;letter-spacing:.04em;text-transform:uppercase;
+}
+
+@media(max-width:600px){
+  .flow::before{left:28px;}
+  .step-num{width:56px;}
+  .step-badge{width:28px;height:28px;font-size:11px;}
+  .fork,.divider{margin-left:56px;}
+  .modal-panel{width:100vw;border-left:none;border-top:1px solid var(--border-strong);}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-eyebrow">LRCAP 2026 — Sistema de Armazenamento de Energia (SAE)</div>
+  <h1>Fluxograma Completo<br>Do Início à Operação Comercial</h1>
+  <p>Passo a passo desde a prospecção da área até o início da operação, incluindo processo fundiário, licenciamento, outorga ANEEL, cadastramento EPE e leilão.</p>
+</div>
+
+<div style="text-align:center;margin-bottom:32px;">
+  <a href="mapa_mental_requisitos_SAE.html" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    Voltar ao Mapa Mental
+  </a>
+</div>
+
+<div class="flow" id="flow"></div>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:#ff8c42"></div>Prospecção / Estruturação</div>
+  <div class="leg"><div class="leg-dot" style="background:#4da3ff"></div>Processo Fundiário</div>
+  <div class="leg"><div class="leg-dot" style="background:#f78fb3"></div>Licenciamento Ambiental</div>
+  <div class="leg"><div class="leg-dot" style="background:#c792ff"></div>Outorga ANEEL</div>
+  <div class="leg"><div class="leg-dot" style="background:#ffb45e"></div>Conexão à Rede</div>
+  <div class="leg"><div class="leg-dot" style="background:#5ed68f"></div>EPE / AEGE</div>
+  <div class="leg"><div class="leg-dot" style="background:#4ecdc4"></div>Leilão</div>
+  <div class="leg"><div class="leg-dot" style="background:#ff6b6b"></div>Implantação / Operação</div>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay">
+  <div class="modal-panel" id="modal-panel">
+    <button class="modal-close" id="modal-close" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+const STEPS = [
+  {
+    num:1, color:'orange', tag:'Prospecção', label:'Prospecção e Análise de Viabilidade',
+    sub:'Identificar área, tecnologia e modalidade de comercialização',
+    pills:['Identificação da área','Estudo técnico preliminar','Ponto de conexão','Tecnologia SAE'],
+    modal:{
+      tag:'Fase 1 — Prospecção', title:'Prospecção e Análise de Viabilidade',
+      subtitle:'Primeiro passo: avaliar a viabilidade técnica, regulatória e comercial antes de qualquer investimento.',
+      sections:[
+        { title:'Identificação da Área', color:'#ff8c42', items:[
+          {text:'Identificar área candidata (localização, acesso, infraestrutura existente)'},
+          {text:'Verificar restrições de uso do solo: zoneamento municipal, APP (Área de Preservação Permanente), APA, unidades de conservação'},
+          {text:'Verificar distância ao ponto de conexão na rede elétrica (kV, subestação ou linha disponível)'},
+          {text:'Analisar topografia e condições geotécnicas para implantação'},
+        ]},
+        { title:'Estudo Técnico Preliminar', color:'#ff8c42', items:[
+          {text:'Definir tecnologia: <strong>Bateria Eletroquímica</strong> ou <strong>Usina Hidrelétrica Reversível (UHR)</strong>'},
+          {text:'Dimensionar potência (MW) e capacidade de armazenamento (MWh)'},
+          {text:'Estimar investimento (CAPEX) e retorno (OPEX, receita CRCAP)'},
+          {text:'Avaliar regime de operação: arbitragem, regulação de frequência, reserva de capacidade'},
+        ]},
+        { title:'Análise Regulatória e Comercial', color:'#ff8c42', items:[
+          {text:'Verificar enquadramento no LRCAP 2026: produto Potência Armazenamento (PA) 2028-A ou 2028-B'},
+          {text:'Confirmar prazo de publicação da Portaria MME e cronograma do leilão'},
+          {text:'Avaliar modalidade de acesso à rede: Rede Básica/DIT (via ONS) ou Distribuição (via distribuidora)'},
+          {text:'Verificar exigência de Conteúdo Nacional (item aplicável ao leilão)'},
+        ]},
+      ],
+      note:null
+    }
+  },
+  {
+    num:2, color:'orange', tag:'Jurídico', label:'Constituição Jurídica da Empresa / SPE',
+    sub:'Criar a pessoa jurídica apta a deter a outorga e participar do leilão',
+    pills:['Contrato social','CNPJ','Representação legal','Organograma societário'],
+    modal:{
+      tag:'Fase 2 — Jurídico', title:'Constituição Jurídica da Empresa / SPE',
+      subtitle:'A ANEEL e a EPE exigem que o requerente seja pessoa jurídica com objeto social compatível com a exploração de SAE.',
+      sections:[
+        { title:'Documentos Societários', color:'#ff8c42', items:[
+          {text:'Constituir a Sociedade de Propósito Específico (SPE) ou empresa titular', ref:'RN ANEEL 1.161/2026 — Anexo II, item 3'},
+          {text:'<strong>Ato constitutivo / estatuto / contrato social</strong> em vigor, devidamente registrado no órgão competente (JUCEA/Cartório)', ref:'Anexo II, item 3.1'},
+          {text:'O objeto social deve descrever de forma precisa as atividades vinculadas à autorização de exploração de SAE'},
+          {text:'Ato que instituiu a atual administração (eleição de diretores, ata de AGE etc.)'},
+          {text:'<strong>CNPJ</strong> ativo junto à Receita Federal'},
+        ]},
+        { title:'Representação Legal', color:'#ff8c42', items:[
+          {text:'<strong>Comprovação de representação legal</strong> da pessoa que assinará os requerimentos (procuração pública ou estatutária)', ref:'Anexo II, item 4'},
+          {text:'Designar o <strong>Representante Legal</strong> (signatário de documentos) e o <strong>Interlocutor</strong> (contato técnico) — ambos com login próprio no AEGE', ref:'EPE-DEE-RE-079 — item 3.1'},
+        ]},
+        { title:'Organograma Societário', color:'#ff8c42', items:[
+          {text:'<strong>Organograma do grupo societário</strong> com abertura do quadro de acionistas até a participação final, inclusive pessoa física', ref:'Anexo II, item 2'},
+          {text:'Indicar participações diretas e indiretas acima de 5%'},
+          {text:'Participações inferiores a 5% também devem constar se o acionista integrar o Grupo de Controle via Acordo de Acionistas'},
+          {text:'Sinalizar quem exerce controle societário direto sobre a requerente'},
+        ]},
+        { title:'Regularidade Fiscal (manter durante toda a vigência)', color:'#ff8c42', items:[
+          {text:'CRF — <strong>Regularidade com o FGTS</strong>', ref:'Anexo II, item 1'},
+          {text:'Certidão negativa de débitos das <strong>Fazendas Municipal, Estadual e Federal</strong> do domicílio ou sede'},
+          {text:'Regularidade <strong>contínua</strong>: deve ser mantida durante a instrução do processo e durante toda a vigência da outorga (35 anos)'},
+        ]},
+        { title:'Consórcio (se houver)', color:'#ff8c42', items:[
+          {text:'<strong>Contrato de constituição de consórcio</strong> por instrumento público ou particular, subscrito pelos representantes legais', ref:'Anexo II, item 5'},
+          {text:'Indicar participação percentual de cada empresa e designar a empresa líder'},
+        ]},
+      ],
+      note:null
+    }
+  },
+  {
+    num:3, color:'blue', tag:'Fundiário', label:'Processo Fundiário — Área do Empreendimento',
+    sub:'Matrícula, georreferenciamento, escritura e direito de uso do local',
+    pills:['Matrícula RGI','Georreferenciamento INCRA','Escritura / Arrendamento','Certidão inteiro teor','Declaração Anexo VI'],
+    modal:{
+      tag:'Fase 3 — Fundiário', title:'Processo Fundiário — Área do Empreendimento',
+      subtitle:'A EPE exige comprovação do direito de usar ou dispor do local, com georreferenciamento averbado no RGI. É um dos documentos mais complexos e demorados do processo.',
+      sections:[
+        { title:'Regularização Imobiliária', color:'#4da3ff', items:[
+          {text:'Identificar o imóvel e obter a <strong>matrícula no Cartório de Registro de Imóveis (RGI)</strong> da comarca correspondente'},
+          {text:'Verificar se o imóvel está individualizado ou se é necessário realizar <strong>desmembramento / remembramento</strong>'},
+          {text:'Verificar eventuais ônus, hipotecas, penhoras ou restrições na matrícula'},
+          {text:'Obter <strong>certidão de inteiro teor</strong> atualizada (a EPE exige emissão ≤ 30 dias da data de apresentação)'},
+        ]},
+        { title:'Georreferenciamento (INCRA)', color:'#4da3ff', items:[
+          {text:'Contratar profissional habilitado para realizar o <strong>georreferenciamento do imóvel</strong> conforme normas INCRA (Lei 10.267/2001 e Decreto 4.449/2002)'},
+          {text:'Submeter o levantamento ao <strong>SIGEF/INCRA</strong> para certificação'},
+          {text:'Após certificação pelo INCRA, <strong>averbar o georreferenciamento na matrícula do RGI</strong>'},
+          {text:'O georreferenciamento averbado deve estar consistente com a poligonal declarada no AEGE (Guia Empreendimento)'},
+        ]},
+        { title:'Aquisição ou Arrendamento do Terreno', color:'#4da3ff', items:[
+          {text:'Assinar <strong>Escritura de Compra e Venda</strong> (registrada no RGI) ou <strong>Contrato de Arrendamento / Locação</strong> com prazo compatível com a outorga (35 anos + margem)'},
+          {text:'Registrar a escritura ou averbação do arrendamento no RGI'},
+          {text:'Para áreas em diferentes matrículas: comprovar direito sobre todas as parcelas'},
+          {text:'Empreendimento deve estar integralmente contido dentro da(s) poligonal(is) comprovada(s)'},
+        ]},
+        { title:'Declaração de Direito de Uso (EPE)', color:'#4da3ff', items:[
+          {text:'Preparar a <strong>Declaração de Direito de Usar ou Dispor do Local — Anexo VI</strong> (EPE-DEE-RE-079)', ref:'EPE-DEE-RE-079 — item 4.4'},
+          {text:'A declaração deve ser assinada pelo <strong>Representante Legal</strong> com firma reconhecida ou assinatura digital'},
+          {text:'Acompanhar de <strong>certidão de inteiro teor</strong> com georreferenciamento averbado (emitida em ≤ 30 dias)'},
+          {text:'Indicar na declaração o número da matrícula, nome do proprietário/arrendatário e descrição do vínculo jurídico'},
+        ]},
+        { title:'Desenho de Localização (para EPE)', color:'#4da3ff', items:[
+          {text:'Elaborar o <strong>Desenho de Localização em DWG</strong>, projeção UTM, com grade de coordenadas, meridiano central e referencial SIRGAS 2000', ref:'EPE-DEE-RE-079 — item 4.1-B'},
+          {text:'Incluir: poligonal da(s) propriedade(s) com número de matrícula RGI, localização das unidades do SAE (compatíveis com AEGE), estradas, acessos e subestação'},
+          {text:'Elaborar <strong>Planilha Excel de Coordenadas UTM dos Vértices</strong> da poligonal (conforme Anexo IV da EPE)', ref:'Item 4.1-C'},
+        ]},
+      ],
+      note:'O georreferenciamento averbado no RGI costuma levar de 60 a 180 dias. Inicie este processo o quanto antes — é item bloqueador para o cadastramento EPE.'
+    }
+  },
+  {
+    num:4, color:'pink', tag:'Ambiental', label:'Licenciamento Ambiental',
+    sub:'Licença Prévia → Licença de Instalação → Licença de Operação',
+    pills:['Licença Prévia (LP)','Licença de Instalação (LI)','Licença de Operação (LO)','EIA/RAS'],
+    modal:{
+      tag:'Fase 4 — Ambiental', title:'Licenciamento Ambiental',
+      subtitle:'A licença ambiental é exigida pela ANEEL para emissão da outorga definitiva (Anexo II, item 11). O processo pode ser federal (IBAMA) ou estadual, dependendo do porte e localização.',
+      sections:[
+        { title:'Enquadramento e Órgão Licenciador', color:'#f78fb3', items:[
+          {text:'Verificar se a competência é <strong>federal (IBAMA)</strong>, estadual (ex.: SEMA, SEMAD) ou municipal'},
+          {text:'Para empreendimentos de grande porte ou com impacto significativo: exige <strong>EIA/RIMA</strong> (Estudo de Impacto Ambiental / Relatório de Impacto)'},
+          {text:'Para empreendimentos de menor impacto: pode ser exigido apenas <strong>RAS</strong> (Relatório Ambiental Simplificado) ou <strong>RCA</strong>'},
+          {text:'Verificar exigências específicas do estado de localização'},
+        ]},
+        { title:'Licença Prévia (LP)', color:'#f78fb3', items:[
+          {text:'Protocolar requerimento de LP com <strong>EIA/RIMA</strong> ou estudo ambiental correspondente'},
+          {text:'Aguardar análise do órgão ambiental e realização de <strong>audiência pública</strong> (quando aplicável)'},
+          {text:'<strong>LP concedida</strong>: atesta viabilidade ambiental do empreendimento e estabelece condicionantes para a próxima fase'},
+          {text:'LP é exigida antes do início das obras'},
+        ]},
+        { title:'Licença de Instalação (LI)', color:'#f78fb3', items:[
+          {text:'Comprovar atendimento a todas as condicionantes da LP'},
+          {text:'Apresentar projetos de engenharia detalhados e plano de controle ambiental durante a obra'},
+          {text:'<strong>LI concedida</strong>: autoriza o início das obras de implantação'},
+          {text:'<strong>ANEEL exige a licença ambiental</strong> (LP ou LI) para emissão da outorga definitiva'},
+        ]},
+        { title:'Licença de Operação (LO)', color:'#f78fb3', items:[
+          {text:'Requerer após a conclusão das obras, comprovando atendimento a todas as condicionantes da LI'},
+          {text:'Pode ser exigida para início da <strong>operação em teste</strong> e obrigatória para a <strong>operação comercial</strong>'},
+          {text:'Renovação periódica conforme prazo estabelecido pelo órgão ambiental'},
+        ]},
+      ],
+      note:'Para SAE de bateria em zona industrial existente ou próxima à subestação, o licenciamento tende a ser mais simples. Para UHR em ciclo fechado, o processo é mais longo e exigente, por envolver reservatórios e recursos hídricos.'
+    }
+  },
+  {
+    num:5, color:'purple', tag:'ANEEL', label:'Outorga de Autorização (ANEEL)',
+    sub:'DRO-SAE (opcional) → Qualificação Jurídica + Técnica → Publicação no DOU',
+    pills:['DRO-SAE (opc.)','Qualificação Jurídica','Qualificação Técnica','Licença Ambiental','Outorga 35 anos'],
+    modal:{
+      tag:'Fase 5 — ANEEL', title:'Outorga de Autorização ANEEL',
+      subtitle:'Regida pela RN ANEEL 1.161/2026. Processo obrigatório para operar o SAE. A outorga tem vigência de 35 anos com prazo de implantação de 54 meses.',
+      sections:[
+        { title:'Passo 5.A — DRO-SAE (Opcional)', color:'#c792ff', items:[
+          {text:'<span style="opacity:.7">[Opcional]</span> <strong>Despacho de Registro do Requerimento de Outorga (DRO-SAE)</strong>: não garante exclusividade nem direito de preferência. Validade de 4 anos, sem prorrogação', ref:'RN 1.161/2026 — Art. 4º'},
+          {text:'<strong>Formulário de Requerimento de Outorga — Anexo I</strong>: primeiro documento a ser protocolado no sistema informatizado da ANEEL'},
+          {text:'<strong>Declaração de Atendimento — Anexo III</strong>: declaração de compromisso com os requisitos técnicos'},
+          {text:'Protocolar via sistema informatizado ANEEL ou conforme instruções no sítio da agência'},
+        ]},
+        { title:'Passo 5.B — Qualificação Jurídica', color:'#c792ff', items:[
+          {text:'Regularidade fiscal: CRF/FGTS + certidões das Fazendas Municipal, Estadual e Federal', ref:'Anexo II, item 1'},
+          {text:'Organograma societário com participações diretas/indiretas ≥ 5%', ref:'Anexo II, item 2'},
+          {text:'Ato constitutivo/estatuto + ato que instituiu a administração atual', ref:'Anexo II, item 3'},
+          {text:'Comprovação de representação legal (procuração pública ou estatutária)', ref:'Anexo II, item 4'},
+          {text:'Contrato de constituição de consórcio, se houver', ref:'Anexo II, item 5'},
+        ]},
+        { title:'Passo 5.C — Qualificação Técnica (Bateria)', color:'#c792ff', items:[
+          {text:'<strong>Arranjo Geral</strong> do empreendimento com poligonal do SAE e rede de interesse restrito (subestação coletora → ponto de conexão)', ref:'Anexo II, item 6'},
+          {text:'<strong>Estudo técnico</strong>: estimativa de injeção anual, potência de descarga (kW), capacidade de armazenamento (kWh)', ref:'Anexo II, item 7'},
+          {text:'Descrição da tecnologia e equipamentos adotados, eficiência global, perfil de operação previsto'},
+        ]},
+        { title:'Passo 5.C — Qualificação Técnica (UHR)', color:'#c792ff', items:[
+          {text:'<strong>Arranjo Geral</strong> com reservatórios, dutos forçados, casa de força e rede de interesse restrito', ref:'Anexo II, item 8'},
+          {text:'<strong>Outorga de uso dos recursos hídricos</strong> (ou documentos do órgão competente dispensando a outorga)', ref:'Anexo II, item 9'},
+          {text:'Estudo técnico: potência injetável, potência bombeável, capacidade de armazenamento, altura de queda, vazão de projeto, eficiência global', ref:'Anexo II, item 10'},
+        ]},
+        { title:'Passo 5.D — Documentos Adicionais', color:'#c792ff', items:[
+          {text:'<strong>Licença ambiental</strong>', ref:'Anexo II, item 11'},
+          {text:'<strong>CUST</strong> (celebrado com o ONS) e/ou <strong>CUSD</strong> (celebrado com a distribuidora)', ref:'Anexo II, item 12'},
+          {text:'<strong>Parecer de acesso</strong> correspondente ao contrato de uso da rede', ref:'Anexo II, item 12.1'},
+          {text:'<strong>Sumário Executivo</strong> para emissão de outorga', ref:'Anexo II, item 13'},
+          {text:'<strong>Declaração de Atendimento — Anexo III</strong>'},
+        ]},
+        { title:'Passo 5.E — Análise e Publicação', color:'#c792ff', items:[
+          {text:'ANEEL analisa histórico do requerente e de seus controladores (penalidades e adimplência setorial)'},
+          {text:'<strong>Outorga publicada no D.O.U.</strong> com vigência de 35 anos a partir da publicação'},
+          {text:'Prazo de implantação: <strong>54 meses</strong> para operação comercial de todas as unidades'},
+          {text:'Pedido pode ser indeferido/arquivado se faltar documentação dos Anexos I e II'},
+        ]},
+      ],
+      note:'Pedidos protocolados antes de 24/06/2026 têm 90 dias para se adequar aos novos requisitos da RN 1.161/2026, sob pena de indeferimento automático.'
+    }
+  },
+
+  // FORK: DISTRIBUIÇÃO / TRANSMISSÃO
+  { type:'fork' },
+
+  {
+    num:6, color:'amber', tag:'Conexão · Distribuição', label:'Processo de Conexão — Distribuição',
+    sub:'DAL / Orçamento de Conexão via distribuidora local (RN ANEEL 1000/2021)',
+    pills:['Pedido de acesso','Estudo distribuidora','DAL / Orç. Conexão','CUSD + CCD','Faixa de servidão'],
+    modal:{
+      tag:'Fase 6A — Distribuição', title:'Processo de Conexão à Rede de Distribuição',
+      subtitle:'Para empreendimentos conectados à rede de distribuição (tensão < 230 kV na maioria dos casos). Regido pela RN ANEEL 1000/2021.',
+      sections:[
+        { title:'Solicitação de Acesso', color:'#ffb45e', items:[
+          {text:'Protocolar <strong>Pedido de Acesso</strong> junto à distribuidora local, conforme RN ANEEL 1.000/2021'},
+          {text:'Informar: potência instalada, tecnologia, ponto de conexão pretendido, previsão de entrada em operação'},
+          {text:'Aguardar <strong>Estudo de Acesso</strong> da distribuidora (prazo regulatório conforme RN 1.000/2021)'},
+        ]},
+        { title:'Documento de Acesso para Leilão (DAL)', color:'#ffb45e', items:[
+          {text:'<strong>Orçamento Estimado (DAL)</strong>: documento exclusivo para participação neste leilão específico (LRCAP-2026)', ref:'EPE-DEE-RE-079 — item 4.2-B.2'},
+          {text:'Deve seguir as diretrizes da RN ANEEL 1.000/2021 (art. 60 — escopo mínimo do orçamento)'},
+          {text:'Enviar à EPE até <strong>75 dias antes</strong> da data do leilão (Portaria MME 102/2016)'},
+        ]},
+        { title:'Orçamento de Conexão', color:'#ffb45e', items:[
+          {text:'Alternativa ao DAL: <strong>Orçamento de Conexão</strong> emitido pela distribuidora', ref:'EPE-DEE-RE-079 — item 4.2-B.3'},
+          {text:'Prazo de envio à EPE: até <strong>75 dias antes</strong> do leilão'},
+        ]},
+        { title:'Contratos de Rede', color:'#ffb45e', items:[
+          {text:'Negociar e assinar o <strong>CUSD — Contrato de Uso do Sistema de Distribuição</strong>'},
+          {text:'Assinar o <strong>CCD — Contrato de Conexão à Distribuição</strong>'},
+          {text:'Estes contratos são exigidos pela ANEEL para emissão da outorga definitiva'},
+        ]},
+        { title:'Processo Fundiário — Faixa de Servidão', color:'#ffb45e', items:[
+          {text:'Se houver necessidade de construção de nova linha de distribuição: realizar levantamento fundiário da faixa de passagem'},
+          {text:'Negociar servidão administrativa ou de passagem com proprietários lindeiros'},
+          {text:'Registrar a servidão no RGI de cada imóvel afetado'},
+        ]},
+      ],
+      note:null
+    }
+  },
+  {
+    num:'6B', color:'amber', tag:'Conexão · Transmissão', label:'Processo de Conexão — Rede Básica / Transmissão',
+    sub:'Parecer de Acesso ONS para Rede Básica ou DIT (Procedimentos de Rede)',
+    pills:['Pedido ao ONS','Parecer de Acesso ONS','CUST','LT / Subestação','Faixa de servidão'],
+    modal:{
+      tag:'Fase 6B — Transmissão', title:'Processo de Conexão — Rede Básica / DIT',
+      subtitle:'Para empreendimentos que se conectam à Rede Básica (≥ 230 kV) ou a Demais Instalações de Transmissão (DIT). Processo gerenciado pelo ONS.',
+      sections:[
+        { title:'Solicitação de Acesso ao ONS', color:'#ffb45e', items:[
+          {text:'Protocolar <strong>Pedido de Acesso ao ONS</strong> conforme os Procedimentos de Rede do ONS'},
+          {text:'Informar ponto de conexão pretendido, tensão, potência instalada e previsão de entrada em operação'},
+          {text:'Aguardar realização do <strong>Estudo de Acesso</strong> pelo ONS'},
+        ]},
+        { title:'Parecer de Acesso ONS', color:'#ffb45e', items:[
+          {text:'<strong>Parecer de Acesso ONS</strong>: válido quando a data de início do suprimento do leilão for ≤ 5 anos', ref:'EPE-DEE-RE-079 — item 4.2-B.1'},
+          {text:'Validade do parecer: <strong>90 dias</strong> conforme os Procedimentos de Rede'},
+          {text:'Enviar à EPE até <strong>75 dias antes</strong> da data do leilão (Portaria MME 102/2016)'},
+          {text:'Obrigatório para leilões sem disputa de margem'},
+          {text:'Alternativa: <strong>Informação de Acesso EPE</strong> — emitida apenas pela EPE para projetos cadastrados com ponto de conexão em Rede Básica/DIT/ICG', ref:'Item 4.2-B.4'},
+        ]},
+        { title:'Contrato CUST', color:'#ffb45e', items:[
+          {text:'Negociar e assinar o <strong>CUST — Contrato de Uso do Sistema de Transmissão</strong> junto ao ONS'},
+          {text:'O CUST é exigido pela ANEEL para emissão da outorga definitiva'},
+          {text:'Para conexão em DIT ou instalações de distribuição: assinar também o <strong>CUSD</strong> com a distribuidora/transmissora local'},
+        ]},
+        { title:'Obras de Conexão', color:'#ffb45e', items:[
+          {text:'Construção da <strong>subestação coletora</strong> (se necessária) e da rede de interesse restrito até o ponto de conexão'},
+          {text:'Para linhas de transmissão novas: elaborar projeto de engenharia, obter licença ambiental e realizar obras'},
+          {text:'Inspeção e aprovação da conexão pelo ONS antes do energizamento'},
+        ]},
+        { title:'Processo Fundiário — Faixa de Servidão (LT)', color:'#ffb45e', items:[
+          {text:'Realizar levantamento cadastral e fundiário da faixa de passagem da linha de transmissão'},
+          {text:'Negociar <strong>servidão de passagem</strong> (indenização + restrições de uso) com todos os proprietários ao longo do traçado'},
+          {text:'Registrar a servidão nas matrículas no RGI de cada imóvel atravessado'},
+          {text:'Para desapropriação administrativa: declaração de utilidade pública e processo regulatório específico'},
+        ]},
+      ],
+      note:null
+    }
+  },
+  {
+    num:7, color:'green', tag:'EPE / AEGE', label:'Pré-Cadastro EPE — Sistema AEGE',
+    sub:'Adesão ao AEGE → Login → Cadastro da empresa → Inscrição no LRCAP-2026',
+    pills:['Adesão AEGE','Login e senha','Dados do empreendedor','Inscrição LRCAP-2026','Campos azuis'],
+    modal:{
+      tag:'Fase 7 — EPE / AEGE', title:'Pré-Cadastro EPE — Sistema AEGE',
+      subtitle:'Primeiro contato formal com a EPE para fins do LRCAP-2026. A Inscrição é apenas a intenção de participar — o Cadastramento só se efetiva com a documentação completa.',
+      sections:[
+        { title:'Adesão ao Sistema AEGE', color:'#5ed68f', items:[
+          {text:'Acessar <strong>https://aege-adesao.epe.gov.br</strong> e preencher o Formulário de Adesão da empresa', ref:'Manual do Empreendedor — EPE-DEE-RE-028'},
+          {text:'Enviar o formulário à EPE e aguardar verificação (até <strong>5 dias úteis</strong>)'},
+          {text:'Receber <strong>login e senha</strong> por e-mail (Usuário Responsável)'},
+          {text:'Para trocar a senha: acessar <strong>https://sen.epe.gov.br</strong> (mínimo 12 caracteres, com maiúscula, minúscula, número e símbolo)'},
+        ]},
+        { title:'Menu "Cadastro" — Dados do Empreendedor', color:'#5ed68f', items:[
+          {text:'Acessar o AEGE com login e senha recebidos'},
+          {text:'Clicar no menu <strong>"Cadastro"</strong> e preencher a tela "Dados do Empreendedor" (Razão Social, CNPJ)'},
+          {text:'Clicar em <strong>"Incluir"</strong> para adicionar cada usuário'},
+          {text:'Se já houver cadastro em outro sistema EPE: informar o CPF e clicar em "Trazer os dados do CPF"'},
+          {text:'Designar o <strong>Representante Legal</strong> e o <strong>Interlocutor</strong> nas listas suspensas'},
+        ]},
+        { title:'Menu "Empreendimentos" — Incluir o Projeto', color:'#5ed68f', items:[
+          {text:'Clicar no menu <strong>"Empreendimentos"</strong>'},
+          {text:'Selecionar o tipo de empreendimento no menu vertical (SAE — Bateria)'},
+          {text:'Clicar em <strong>"Incluir"</strong>'},
+          {text:'Digitar o nome do empreendimento (sem siglas como "SAE", "ESS" etc. no início)'},
+          {text:'Clicar em <strong>"Salvar"</strong> — quem inclui o empreendimento torna-se automaticamente o Interlocutor do projeto'},
+        ]},
+        { title:'Menu "Inscrição" — Vincular ao LRCAP-2026', color:'#5ed68f', items:[
+          {text:'Clicar em <strong>"Inscrição"</strong> no menu do AEGE'},
+          {text:'Selecionar o empreendimento com número de inscrição "0" na lista de busca'},
+          {text:'Clicar em <strong>"Editar"</strong>'},
+          {text:'No campo <strong>"Leilão"</strong>, selecionar <strong>LRCAP-2026</strong>'},
+          {text:'Designar o Representante Legal na lista suspensa'},
+          {text:'Clicar em <strong>"Salvar"</strong> → o sistema gera o <strong>Número de Inscrição</strong> específico para o leilão'},
+        ]},
+        { title:'Campos Azuis — Dados Específicos do Leilão', color:'#5ed68f', items:[
+          {text:'<em>Campos amarelos</em> = núcleo do empreendimento (valem para todos os leilões) | <em>Campos azuis</em> = específicos do LRCAP-2026'},
+          {text:'<strong>Guia Empreendimento</strong> → Representante Legal'},
+          {text:'<strong>Guia Conexão</strong> → Subestação Elevadora (tipo, tensão, transformadores) + Instalação Conexão (UF, submercado, tipo de conexão)'},
+          {text:'<strong>Guia Leilão</strong> → Cronograma de implantação, Motorização, Orçamento do empreendimento, REIDI'},
+        ]},
+      ],
+      note:'Sessões do AEGE expiram em 30 minutos de inatividade — salve cada guia periodicamente para não perder dados preenchidos.'
+    }
+  },
+  {
+    num:8, color:'green', tag:'EPE / Documentos', label:'Cadastramento Técnico EPE',
+    sub:'Memoriais A–F + Ficha de Dados + Documento de Acesso + Declarações',
+    pills:['Memorial A — Tecnologia','Memorial B–F','Ficha de Dados AEGE','Doc. Acesso','Direito de Uso','Decl. CN'],
+    modal:{
+      tag:'Fase 8 — Cadastramento Técnico', title:'Cadastramento Técnico EPE',
+      subtitle:'Documentação técnica completa exigida pela EPE para o LRCAP-2026, conforme EPE-DEE-RE-079/2024-R2. Enviada por upload no AEGE junto ao Requerimento de Cadastramento.',
+      sections:[
+        { title:'Memorial Descritivo A — Tecnologia (item 4.1-A)', color:'#5ed68f', items:[
+          {text:'<strong>a)</strong> Descrição da tecnologia: química do cátodo e do ânodo'},
+          {text:'<strong>b)</strong> Dimensionamento: potência (kW) e capacidade de armazenamento (kWh) para o regime de descarga previsto, com análise de ciclo completo (suprimento à rede, perdas, autoconsumo)'},
+          {text:'<strong>c)</strong> Fatores de perda discriminados: RTE (Battery Round-Trip Efficiency), limites de profundidade de carga/descarga, eficiência dos conversores, consumo interno do BESS'},
+          {text:'<strong>d)</strong> Simulação do perfil diário médio anual do estado de carga'},
+          {text:'<strong>e)</strong> Estudo de degradação: ciclos, profundidade de carga/descarga, temperatura e demais variáveis'},
+          {text:'<strong>f)</strong> RTE remanescente mínima projetada ao longo dos anos do contrato (com memória de cálculo e gráfico, compatível com a Ficha de Dados do AEGE)'},
+          {text:'<strong>g)</strong> Estratégia de Augmentation: instalação de novos conjuntos ou substituição de packs/PCS'},
+          {text:'<strong>h)</strong> Plano de descarte/reciclagem ao final da vida útil dos equipamentos'},
+          {text:'Catálogo técnico dos equipamentos (BESS + PCS)'},
+        ]},
+        { title:'Memorial B — Desenho de Localização (item 4.1-B)', color:'#5ed68f', items:[
+          {text:'Arquivo DWG, projeção UTM, grade de coordenadas, meridiano central do fuso, referencial SIRGAS 2000'},
+          {text:'Poligonal da(s) propriedade(s) com número de matrícula no RGI, consistente com o georreferenciamento averbado'},
+          {text:'Localização e identificação das unidades do SAE (compatíveis com as coordenadas da Guia Empreendimento do AEGE)'},
+          {text:'Localização de estradas, acessos, subestação e demais edificações'},
+        ]},
+        { title:'Memorial C — Poligonal da Área (item 4.1-C)', color:'#5ed68f', items:[
+          {text:'<strong>Planilha Excel (xls/xlsx)</strong> conforme modelo do Anexo IV, com coordenadas UTM dos vértices que delimitam a área'},
+          {text:'O ponto da Guia Empreendimento do AEGE deve estar dentro da poligonal'},
+        ]},
+        { title:'Memorial D — Segurança (item 4.1-D)', color:'#5ed68f', items:[
+          {text:'Plano de resposta a emergência: detecção, isolamento, contenção de incêndios e procedimentos de supressão'},
+          {text:'Procedimentos de operação e manutenção preventivos (sistemas de refrigeração e ventilação, quando aplicável)'},
+          {text:'Deve ser aderente à tecnologia e ao arranjo adotados, contemplando projetos vizinhos quando os planos forem associados'},
+        ]},
+        { title:'Memorial E — Diagrama Unifilar (item 4.1-E)', color:'#5ed68f', items:[
+          {text:'Identificação dos barramentos CC e CA e demais componentes (controlador de carga, inversor/PCS)'},
+          {text:'Subestação elevadora e rede de interesse restrito: transformadores (quantidade/potência), níveis de tensão, compartilhamento com outros projetos'},
+          {text:'Conexão à rede (distribuição, Rede Básica ou DIT): extensão e bitola dos condutores'},
+          {text:'Ponto de conexão na rede da concessionária (subestação ou linhas a seccionar)'},
+        ]},
+        { title:'Memorial F — ART (item 4.1-F)', color:'#5ed68f', items:[
+          {text:'<strong>ART — Anotação de Responsabilidade Técnica</strong> com comprovante de recolhimento (Lei 6.496/1977)'},
+          {text:'Constar: empresas contratante e contratada, nome e registro do profissional, título profissional, nome do empreendimento, potência instalada e endereço'},
+        ]},
+        { title:'Ficha de Dados (Anexo V)', color:'#5ed68f', items:[
+          {text:'Gerada pelo botão <strong>"F. Dados"</strong> no AEGE após o preenchimento completo dos campos'},
+          {text:'Documento indispensável para instruir o processo de Habilitação Técnica'},
+        ]},
+        { title:'Documento de Acesso (item 4.2)', color:'#5ed68f', items:[
+          {text:'<strong>Rede Básica/DIT:</strong> Parecer de Acesso ONS (validade 90 dias) ou Informação de Acesso EPE'},
+          {text:'<strong>Distribuição:</strong> Orçamento Estimado DAL ou Orçamento de Conexão da distribuidora'},
+          {text:'Enviar até <strong>75 dias antes</strong> da data do leilão (Portaria MME 102/2016)'},
+        ]},
+        { title:'Direito de Uso do Local (item 4.4)', color:'#5ed68f', items:[
+          {text:'<strong>Declaração de Direito de Usar ou Dispor do Local — Anexo VI</strong>, assinada pelo Representante Legal'},
+          {text:'Acompanhar de certidão de inteiro teor com <strong>georreferenciamento averbado</strong> (emitida em ≤ 30 dias)'},
+        ]},
+        { title:'Declaração de Conteúdo Nacional (item 4.5)', color:'#5ed68f', items:[
+          {text:'<strong>Declaração — Anexo VII</strong>, assinada pelo Representante Legal com firma reconhecida ou assinatura digital'},
+        ]},
+        { title:'Guia "Verificação e Finalização" (item 4.6)', color:'#5ed68f', items:[
+          {text:'Abrir a guia <strong>"Leilão" → subguia "Verificação e Finalização"</strong>'},
+          {text:'Corrigir campos sinalizados em vermelho (preenchimento obrigatório)'},
+          {text:'Confirmar a Declaração automática gerada pelo AEGE (equipamentos novos, ADS, requisitos mínimos de conexão)'},
+          {text:'Repetir até o status ficar <strong>"V" (Verificado)</strong> — status "N" não impede a inscrição, mas erros não corrigidos podem levar à inabilitação'},
+        ]},
+      ],
+      note:null
+    }
+  },
+  {
+    num:9, color:'green', tag:'EPE / Análise', label:'Análise Técnica e Habilitação EPE',
+    sub:'EPE analisa documentação → Habilitado (CEG) ou Inabilitado (Recurso)',
+    pills:['Análise EPE','Complementação (se solicitada)','Habilitação Técnica','CEG gerado','Recurso (se necessário)'],
+    modal:{
+      tag:'Fase 9 — Habilitação', title:'Análise Técnica e Habilitação EPE',
+      subtitle:'Após o envio da documentação completa, a EPE realiza a análise técnica. O resultado é a Habilitação Técnica (ou recurso em caso de inabilitação).',
+      sections:[
+        { title:'Análise Técnica da EPE', color:'#5ed68f', items:[
+          {text:'EPE verifica <strong>sobreposição física</strong> de projetos (coordenadas das poligonais)'},
+          {text:'Analisa completude e consistência da documentação — documentação incompleta torna o cadastramento ineficaz'},
+          {text:'Pode emitir <strong>solicitação de documentação complementar</strong> (prazo conforme Portaria/Edital)'},
+          {text:'Após aceito, o botão <strong>"Comprovante"</strong> é liberado no AEGE para impressão do protocolo de cadastramento'},
+        ]},
+        { title:'Habilitação Técnica Concedida', color:'#5ed68f', items:[
+          {text:'Botão <strong>"Habilitação Técnica"</strong> liberado no AEGE — disponível até a data do leilão'},
+          {text:'Imprimir: Habilitação Técnica, Ficha de Dados, Ofício de COP/CEC, Parecer de Acesso EPE'},
+          {text:'<strong>CEG (Código de Empreendimento de Geração)</strong> gerado — identifica o empreendimento durante todo o ciclo de vida regulatório'},
+        ]},
+        { title:'Inabilitação — Recurso Administrativo', color:'#5ed68f', items:[
+          {text:'Prazo para recurso: <strong>5 dias úteis</strong> a partir da notificação'},
+          {text:'1ª instância: Superintendente de Geração da EPE'},
+          {text:'2ª instância (recurso final): Diretor de Estudos de Energia Elétrica da EPE'},
+        ]},
+      ],
+      note:null
+    }
+  },
+  {
+    num:10, color:'teal', tag:'Leilão', label:'Leilão LRCAP-2026',
+    sub:'Participar do leilão com habilitação técnica em mãos → CRCAP',
+    pills:['Data do leilão','Garantia de proposta','Lances (leilão)','CRCAP assinado'],
+    modal:{
+      tag:'Fase 10 — Leilão', title:'Leilão LRCAP-2026',
+      subtitle:'Com a Habilitação Técnica da EPE em mãos, o empreendedor participa do leilão realizado pela ANEEL. O vencedor assina o CRCAP (Contrato de Reserva de Capacidade de Potência).',
+      sections:[
+        { title:'Preparação para o Leilão', color:'#4ecdc4', items:[
+          {text:'Confirmar data, horário e plataforma eletrônica do leilão (publicado pela ANEEL no Edital)'},
+          {text:'Credenciar o Representante Legal no sistema de lances da ANEEL'},
+          {text:'Apresentar <strong>Garantia de Proposta</strong> (carta fiança ou seguro-garantia) no valor e prazo definidos pelo Edital'},
+          {text:'Verificar a <strong>Habilitação Técnica</strong> emitida pela EPE e conferir se está dentro do prazo de validade'},
+        ]},
+        { title:'Participação no Leilão', color:'#4ecdc4', items:[
+          {text:'Leilão realizado em plataforma eletrônica — lances de oferta de preço (R$/MW-mês) para o produto de capacidade de potência'},
+          {text:'Classificação pelo menor preço ofertado, respeitando os requisitos técnicos mínimos definidos no Edital'},
+          {text:'Resultado publicado no DOU — vencedores e quantidades contratadas'},
+        ]},
+        { title:'CRCAP — Contrato de Reserva de Capacidade', color:'#4ecdc4', items:[
+          {text:'<strong>Vencedor</strong>: assinar o <strong>CRCAP</strong> (Contrato de Reserva de Capacidade de Potência) com o agente contratante definido no Edital'},
+          {text:'O CRCAP define: potência contratada (MW), prazo do contrato, receita de disponibilidade e obrigações de desempenho'},
+          {text:'Início do período de disponibilidade: conforme Produto — PA 2028-A (2028) ou PA 2028-B (2029/2030)'},
+          {text:'<strong>Não vencedor</strong>: sem obrigações — pode tentar em leilões futuros, mas a habilitação técnica pode precisar ser renovada'},
+        ]},
+      ],
+      note:'A sistemática do leilão é definida pela Portaria MME 136/2026 e pelo Edital publicado pela ANEEL. Verifique as condições específicas de preço-teto, garantia e penalidades no Edital vigente.'
+    }
+  },
+  {
+    num:11, color:'red', tag:'Pós-Leilão', label:'Implantação e Início da Operação Comercial',
+    sub:'Obras → Conexão → Operação em Teste → Operação Comercial',
+    pills:['Comunicar início de obras','Marcos de implantação','Operação em teste','COD — Operação Comercial','Fiscalização ANEEL'],
+    modal:{
+      tag:'Fase 11 — Implantação', title:'Implantação e Início da Operação Comercial',
+      subtitle:'Fase de execução física do empreendimento, desde o início das obras até a declaração de operação comercial. Sujeita à fiscalização da ANEEL.',
+      sections:[
+        { title:'Início das Obras', color:'#ff6b6b', items:[
+          {text:'Início das obras pode ocorrer <strong>antes da outorga definitiva</strong>, por conta e risco do empreendedor', ref:'RN 1.161/2026 — Art. 6º'},
+          {text:'<strong>Comunicar o início das obras à ANEEL</strong> (fiscalização)'},
+          {text:'Ter a <strong>Licença de Instalação (LI)</strong> em mãos'},
+          {text:'Mobilização de empreiteiras, logística de equipamentos (BESS, PCS, transformadores, cabos)'},
+        ]},
+        { title:'Marcos Intermediários de Implantação', color:'#ff6b6b', items:[
+          {text:'A ANEEL acompanha o cumprimento dos <strong>marcos intermediários</strong> definidos no ato de outorga (aplicável para empreendimentos com potência > 5.000 kW)'},
+          {text:'Empreendedor deve comunicar o cumprimento de cada marco no prazo estabelecido'},
+          {text:'O descumprimento injustificado pode acarretar penalidades e, em casos extremos, revogação da outorga'},
+        ]},
+        { title:'Conexão ao Sistema Elétrico', color:'#ff6b6b', items:[
+          {text:'A conexão exige: <strong>contratos de uso/conexão da rede celebrados</strong> (CUST/CUSD) + <strong>outorga emitida</strong>', ref:'RN 1.161/2026 — Art. 7º'},
+          {text:'Coordenar com o ONS ou distribuidora o energizamento e os testes de recebimento'},
+          {text:'A conexão <strong>não autoriza</strong>, por si só, operação em teste ou comercial'},
+        ]},
+        { title:'Operação em Teste', color:'#ff6b6b', items:[
+          {text:'Operação em teste realizada conforme <strong>RN ANEEL 1.029/2022</strong>'},
+          {text:'Notificar o ONS e o agente de medição sobre o início dos testes'},
+          {text:'SAE adjacentes <strong>não podem compartilhar medição ou sistemas de controle</strong>', ref:'RN 1.161/2026 — Art. 12'},
+        ]},
+        { title:'Declaração de Operação Comercial (COD)', color:'#ff6b6b', items:[
+          {text:'Após aprovação nos testes: declarar o <strong>Início de Operação Comercial (COD)</strong>'},
+          {text:'Prazo máximo: <strong>54 meses</strong> a partir da data de publicação da outorga para operação comercial de todas as unidades'},
+          {text:'A partir do COD: início do recebimento da <strong>Receita de Disponibilidade</strong> do CRCAP'},
+          {text:'Comunicar o COD à ANEEL (fiscalização) e ao agente contratante do CRCAP'},
+        ]},
+        { title:'Procedimentos Pós-Outorga (sob demanda)', color:'#ff6b6b', items:[
+          {text:'<strong>Alteração de características técnicas</strong>: apresentar Anexo II atualizado à ANEEL'},
+          {text:'<strong>Prorrogação de prazo</strong>: requerer com ≥ 6 meses de antecedência do vencimento'},
+          {text:'<strong>Transferência de titularidade</strong>: solicitar à ANEEL via sistema informatizado'},
+          {text:'<strong>Revogação a pedido</strong>: solicitar à ANEEL via sistema informatizado'},
+        ]},
+      ],
+      note:null
+    }
+  },
+];
+
+// ── Build Flowchart ──
+const flow = document.getElementById('flow');
+
+const chevron = `<svg class="step-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
+
+let stepIndex = 0;
+
+function buildPills(pills){
+  if(!pills || !pills.length) return '';
+  return `<div class="step-pills">${pills.map(p=>`<div class="pill">${p}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>`).join('')}</div>`;
+}
+
+STEPS.forEach((step, i) => {
+  if(step.type === 'fork'){
+    flow.innerHTML += `
+    <div class="divider">Tipo de conexão</div>
+    <div class="fork">
+      <div class="fork-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9 9-9z"/></svg>
+        Decisão — Ponto de Conexão ao Sistema Elétrico
+      </div>
+      <div class="fork-row">
+        <div class="fork-branch">
+          <div class="fork-branch-label">Distribuição</div>
+          <div class="fork-branch-sub">Conexão via distribuidora local · RN ANEEL 1000/2021 · Prosseguir no Passo 6A</div>
+        </div>
+        <div class="fork-branch">
+          <div class="fork-branch-label">Rede Básica / Transmissão</div>
+          <div class="fork-branch-sub">Conexão via ONS · Procedimentos de Rede · Prosseguir no Passo 6B</div>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  if(typeof step.num === 'number'){
+    if(step.num === 6){
+      flow.innerHTML += `<div class="divider">Conexão à Rede</div>`;
+    } else if(step.num === 7){
+      flow.innerHTML += `<div class="divider">EPE — Cadastramento para o Leilão</div>`;
+    } else if(step.num === 10){
+      flow.innerHTML += `<div class="divider">Leilão e Contratação</div>`;
+    } else if(step.num === 11){
+      flow.innerHTML += `<div class="divider">Implantação e Operação</div>`;
+    }
+  }
+
+  const isAlt = step.num === '6B';
+  const numDisplay = isAlt ? '6B' : step.num;
+
+  flow.innerHTML += `
+  <div class="step" data-color="${step.color}" data-step-index="${i}">
+    <div class="step-num">
+      <div class="step-badge">${numDisplay}</div>
+    </div>
+    <div class="step-body" id="step-${i}">
+      <div class="step-top">
+        <div>
+          <div class="step-label">${step.label}</div>
+          <div class="step-sub">${step.sub}</div>
+        </div>
+        <span class="step-tag">${step.tag}</span>
+        ${chevron}
+      </div>
+      ${buildPills(step.pills)}
+    </div>
+  </div>`;
+});
+
+// ── Modal Logic ──
+const overlay = document.getElementById('modal-overlay');
+const panel = document.getElementById('modal-panel');
+const content = document.getElementById('modal-content');
+const closeBtn = document.getElementById('modal-close');
+
+const COLOR_MAP = {
+  orange:'#ff8c42', blue:'#4da3ff', green:'#5ed68f', amber:'#ffb45e',
+  purple:'#c792ff', teal:'#4ecdc4', red:'#ff6b6b', pink:'#f78fb3'
+};
+
+function buildModalContent(step){
+  const m = step.modal;
+  const c = COLOR_MAP[step.color] || '#4da3ff';
+  let html = `
+    <div class="modal-tag" style="background:${c}22;border:1px solid ${c}55;color:${c}">${m.tag}</div>
+    <div class="modal-title">${m.title}</div>
+    <div class="modal-subtitle">${m.subtitle}</div>`;
+
+  m.sections.forEach(sec => {
+    html += `<div class="modal-section">
+      <div class="modal-section-title">${sec.title}</div>
+      <div class="doc-list">`;
+    sec.items.forEach(item => {
+      html += `<div class="doc-item">
+        <div class="doc-dot" style="background:${sec.color};opacity:.8"></div>
+        <div>
+          <div class="doc-text">${item.text}</div>
+          ${item.ref ? `<div class="doc-ref">${item.ref}</div>` : ''}
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  if(m.note){
+    html += `<div class="modal-note"><strong>Atenção:</strong> ${m.note}</div>`;
+  }
+
+  return html;
+}
+
+function openModal(step){
+  content.innerHTML = buildModalContent(step);
+  overlay.classList.add('active');
+  panel.scrollTop = 0;
+}
+
+function closeModal(){
+  overlay.classList.remove('active');
+  document.querySelectorAll('.step-body.open').forEach(b => b.classList.remove('open'));
+}
+
+closeBtn.addEventListener('click', closeModal);
+overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+
+document.querySelectorAll('.step-body').forEach(body => {
+  body.addEventListener('click', () => {
+    const stepEl = body.closest('.step');
+    const idx = parseInt(stepEl.dataset.stepIndex);
+    const step = STEPS[idx];
+    if(!step || !step.modal) return;
+    body.classList.toggle('open');
+    if(body.classList.contains('open')){
+      // close others
+      document.querySelectorAll('.step-body.open').forEach(b => { if(b !== body) b.classList.remove('open'); });
+      openModal(step);
+    } else {
+      closeModal();
+    }
+  });
+});
+
+// pill clicks also open modal
+document.querySelectorAll('.pill').forEach(pill => {
+  pill.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const stepEl = pill.closest('.step');
+    const idx = parseInt(stepEl.dataset.stepIndex);
+    const step = STEPS[idx];
+    if(!step || !step.modal) return;
+    const body = document.getElementById(`step-${idx}`);
+    body.classList.add('open');
+    openModal(step);
+  });
+});
+</script>
+</body>
+</html>
