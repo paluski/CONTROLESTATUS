@@ -272,6 +272,10 @@
       ? '<span class="badge s-respondida">Respondida</span>'
       : '<span class="badge s-pendente">Pendente</span>';
   }
+  function orgTag(r) {
+    if (!r.orgao_responsavel) return "";
+    return `<span class="org-tag" title="Órgão responsável (para quem foi perguntado)">${highlight(r.orgao_responsavel, state.search)}</span>`;
+  }
   function cellOr(v) { return v ? txt(v) : '<span class="cell-empty">—</span>'; }
   function cellH(v) { return v ? highlight(v, state.search) : '<span class="cell-empty">—</span>'; }
 
@@ -439,7 +443,7 @@
       <span class="qrow-dot ${dotClass}"></span>
       <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "·"}</span>
       <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
-      <span class="qrow-badges">${readingStatus(r)}</span>
+      <span class="qrow-badges">${orgTag(r)}${readingStatus(r)}</span>
       <svg class="qrow-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
     </button>`;
   }
@@ -466,7 +470,7 @@
             <span class="qrow-path">${highlight(pathOf(r), q)}</span>
             <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
           </span>
-          <span class="qrow-badges">${readingStatus(r)}</span>
+          <span class="qrow-badges">${orgTag(r)}${readingStatus(r)}</span>
         </button>`).join("") + `</div>`;
   }
   function renderNavigate(list) {
@@ -1082,14 +1086,20 @@
     if (typeof XLSX === "undefined") { toast("A biblioteca de planilha não carregou.", "error"); return; }
     const list = getFiltered();
     if (!list.length) { toast("Não há registros para exportar.", "error"); return; }
-    const headers = FIELDS.map((f) => f.label);
-    const rows = list.map((r) => {
-      const o = {};
-      FIELDS.forEach((f) => { o[f.label] = f.key === "data_protocolo" ? formatDate(r[f.key]) : (r[f.key] || ""); });
-      return o;
-    });
+    const headers = ["Documento", "Item do documento", "Item referente", "Tipo da pergunta", "Data de protocolo", "Órgão responsável", "Status", "Pergunta", "Resposta"];
+    const rows = list.map((r) => ({
+      "Documento": r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "",
+      "Item do documento": r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "",
+      "Item referente": r.item_referente || "",
+      "Tipo da pergunta": r.classificacao || "",
+      "Data de protocolo": formatDate(r.data_protocolo),
+      "Órgão responsável": r.orgao_responsavel || "",
+      "Status": r.status || "",
+      "Pergunta": r.pergunta || "",
+      "Resposta": r.resposta || "",
+    }));
     const ws = XLSX.utils.json_to_sheet(rows, { header: headers });
-    ws["!cols"] = FIELDS.map((f) => ({ wch: (f.key === "pergunta" || f.key === "resposta") ? 50 : (f.key === "capitulo" ? 28 : 20) }));
+    ws["!cols"] = [{ wch: 30 }, { wch: 28 }, { wch: 12 }, { wch: 18 }, { wch: 14 }, { wch: 18 }, { wch: 14 }, { wch: 50 }, { wch: 50 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Registros");
     XLSX.writeFile(wb, `controle-perguntas-${ymd(new Date())}.xlsx`);
