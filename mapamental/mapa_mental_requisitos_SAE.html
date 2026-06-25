@@ -1123,6 +1123,369 @@ const LEAF_DETAILS = {
     summary:'Consequência objetiva do descumprimento do prazo transitório: não há nova notificação ou tolerância — o requerimento é automaticamente indeferido.',
     detail:[ '"O não cumprimento dos prazos e requisitos implicará no indeferimento do requerimento."' ]
   },
+
+  // ---------- Itens exclusivos do FLUXOGRAMA (passo a passo) ----------
+  // Qualificação Jurídica (redação do fluxo)
+  'Regularidade fiscal: FGTS + Fazendas Municipal/Estadual/Federal':{
+    source:`${ANEEL_SRC} — Anexo II, item 1`,
+    summary:'Comprovação de que a empresa está em dia com suas obrigações fiscais nas três esferas, condição permanente durante toda a instrução e vigência da outorga.',
+    detail:[ '"Comprovação de regularidade fiscal para com o FGTS e para com as Fazendas Municipal, Estadual e Federal do domicílio ou sede do interessado" (Anexo II, item 1).' ]
+  },
+  'Organograma societário (participações >5%)':{
+    source:`${ANEEL_SRC} — Anexo II, item 2`,
+    summary:'Mapa completo da cadeia societária até o último nível, destacando participações relevantes e quem exerce controle direto sobre a requerente.',
+    detail:[ 'Abertura do quadro de acionistas com participações diretas/indiretas superiores a 5%, sinalizando quem exerce controle societário direto (item 2 e subitens 2.1 a 2.4).' ]
+  },
+  'Ato constitutivo/estatuto + administração atual':{
+    source:`${ANEEL_SRC} — Anexo II, item 3`,
+    summary:'Documento societário que comprova a existência legal da empresa e sua administração vigente, com objeto social descrevendo as atividades de SAE.',
+    detail:[ '"Ato constitutivo, estatuto ou contrato social em vigor... acompanhado do ato que instituiu a atual administração" (item 3), com objeto social preciso quanto às atividades vinculadas à autorização (item 3.1).' ]
+  },
+  'Comprovação de representação legal':{
+    source:`${ANEEL_SRC} — Anexo II, item 4`,
+    summary:'Garante que a pessoa que assina o requerimento de outorga tem poderes legais para representar a empresa.',
+    detail:[ '"Comprovação de representação legal da pessoa que assina os requerimentos" (item 4).' ]
+  },
+  'Contrato de Constituição de Consórcio (se houver)':{
+    source:`${ANEEL_SRC} — Anexo II, item 5`,
+    summary:'Documento exigido apenas quando o SAE é explorado em consórcio, definindo participação percentual e a empresa líder responsável perante a ANEEL.',
+    detail:[ 'Contrato firmado pelos representantes legais das consorciadas, indicando participação percentual de cada empresa e a líder do consórcio (itens 5, 5.1 e 5.2).' ]
+  },
+
+  // Documentos adicionais (redação do fluxo)
+  'CUST (ONS) e/ou CUSD (distribuidora)':{
+    source:`${ANEEL_SRC} — Anexo II, item 12`,
+    summary:'Contrato de uso da rede elétrica, variando conforme o ponto de conexão: CUST com o ONS (Rede Básica/DIT) ou CUSD com a distribuidora.',
+    detail:[ '"CUST celebrado junto ao ONS e, no caso de acesso às Demais Instalações de Transmissão – DIT ou as instalações de distribuição, o... CUSD celebrado com a concessionária ou permissionária de distribuição" (item 12).' ]
+  },
+  'Parecer de acesso correspondente':{
+    source:`${ANEEL_SRC} — Anexo II, item 12.1`,
+    summary:'Documento técnico que deve acompanhar obrigatoriamente o contrato de uso da rede, atestando as condições de acesso definidas pelo operador.',
+    detail:[ '"O correspondente parecer de acesso, ou documento equivalente, deve ser encaminhado junto do contrato de uso da rede elétrica" (item 12.1).' ]
+  },
+  'Sumário Executivo para emissão de outorga':{
+    source:`${ANEEL_SRC} — Anexo II, item 13`,
+    summary:'Documento-síntese do empreendimento, exigido especificamente para a emissão do ato de outorga.',
+    detail:[ '"Sumário Executivo para emissão de outorga" (item 13).' ]
+  },
+
+  // Outorga publicada
+  'Vigência: 35 anos a partir da publicação':{
+    source:`${ANEEL_SRC} — Art. 8º, §2º`,
+    summary:'Prazo total de vigência da outorga definitiva de exploração do SAE.',
+    detail:[ '"As outorgas de autorização terão vigência de 35 (trinta e cinco) anos, contados da data de suas publicações."' ]
+  },
+  'Prazo de implantação: 54 meses para operação comercial de todas as unidades':{
+    source:`${ANEEL_SRC} — Art. 11`,
+    summary:'Janela máxima entre a publicação da outorga e a entrada em operação comercial de todas as unidades armazenadoras.',
+    detail:[ '"Os atos autorizativos fixarão prazo limite de 54 (cinquenta e quatro) meses para entrada em operação comercial de todas as unidades armazenadoras de energia, contado da data de publicação do ato de outorga."' ]
+  },
+  'Marcos intermediários acompanhados pela fiscalização (potência > 5.000 kW)':{
+    source:`${ANEEL_SRC} — Art. 11, §1º`,
+    summary:'Para projetos maiores, a ANEEL acompanha etapas intermediárias da obra, não apenas o prazo final.',
+    detail:[ '"Para empreendimentos cuja potência instalada for superior a 5.000 kW, os marcos intermediários de implantação serão acompanhados pela área de fiscalização" via sistema de acompanhamento de obras.' ]
+  },
+
+  // Conexão — decisão (redação do fluxo)
+  'Suprimento ≤ 5 anos da data do leilão (quando aplicável)':{
+    source:`${EPE_SRC} — Item 4.2-B.1`,
+    summary:'Condição de validade temporal do Parecer de Acesso do ONS para fins de habilitação técnica no leilão.',
+    detail:[ '"A data de início de suprimento do leilão seja inferior ou igual a cinco anos."' ]
+  },
+  'Validade 90 dias (Procedimentos de Rede)':{
+    source:`${EPE_SRC} — Item 4.2-B.1`,
+    summary:'Janela de validade do Parecer de Acesso do ONS contada da emissão até o envio formal à EPE.',
+    detail:[ '"A data de emissão do documento esteja dentro do prazo de validade estabelecido pelos Procedimentos de Rede (90 dias)..."' ]
+  },
+  'Envio até 75 dias antes do leilão (Portaria MME 102/2016)':{
+    source:`${EPE_SRC} — Portaria MME 102/2016`,
+    summary:'Prazo regulatório comum à maioria dos documentos de acesso: devem chegar à EPE até 75 dias antes do leilão.',
+    detail:[ '"O documento seja encaminhado à EPE dentro do prazo limite estabelecido na Portaria MME n. 102/2016 (até 75 dias antes da data de realização do leilão)."' ]
+  },
+  'Envio até 75 dias antes do leilão':{
+    source:`${EPE_SRC} — Portaria MME 102/2016`,
+    summary:'Mesma janela de 75 dias aplicada aos documentos de acesso de distribuição (DAL, Orçamento de Conexão, CUSD/CCD).',
+    detail:[ 'Documento deve ser encaminhado à EPE dentro do prazo limite estabelecido pela Portaria MME nº 102/2016 (até 75 dias antes da data do leilão).' ]
+  },
+
+  // DRO-SAE (redação do fluxo)
+  'Formulário de Requerimento de Outorga (Anexo I)':{
+    source:`${ANEEL_SRC} — Art. 4º e Anexo I`,
+    summary:'Documento-base do pedido de registro do DRO-SAE, apresentado pelo representante legal via sistema informatizado da ANEEL.',
+    detail:[ '"Formulário de Requerimento de Outorga" (Anexo I, item 1), exigido para o registro do requerimento nos termos do art. 4º.' ]
+  },
+
+  // Qualificação técnica bateria (redação do fluxo)
+  'Arranjo Geral + rede de interesse restrito (subestação coletora → ponto de conexão)':{
+    source:`${ANEEL_SRC} — Anexo II, item 6`,
+    summary:'Planta geral delimitando a poligonal do SAE e toda a rede de interesse restrito, da subestação coletora ao ponto de conexão.',
+    detail:[ '"Arranjo Geral do empreendimento contendo a delimitação da poligonal... e rede de interesse restrito do armazenador, partindo da subestação coletora da central até o ponto de conexão" (item 6).' ]
+  },
+  'Estudo técnico de estimativa de injeção anual':{
+    source:`${ANEEL_SRC} — Anexo II, item 7`,
+    summary:'Estudo técnico que projeta quanto de energia o SAE injetará na rede anualmente, base de toda a qualificação técnica de bateria.',
+    detail:[ '"Estudo técnico contendo a estimativa de injeção anual de energia elétrica associada ao empreendimento, com base nos critérios de projeto do sistema de armazenamento" (item 7).' ]
+  },
+  'Perfil de operação, eficiência global e potência de descarga':{
+    source:`${ANEEL_SRC} — Anexo II, item 7`,
+    summary:'Parâmetros que compõem o mesmo estudo técnico do item 7: como o sistema opera, sua eficiência global e a potência de descarga.',
+    detail:[ 'O item 7 exige que o estudo inclua "o perfil de operação previsto, a eficiência global do sistema, a potência de descarga... bem como a descrição da tecnologia e dos equipamentos adotados".' ]
+  },
+  'Capacidade de armazenamento, tecnologia e equipamentos':{
+    source:`${ANEEL_SRC} — Anexo II, item 7`,
+    summary:'Completa o estudo técnico de bateria com a capacidade de armazenamento (kWh) e a descrição da tecnologia/equipamentos utilizados.',
+    detail:[ 'Mesmo item 7: "a capacidade de armazenamento, bem como a descrição da tecnologia e dos equipamentos adotados".' ]
+  },
+
+  // Qualificação técnica UHR (redação do fluxo)
+  'Arranjo Geral com reservatórios, dutos forçados e casa de força':{
+    source:`${ANEEL_SRC} — Anexo II, item 8`,
+    summary:'Planta geral da UHR, delimitando reservatórios, dutos forçados, casa de força e a rede de interesse restrito até o ponto de conexão.',
+    detail:[ '"Arranjo Geral do empreendimento contendo a delimitação da poligonal... incluindo a delimitação dos reservatórios, dos dutos forçados, da casa de força, e rede de interesse restrito do armazenador" (item 8).' ]
+  },
+  'Outorga de uso dos recursos hídricos (ou dispensa do órgão competente)':{
+    source:`${ANEEL_SRC} — Anexo II, item 9`,
+    summary:'Documento específico de UHR: comprova o direito de uso dos recursos hídricos para bombeamento/geração, ou sua dispensa formal.',
+    detail:[ '"Outorga de uso dos recursos hídricos, ou documentos do órgão competente dispensando a outorga" (item 9).' ]
+  },
+  'Estudo técnico: potência injetável e potência bombeável':{
+    source:`${ANEEL_SRC} — Anexo II, item 10`,
+    summary:'Quantifica tanto a potência que a UHR injeta na rede quanto a que consome para bombear água ao reservatório superior.',
+    detail:[ 'Item 10: estudo com "a capacidade de armazenamento, a potência injetável, a potência bombeável... bem como a descrição da tecnologia e dos equipamentos adotados".' ]
+  },
+  'Altura de queda, vazão de projeto e eficiência global':{
+    source:`${ANEEL_SRC} — Anexo II, item 10`,
+    summary:'Parâmetros hidráulicos que definem a viabilidade energética do aproveitamento reversível, parte do mesmo estudo técnico.',
+    detail:[ 'Item 10 exige ainda "a altura de queda, a vazão de projeto, a eficiência global do sistema e o perfil de operação previsto".' ]
+  },
+  'Capacidade de armazenamento e perfil de operação previsto':{
+    source:`${ANEEL_SRC} — Anexo II, item 10`,
+    summary:'Fecha o estudo técnico da UHR com a capacidade de armazenamento e o perfil de operação previsto ao longo do tempo.',
+    detail:[ 'Mesmo item 10, em conjunto com os demais parâmetros hidráulicos do estudo técnico da usina hidrelétrica reversível.' ]
+  },
+
+  // AEGE — Adesão (redação do fluxo)
+  'Abrir https://aege-adesao.epe.gov.br':{
+    source:`${MANUAL_SRC} — Item 4`,
+    summary:'Endereço eletrônico onde a empresa realiza a Adesão ao Sistema AEGE — primeiro passo de todo o processo, antes de existir qualquer login.',
+    detail:[ '"A Adesão ao AEGE... deverá ser realizada eletronicamente pelo endereço: https://aege-adesao.epe.gov.br" (Figura 1 do Manual).' ]
+  },
+  'Preencher os dados da empresa no Formulário de Adesão':{
+    source:`${MANUAL_SRC} — Item 4`,
+    summary:'Etapa de preenchimento do formulário de Adesão com os dados cadastrais da empresa interessada.',
+    detail:[ 'O Formulário de Adesão registra os dados da empresa e estabelece o Usuário Responsável pela interface de segurança entre a EPE e o empreendedor.' ]
+  },
+  'Enviar o formulário à EPE':{
+    source:`${MANUAL_SRC} — Item 4`,
+    summary:'Conclusão do envio do Formulário de Adesão, dando início à verificação pela EPE.',
+    detail:[ 'Após o preenchimento, o formulário é enviado eletronicamente à EPE para análise.' ]
+  },
+  'Aguardar verificação da EPE (até 5 dias úteis)':{
+    source:`${MANUAL_SRC} — Item 4`,
+    summary:'Prazo de análise da EPE antes da liberação de login e senha de acesso ao AEGE.',
+    detail:[ '"Os dados informados serão verificados em até 5 (cinco) dias úteis." Aprovada a adesão, login e senha são enviados por e-mail ao Usuário Responsável.' ]
+  },
+
+  // AEGE — Login (redação do fluxo)
+  'Abrir o AEGE e entrar com login e senha recebidos por e-mail':{
+    source:`${MANUAL_SRC} — Item 5`,
+    summary:'Acesso ao sistema após aprovação da adesão, exibindo a Tela Inicial do AEGE.',
+    detail:[ '"Após o processo de adesão, já de posse de login e senha, o usuário estará apto a acessar o sistema."' ]
+  },
+  'Se precisar trocar a senha: acessar https://sen.epe.gov.br':{
+    source:`${MANUAL_SRC} — Item 5.6`,
+    summary:'Endereço específico para alteração de senha, distinto do endereço de adesão.',
+    detail:[ '"Caso seja necessário alterar a senha de acesso, o usuário deverá acessar o endereço https://sen.epe.gov.br."' ]
+  },
+  'Senha deve ter ≥ 12 caracteres, com maiúscula, minúscula, número e símbolo':{
+    source:`${MANUAL_SRC} — Item 5.6`,
+    summary:'Critérios obrigatórios de complexidade para qualquer nova senha do AEGE.',
+    detail:[ 'Mínimo de 12 caracteres; ao menos uma letra maiúscula, uma minúscula, um número e um caractere especial; não pode conter trechos do login ou do nome do usuário.' ]
+  },
+
+  // AEGE — Cadastro de usuários (redação do fluxo)
+  'Clicar no menu "Cadastro"':{
+    source:`${MANUAL_SRC} — Item 5.1`,
+    summary:'Ponto de entrada para inserir ou editar as informações do empreendedor e dos demais usuários do AEGE.',
+    detail:[ 'No menu "Cadastro", o Usuário Responsável insere/edita os dados do empreendedor, que se refletem na Ficha de Dados (Razão Social, CNPJ).' ]
+  },
+  'Preencher a tela "Dados do Empreendedor" (Razão Social, CNPJ)':{
+    source:`${MANUAL_SRC} — Item 5.1`,
+    summary:'Preenchimento obrigatório de todos os campos da tela de dados cadastrais do empreendedor.',
+    detail:[ '"É obrigatório o preenchimento de todos os campos dos formulários... referentes aos dados cadastrais do empreendedor e dos usuários."' ]
+  },
+  'Clicar em "Incluir" para cada novo usuário':{
+    source:`${MANUAL_SRC} — Item 5.1`,
+    summary:'Botão usado para cadastrar cada usuário vinculado à empresa (Representante Legal, Interlocutor etc.).',
+    detail:[ 'Tela "Incluir" Usuário (Figura 5): o login e a senha do novo usuário são enviados ao e-mail informado no formulário.' ]
+  },
+  'Se já existir cadastro em outro sistema EPE: informar o CPF e clicar em "Trazer os dados do CPF"':{
+    source:`${MANUAL_SRC} — Item 5.1`,
+    summary:'Atalho que evita redigitação de dados quando o usuário já possui cadastro em outro sistema da EPE.',
+    detail:[ '"Caso o usuário já tenha sido cadastrado em algum outro sistema da EPE, o Usuário Responsável deve informar o CPF e utilizar o botão \\"Trazer os dados do CPF\\" para importar os dados."' ]
+  },
+  'Designar o Representante Legal e o Interlocutor':{
+    source:`${MANUAL_SRC} — Item 5.3`,
+    summary:'Definição dos dois usuários-chave do projeto: o Representante Legal (signatário da habilitação) e o Interlocutor (contato técnico).',
+    detail:[ 'Recomenda-se cadastrar pessoas distintas para os dois papéis, garantindo o recebimento das comunicações da EPE durante a análise técnica.' ]
+  },
+
+  // AEGE — Incluir empreendimento (redação do fluxo)
+  'Clicar no menu "Empreendimentos"':{
+    source:`${MANUAL_SRC} — Item 5.4`,
+    summary:'Menu onde se seleciona o tipo de fonte de geração e se inclui ou consulta os empreendimentos já cadastrados.',
+    detail:[ '"O usuário poderá selecionar no menu vertical o tipo de empreendimento que deseja inserir."' ]
+  },
+  'Selecionar o tipo de empreendimento no menu vertical':{
+    source:`${MANUAL_SRC} — Item 5.4`,
+    summary:'O AEGE é estruturado em módulos independentes por tipo de fonte (Eólica, Solar, Térmica, Hidro etc.).',
+    detail:[ 'Após selecionar o tipo de empreendimento, os usuários podem incluir ou visualizar os empreendimentos já inclusos naquele módulo.' ]
+  },
+  'Clicar em "Incluir"':{
+    source:`${MANUAL_SRC} — Item 7.1`,
+    summary:'Abre o formulário para digitação dos dados do novo empreendimento.',
+    detail:[ '"Ao clicar em \\"Incluir\\", o usuário tem acesso a um formulário para a digitação dos dados do empreendimento. O primeiro campo a ser preenchido, obrigatoriamente, deverá ser o nome do empreendimento."' ]
+  },
+  'Digitar o nome do empreendimento (sem siglas como "EOL", "UEE" etc.)':{
+    source:`${MANUAL_SRC} — Item 7.1`,
+    summary:'Regra de nomenclatura: o nome do projeto deve se ater à sua denominação, sem vocábulos genéricos de tipo de fonte.',
+    detail:[ '"Vocábulos como EOL, Eólica, Usina Eólica, Parque Eólico, Central Eólica, UEE e equivalentes... não devem compor o nome do projeto."', 'O sistema detecta homonímia entre empreendimentos da mesma fonte e impede a inclusão duplicada.' ]
+  },
+  'Clicar em "Salvar"':{
+    source:`${MANUAL_SRC} — Item 6.2 / 7.1`,
+    summary:'Grava as informações digitadas; o sistema confirma com a mensagem "Registro salvo com sucesso".',
+    detail:[ 'Ao mudar de guia, é obrigatório salvar antes — campos fora das especificações geram mensagem de erro para correção.' ]
+  },
+
+  // AEGE — Inscrição (redação do fluxo)
+  'Clicar em "Inscrição" no menu do AEGE':{
+    source:`${MANUAL_SRC} — Item 5.5`,
+    summary:'Primeiro clique do processo de inscrição, que expressa a intenção de participar de um leilão específico.',
+    detail:[ 'A inscrição é pré-requisito do Cadastramento, mas não o substitui — o cadastramento só se efetiva com a documentação completa.' ]
+  },
+  'Selecionar o empreendimento com número de inscrição "0" na lista de busca':{
+    source:`${MANUAL_SRC} — Item 5.5`,
+    summary:'Identifica, na lista de busca, o empreendimento ainda não inscrito no leilão desejado (número de inscrição zerado).',
+    detail:[ '"Clicar no empreendimento desejado com número de inscrição \\"0\\" (zero) na lista exibida abaixo do quadro \\"Dados Principais\\"."' ]
+  },
+  'Clicar em "Editar"':{
+    source:`${MANUAL_SRC} — Item 5.5 / 6.2`,
+    summary:'Habilita a edição do formulário de inscrição para selecionar o leilão e o Representante Legal.',
+    detail:[ 'Botão "Editar" usado tanto para inscrição quanto para qualquer alteração de dados em formulários do AEGE.' ]
+  },
+  'No campo "Leilão", selecionar LRCAP-2026':{
+    source:`${MANUAL_SRC} — Item 5.5`,
+    summary:'Campo decisivo da inscrição: define a qual certame o empreendimento concorrerá — no caso, o LRCAP-2026.',
+    detail:[ '"No formulário, no item \\"Leilão\\", selecionar o leilão desejado" — aqui, LRCAP-2026.' ]
+  },
+  'Designar o Representante Legal na lista suspensa':{
+    source:`${MANUAL_SRC} — Item 5.5`,
+    summary:'Vincula formalmente o Representante Legal àquela inscrição específica no leilão escolhido.',
+    detail:[ '"Designar o Representante Legal do empreendimento por meio da lista suspensa."' ]
+  },
+  'Clicar em "Salvar" → o sistema gera o Número de Inscrição':{
+    source:`${MANUAL_SRC} — Item 5.5`,
+    summary:'Conclui a inscrição: o AEGE atribui um Número de Inscrição específico para aquele leilão, exibido na lista de busca.',
+    detail:[ '"Após a realização desses procedimentos, o empreendimento receberá um \\"Número de Inscrição\\" específico para o respectivo leilão."' ]
+  },
+
+  // AEGE — Campos azuis (redação do fluxo)
+  'Guia Empreendimento → Representante Legal':{
+    source:`${MANUAL_SRC} — Item 7`,
+    summary:'Exemplo de campo azul (específico do leilão) que só fica disponível para edição após a inscrição.',
+    detail:[ 'Campos amarelos = núcleo do empreendimento (válidos para todos os leilões); campos azuis = complementares, exclusivos de cada leilão.' ]
+  },
+  'Guia Conexão → Subestação Elevadora (tipo, tensão, transformadores)':{
+    source:`${MANUAL_SRC} — Apêndice C`,
+    summary:'Subguia onde se descreve a subestação de uso exclusivo do empreendimento: tipo, nível de tensão e transformadores elevadores.',
+    detail:[ 'Campos: Tipo (Convencional/Blindada), Tensão Superior (kV) — igual à do ponto de conexão, quantidade e potência nominal dos transformadores, tensões dos enrolamentos primário/secundário.' ]
+  },
+  'Guia Conexão → Instalação Conexão (UF do ponto de conexão, submercado, tipo de conexão)':{
+    source:`${MANUAL_SRC} — Apêndice C`,
+    summary:'Subguia que descreve como o empreendimento se interliga ao ponto de conexão: UF, submercado e o tipo de conexão.',
+    detail:[ 'UF do Ponto de Conexão e Submercado são obrigatórios. Tipos de conexão: linha de transmissão exclusiva, novo transformador elevador exclusivo, ou seccionamento de linha de transmissão existente.' ]
+  },
+  'Guia Leilão → Cronograma, Motorização, Orçamento, REIDI':{
+    source:`${MANUAL_SRC} — Apêndice D`,
+    summary:'Conjunto de subguias do leilão: datas de implantação (Cronograma), entrada em operação por unidade (Motorização), custos do projeto (Orçamento) e dados para o REIDI.',
+    detail:[ 'Motorização: datas de operação em teste/comercial de cada unidade, em MW. Orçamento: custos em R$ mil, sem juros de construção, com data-base de dezembro do ano anterior ao leilão.' ]
+  },
+
+  // Memorial A (redação do fluxo)
+  'Química do cátodo e do ânodo':{
+    source:`${EPE_SRC} — Item 4.1-A, letra a`,
+    summary:'Identifica a tecnologia eletroquímica do projeto, base de toda a análise de desempenho subsequente.',
+    detail:[ '"Descrição da tecnologia considerada, incluindo informações sobre a química do catodo e do anodo" (letra a).' ]
+  },
+  'Fatores de perda: RTE, eficiência de conversores, autoconsumo':{
+    source:`${EPE_SRC} — Item 4.1-A, letra c`,
+    summary:'Discriminação de cada perda considerada no dimensionamento de potência/capacidade.',
+    detail:[ '"Eficiência de carga/descarga da bateria (Battery Round Trip Efficiency), limites de profundidade de carga e descarga, eficiência dos conversores, consumo interno..." (letra c).' ]
+  },
+  'Estudo de degradação da bateria':{
+    source:`${EPE_SRC} — Item 4.1-A, letra e`,
+    summary:'Estudo do envelhecimento da bateria ao longo da vida útil, considerando ciclagem e temperatura.',
+    detail:[ '"Estudo detalhando o processo de degradação da bateria considerando: o número de ciclos, as profundidades de carga e descarga, os efeitos de temperatura..." (letra e).' ]
+  },
+  'Estratégia de "Augmentation"':{
+    source:`${EPE_SRC} — Item 4.1-A, letra g`,
+    summary:'Plano de manutenção do desempenho contratado ao longo do tempo (novos conjuntos, substituição de equipamentos ou packs).',
+    detail:[ '"Deverá ser detalhada a estratégia de \\"Augmentation\\"... indicando se o processo será realizado com a instalação de novos conjuntos... ou se serão substituídos equipamentos existentes" (letra g).' ]
+  },
+  'Catálogo dos equipamentos (BESS + PCS)':{
+    source:`${EPE_SRC} — Item 4.1-A, letra j`,
+    summary:'Documentação técnica dos equipamentos efetivamente usados na solução de armazenamento e no sistema de conversão de energia.',
+    detail:[ '"Deverá ser encaminhado o catálogo dos equipamentos utilizados na solução de armazenamento e do sistema de conversão de energia (PCS)" (letra j).' ]
+  },
+
+  // Memorial B-F (redação do fluxo)
+  'B: Desenho de localização DWG (UTM/SIRGAS 2000) com matrícula RGI':{
+    source:`${EPE_SRC} — Item 4.1-B`,
+    summary:'Desenho georreferenciado que ancora a documentação de localização: poligonal da propriedade e matrícula no RGI.',
+    detail:[ 'Formato "dwg", projeção UTM, referencial SIRGAS 2000, com poligonal da(s) propriedade(s) e número de matrícula no RGI (item 4.1-B, letra a).' ]
+  },
+  'C: Planilha de coordenadas da poligonal (Anexo IV)':{
+    source:`${EPE_SRC} — Item 4.1-C`,
+    summary:'Planilha que materializa numericamente a poligonal, permitindo à EPE detectar sobreposições entre projetos vizinhos.',
+    detail:[ 'Planilha Excel com as coordenadas UTM dos vértices que delimitam a área do empreendimento, conforme modelo do Anexo IV.' ]
+  },
+  'D: Plano de emergência e prevenção a incêndio':{
+    source:`${EPE_SRC} — Item 4.1-D`,
+    summary:'Documento de segurança operacional aderente à tecnologia e ao arranjo do projeto.',
+    detail:[ 'Plano de resposta a emergência (detecção, isolamento, contenção e supressão de incêndios) e procedimentos preventivos de operação/manutenção.' ]
+  },
+  'E: Diagrama Unifilar completo (CC/CA, subestação, ponto de conexão)':{
+    source:`${EPE_SRC} — Item 4.1-E`,
+    summary:'Representação elétrica completa do sistema, da subestação até o ponto de conexão na rede da concessionária.',
+    detail:[ 'Identificação dos barramentos CC/CA, subestação elevadora (transformadores e níveis de tensão) e ponto de conexão na rede da concessionária.' ]
+  },
+  'F: ART dos responsáveis técnicos + comprovante de recolhimento':{
+    source:`${EPE_SRC} — Item 4.1-F`,
+    summary:'Responsabilização técnica formal do projeto e da certificação, com o respectivo comprovante de pagamento.',
+    detail:[ 'ART e comprovante de recolhimento dos responsáveis pelo projeto e pela certificação, com nome, registro, título e endereço do empreendimento.' ]
+  },
+
+  // Verificação e Finalização (redação do fluxo)
+  'Abrir a guia "Leilão" → subguia "Verificação e Finalização"':{
+    source:`${MANUAL_SRC} — Apêndice D, letra e`,
+    summary:'Subguia onde o AEGE faz a análise crítica final dos dados antes da conclusão do cadastramento.',
+    detail:[ '"Nesta subguia, o Sistema AEGE faz uma análise crítica, verificando os dados inseridos e apontando eventuais inconsistências."' ]
+  },
+  'Corrigir os campos sinalizados em vermelho (preenchimento obrigatório)':{
+    source:`${MANUAL_SRC} — Item 7.4`,
+    summary:'Campos obrigatórios não preenchidos ou inconsistentes aparecem destacados para correção imediata.',
+    detail:[ '"Ao se salvar a guia, os campos de preenchimento obrigatório são exibidos momentaneamente em vermelho e deverão ser completados."' ]
+  },
+  'Confirmar a Declaração automática gerada pelo AEGE':{
+    source:`${EPE_SRC} — Item 4.6`,
+    summary:'O simples cadastramento já implica concordância automática com a declaração (equipamentos novos, ADS, requisitos mínimos de conexão).',
+    detail:[ 'A Declaração é gerada automaticamente pelo AEGE na guia "Verificação e Finalização" e passa a integrar a Ficha de Dados — não exige assinatura manual.' ]
+  },
+  'Repetir a verificação até o status ficar "V" (Verificado)':{
+    source:`${MANUAL_SRC} — Item 7.4`,
+    summary:'O AEGE alterna entre os status "N" (Não Verificado) e "V" (Verificado); erros não impedem a inscrição, mas podem gerar inabilitação.',
+    detail:[ '"O status \\"N\\" denota que alguns dados declarados não atendem às críticas do AEGE... O status \\"V\\" denota que os dados foram preenchidos e verificados."' ]
+  },
 };
 
 function getLeafDetail(label){
@@ -1363,8 +1726,12 @@ function renderMindmap(){
    ========================================================= */
 let stepCounter = 0;
 
+function buildLeafChip(l){
+  return `<div class="leaf-chip" data-leaf="${escAttr(l)}">${l}<svg class="leaf-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>`;
+}
+
 function buildStep(step){
-  const leaves = (step.leaves||[]).map(l=>`<div class="leaf-chip">${l}</div>`).join('');
+  const leaves = (step.leaves||[]).map(buildLeafChip).join('');
   stepCounter++;
   const optTag = step.optional ? `<span class="opt-tag">Opcional</span>` : '';
   return `
@@ -1381,7 +1748,7 @@ function buildStep(step){
 }
 
 function buildForkCard(b, color){
-  const leaves = (b.leaves||[]).map(l=>`<div class="leaf-chip">${l}</div>`).join('');
+  const leaves = (b.leaves||[]).map(buildLeafChip).join('');
   return `
   <div class="fork-card" data-color="${color}">
     <div class="step-card flow-toggle">
@@ -1446,6 +1813,12 @@ function renderFlow(type){
   container.querySelectorAll('.phase-toggle').forEach(el=>{
     el.addEventListener('click', ()=>{
       el.closest('.flow-phase').classList.toggle('collapsed');
+    });
+  });
+  container.querySelectorAll('.leaf-chip').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openLeafModal(el.dataset.leaf);
     });
   });
 }
