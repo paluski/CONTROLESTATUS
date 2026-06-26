@@ -79,7 +79,12 @@ body{
 
 .d-row{position:relative;z-index:1;display:flex;align-items:flex-start;gap:50px;margin:0 0 50px 405px;}
 .d-fork-row{position:relative;z-index:1;display:flex;align-items:flex-start;gap:70px;margin:0 0 50px;}
-.d-branch{display:flex;align-items:flex-start;gap:50px;}
+/* Um ramo agora é uma sequência (pode ter várias etapas e até bifurcações
+ * aninhadas) — por isso empilha verticalmente, igual ao tronco principal.
+ * As regras abaixo zeram a margem-esquerda fixa (405px) usada no nível raiz,
+ * já que dentro de um ramo o alinhamento é relativo à própria coluna. */
+.d-branch{display:flex;flex-direction:column;align-items:flex-start;}
+.d-branch .d-row, .d-branch .d-fork-row, .d-branch .add-row, .d-branch .divider{margin-left:0;}
 
 .d-box{
   width:260px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;
@@ -1043,6 +1048,20 @@ function saveData(){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(flowData)); }catch(e){}
 }
 
+/* Compatibilidade com dados salvos/exportados antes de bifurcações aninhadas:
+ * "branches" passa a ser sempre uma LISTA de etapas por ramo (e não um único
+ * card), o que permite que um ramo contenha vários passos e até uma nova
+ * bifurcação dentro dele. Quem ainda tiver o formato antigo (um card só por
+ * ramo) é migrado automaticamente, recursivamente. */
+function migrateBranchesToLists(list){
+  (list||[]).forEach(entry => {
+    if(entry.type === 'fork-pair'){
+      entry.branches = entry.branches.map(b => Array.isArray(b) ? b : [b]);
+      entry.branches.forEach(migrateBranchesToLists);
+    }
+  });
+}
+
 /* Garante que toda etapa (inclusive as criadas/editadas pelo usuário e as salvas
  * antes desta integração) tenha um flowId estável — é a chave usada para ligar
  * perguntas (Supabase) a um bloco do fluxograma. Uma vez atribuído, não muda
@@ -1060,14 +1079,35 @@ function ensureFlowIds(data){
     }
     used.add(step.flowId);
   }
-  data.forEach(entry => {
-    if(entry.type === 'fork-pair') entry.branches.forEach(assign);
-    else assign(entry);
-  });
+  function walk(list){
+    (list||[]).forEach(entry => {
+      if(entry.type === 'fork-pair') entry.branches.forEach(walk);
+      else assign(entry);
+    });
+  }
+  walk(data);
   return changed;
 }
 
+/* Resolve uma "lista" (array de etapas) a partir de um caminho de bifurcações.
+ * path = [{index, side}, ...] — cada segmento diz "na etapa list[index] (uma
+ * bifurcação), desça para o ramo 'left'/'right'". O último segmento de um
+ * caminho de ETAPA (não de lista) não tem side — ver resolveListByPath vs.
+ * o uso de listPath+index nas funções de mutação abaixo. */
+function resolveListByPath(listPath){
+  let list = flowData;
+  (listPath || []).forEach(seg => {
+    const entry = list[seg.index];
+    list = entry.branches[seg.side === 'left' ? 0 : 1];
+  });
+  return list;
+}
+function parsePathAttr(str){
+  try{ return JSON.parse(str || '[]'); }catch(e){ return []; }
+}
+
 let flowData = loadData();
+migrateBranchesToLists(flowData);
 if(ensureFlowIds(flowData)) saveData();
 let editMode = false;
 
@@ -1123,21 +1163,25 @@ function updateFlowBadges(){
   });
 }
 
-function buildDocsHTML(pills, color, idx, stepFlowId){
-  if(!pills || !pills.length) return '';
-  const docs = pills.map(p=>`<div class="d-doc" data-color="${color}" data-step-index="${idx}" data-flow-id="${escAttr(docFlowId(stepFlowId, p))}">${p}</div>`).join('');
+function buildDocsHTML(pills, color, idx, stepFlowId, forceColumn){
+  // forceColumn: usado pelos ramos de bifurcação para reservar a largura da
+  // coluna de documentos mesmo sem nenhum pill — sem isso, um ramo sem
+  // documentos fica mais estreito que o outro e a bifurcação perde o
+  // alinhamento com o tronco vertical das demais etapas.
+  if((!pills || !pills.length) && !forceColumn) return '';
+  const docs = (pills||[]).map(p=>`<div class="d-doc" data-color="${color}" data-step-index="${idx}" data-flow-id="${escAttr(docFlowId(stepFlowId, p))}">${p}</div>`).join('');
   return `<div class="d-docs">${docs}</div>`;
 }
 
-function buildBoxHTML(step, idx, entryIndex, branch){
-  const isBranch = branch === 'left' || branch === 'right';
+function buildBoxHTML(step, idx, listPath, index){
+  const isBranchItem = listPath.length > 0 && listPath[listPath.length - 1].side;
   let btns = `<button class="eb-btn" data-act="edit" title="Editar">✎</button>`;
-  btns += isBranch
-    ? `<button class="eb-btn" data-act="swap" title="Trocar lado">⇄</button>`
-    : `<button class="eb-btn" data-act="up" title="Mover para cima">↑</button><button class="eb-btn" data-act="down" title="Mover para baixo">↓</button>`;
+  btns += `<button class="eb-btn" data-act="up" title="Mover para cima">↑</button><button class="eb-btn" data-act="down" title="Mover para baixo">↓</button>`;
+  btns += `<button class="eb-btn" data-act="fork" title="Transformar em bifurcação">⑂</button>`;
+  if(isBranchItem) btns += `<button class="eb-btn" data-act="swap" title="Trocar lado do ramo">⇄</button>`;
   btns += `<button class="eb-btn" data-act="del" title="Excluir">🗑</button>`;
   return `
-  <div class="d-box" data-color="${step.color}" data-step-index="${idx}" data-entry-index="${entryIndex}" data-branch="${branch||''}" data-flow-id="${escAttr(step.flowId||'')}">
+  <div class="d-box" data-color="${step.color}" data-step-index="${idx}" data-list-path='${escAttr(JSON.stringify(listPath))}' data-index="${index}" data-flow-id="${escAttr(step.flowId||'')}">
     <div class="edit-bar">${btns}</div>
     <div class="d-box-top">
       <div class="d-box-badge">${step.num}</div>
@@ -1149,42 +1193,56 @@ function buildBoxHTML(step, idx, entryIndex, branch){
   </div>`;
 }
 
-function registerStep(step, entryIndex, branch){
+function registerStep(step, listPath, index, forceDocs){
   const idx = MODAL_STEPS.length;
   MODAL_STEPS.push(step);
-  return { idx, boxHTML: buildBoxHTML(step, idx, entryIndex, branch), docsHTML: buildDocsHTML(step.pills, step.color, idx, step.flowId) };
+  return { idx, boxHTML: buildBoxHTML(step, idx, listPath, index), docsHTML: buildDocsHTML(step.pills, step.color, idx, step.flowId, !!forceDocs) };
 }
 
-function buildAddRow(insertIndex){
-  return `<div class="add-row">
+function buildAddRow(pathStr, insertIndex){
+  return `<div class="add-row" data-list-path='${pathStr}'>
     <button type="button" class="ar-btn" data-add="step" data-insert="${insertIndex}">+ Etapa</button>
     <button type="button" class="ar-btn" data-add="fork" data-insert="${insertIndex}">+ Bifurcação</button>
   </div>`;
 }
 
-function renderFlow(){
-  MODAL_STEPS.length = 0;
-  let html = `<div class="d-root" id="d-root"><b>LRCAP 2026</b><span>Sistema de Armazenamento de Energia (SAE)</span></div>`;
-  html += buildAddRow(0);
+/* Renderiza uma sequência de etapas (o tronco principal, ou o conteúdo de um
+ * ramo de bifurcação — que agora pode ter várias etapas e até bifurcações
+ * aninhadas). "side" controla de que lado os documentos laterais ficam,
+ * dentro de um ramo ('left'/'right'); no tronco principal é sempre 'right'. */
+function renderList(list, listPath, forceDocs, side){
+  const pathStr = escAttr(JSON.stringify(listPath));
+  let html = buildAddRow(pathStr, 0);
 
-  flowData.forEach((entry, i) => {
+  list.forEach((entry, i) => {
     if(entry.dividerBefore){
       html += `<div class="divider">${escHtml(entry.dividerBefore)}</div>`;
     }
     if(entry.type === 'fork-pair'){
-      const [stepA, stepB] = entry.branches;
-      const a = registerStep(stepA, i, 'left'), b = registerStep(stepB, i, 'right');
+      const leftPath = listPath.concat([{ index: i, side: 'left' }]);
+      const rightPath = listPath.concat([{ index: i, side: 'right' }]);
+      const leftHTML = renderList(entry.branches[0], leftPath, true, 'left');
+      const rightHTML = renderList(entry.branches[1], rightPath, true, 'right');
       html += `
-      <div class="d-fork-row" data-entry-index="${i}">
-        <div class="d-branch" data-side="left">${a.docsHTML}${a.boxHTML}</div>
-        <div class="d-branch" data-side="right">${b.boxHTML}${b.docsHTML}</div>
+      <div class="d-fork-row" data-list-path='${pathStr}' data-index="${i}">
+        <div class="d-branch" data-side="left">${leftHTML}</div>
+        <div class="d-branch" data-side="right">${rightHTML}</div>
       </div>`;
     } else {
-      const r = registerStep(entry, i, '');
-      html += `<div class="d-row" data-entry-index="${i}">${r.boxHTML}${r.docsHTML}</div>`;
+      const r = registerStep(entry, listPath, i, forceDocs);
+      const inner = side === 'left' ? `${r.docsHTML}${r.boxHTML}` : `${r.boxHTML}${r.docsHTML}`;
+      html += `<div class="d-row" data-list-path='${pathStr}' data-index="${i}">${inner}</div>`;
     }
-    html += buildAddRow(i + 1);
+    html += buildAddRow(pathStr, i + 1);
   });
+
+  return html;
+}
+
+function renderFlow(){
+  MODAL_STEPS.length = 0;
+  let html = `<div class="d-root" id="d-root"><b>LRCAP 2026</b><span>Sistema de Armazenamento de Energia (SAE)</span></div>`;
+  html += renderList(flowData, [], false, 'right');
 
   flow.innerHTML = html;
   redrawDiagram(300);
@@ -1570,6 +1628,7 @@ function addStepAt(insertIndex){
     sub:'Clique em editar (✎) para preencher a descrição.',
     pills:[], modal:{ tag:'Detalhe', title:'Nova Etapa', subtitle:'', sections:[], note:null }
   });
+  ensureFlowIds(flowData);
   saveData(); renderFlow();
 }
 
@@ -1580,6 +1639,7 @@ function addForkAt(insertIndex){
       { num:'B', color:'amber', tag:'Ramo B', label:'Novo Ramo B', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo B', subtitle:'', sections:[], note:null } },
     ]
   });
+  ensureFlowIds(flowData);
   saveData(); renderFlow();
 }
 
