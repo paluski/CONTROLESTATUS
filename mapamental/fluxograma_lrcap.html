@@ -64,116 +64,131 @@ body{
 .back-btn:hover{background:var(--surface-hover);color:var(--text-1);transform:translateY(-1px);}
 .back-btn svg{width:14px;height:14px;}
 
-/* ── Hierarchical diagram (org-chart style: vertical trunk, right-angle connectors) ── */
-.diagram{max-width:1110px;margin:0 auto;padding:0 20px;position:relative;}
-#diagram-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible;}
+/* ── Flowchart ── */
+.flow{max-width:780px;margin:0 auto;position:relative;}
 
-.d-root{
-  width:260px;margin:0 0 50px 405px;text-align:center;position:relative;z-index:1;
-  background:linear-gradient(155deg, rgba(124,140,255,.35), rgba(124,140,255,.12));
-  border:1px solid rgba(124,140,255,.45);border-radius:14px;padding:16px 18px;
-  box-shadow:var(--shadow-lg);
+/* central spine */
+.flow::before{
+  content:'';position:absolute;left:35px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,transparent 0%,var(--border-strong) 8%,var(--border-strong) 92%,transparent 100%);
+  z-index:0;
 }
-.d-root b{font-size:16px;font-weight:800;letter-spacing:-.01em;color:#fff;}
-.d-root span{display:block;font-size:10.5px;color:var(--text-2);margin-top:5px;line-height:1.4;}
 
-.d-row{position:relative;z-index:1;display:flex;align-items:flex-start;gap:50px;margin:0 0 50px 405px;}
-.d-fork-row{position:relative;z-index:1;display:flex;align-items:flex-start;gap:70px;margin:0 0 50px;}
-.d-branch{display:flex;align-items:flex-start;gap:50px;}
+/* ── Step card ── */
+.step{position:relative;display:flex;gap:0;margin-bottom:10px;z-index:1;}
 
-.d-box{
-  width:260px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:13px 16px;cursor:pointer;user-select:none;
+.step-num{
+  width:70px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;
+  padding-top:16px;
+}
+.step-badge{
+  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;letter-spacing:-.01em;border:2px solid;
+  flex-shrink:0;position:relative;z-index:2;
+}
+
+.step-body{
+  flex:1;background:var(--surface);border:1px solid var(--border);border-radius:18px;
+  padding:16px 18px 16px;cursor:pointer;user-select:none;
   transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
   box-shadow:var(--shadow-sm);
 }
-.d-box:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
-.d-box-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.d-box-badge{
-  width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:10.5px;font-weight:800;letter-spacing:-.01em;border:2px solid;flex-shrink:0;
+.step-body:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.step-body:active{transform:translateY(-1px);}
+
+.step-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.step-label{font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1.3;}
+.step-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
+.step-sub{font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.5;}
+.step-arrow{width:16px;height:16px;color:var(--text-3);flex-shrink:0;transition:transform .25s ease,color .2s ease;}
+.step-body.open .step-arrow{transform:rotate(90deg);color:var(--text-1);}
+
+.step-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.pill{
+  font-size:11.5px;font-weight:500;padding:5px 10px;border-radius:8px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  color:var(--text-2);cursor:pointer;transition:all .15s ease;
+  display:inline-flex;align-items:center;gap:5px;line-height:1.3;
 }
-.d-box-label{font-size:13.5px;font-weight:700;letter-spacing:-.01em;line-height:1.3;margin-top:1px;}
-.d-box-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
-.d-box-sub{font-size:11px;color:var(--text-2);margin-top:5px;line-height:1.45;}
+.pill:hover{background:rgba(255,255,255,.13);color:var(--text-1);border-color:rgba(124,140,255,.45);transform:translateY(-1px);}
+.pill svg{width:10px;height:10px;opacity:.5;}
 
-.d-docs{width:190px;flex-shrink:0;display:flex;flex-direction:column;gap:9px;padding-top:1px;}
-.d-doc{
-  background:rgba(255,255,255,.05);border:1px solid var(--border);border-left:3px solid var(--border-strong);
-  border-radius:7px;padding:7px 10px;font-size:11px;font-weight:500;color:var(--text-2);
-  cursor:pointer;transition:all .15s ease;line-height:1.35;
+/* color variants */
+.step[data-color="orange"] .step-badge{background:var(--c-orange-soft);border-color:var(--c-orange);color:var(--c-orange);}
+.step[data-color="orange"] .step-body{border-color:rgba(255,140,66,.2);}
+.step[data-color="orange"] .step-body:hover,.step[data-color="orange"] .step-body.open{border-color:var(--c-orange-border);background:var(--c-orange-soft);}
+.step[data-color="orange"] .step-label{color:#ffd5b0;}
+.step[data-color="orange"] .step-tag{background:var(--c-orange-soft);border:1px solid var(--c-orange-border);color:#ffd5b0;}
+
+.step[data-color="blue"] .step-badge{background:var(--c-blue-soft);border-color:var(--c-blue);color:var(--c-blue);}
+.step[data-color="blue"] .step-body{border-color:rgba(77,163,255,.2);}
+.step[data-color="blue"] .step-body:hover,.step[data-color="blue"] .step-body.open{border-color:var(--c-blue-border);background:var(--c-blue-soft);}
+.step[data-color="blue"] .step-label{color:#bfe0ff;}
+.step[data-color="blue"] .step-tag{background:var(--c-blue-soft);border:1px solid var(--c-blue-border);color:#bfe0ff;}
+
+.step[data-color="green"] .step-badge{background:var(--c-green-soft);border-color:var(--c-green);color:var(--c-green);}
+.step[data-color="green"] .step-body{border-color:rgba(94,214,143,.2);}
+.step[data-color="green"] .step-body:hover,.step[data-color="green"] .step-body.open{border-color:var(--c-green-border);background:var(--c-green-soft);}
+.step[data-color="green"] .step-label{color:#c4f3da;}
+.step[data-color="green"] .step-tag{background:var(--c-green-soft);border:1px solid var(--c-green-border);color:#c4f3da;}
+
+.step[data-color="amber"] .step-badge{background:var(--c-amber-soft);border-color:var(--c-amber);color:var(--c-amber);}
+.step[data-color="amber"] .step-body{border-color:rgba(255,180,94,.2);}
+.step[data-color="amber"] .step-body:hover,.step[data-color="amber"] .step-body.open{border-color:var(--c-amber-border);background:var(--c-amber-soft);}
+.step[data-color="amber"] .step-label{color:#ffdfb8;}
+.step[data-color="amber"] .step-tag{background:var(--c-amber-soft);border:1px solid var(--c-amber-border);color:#ffdfb8;}
+
+.step[data-color="purple"] .step-badge{background:var(--c-purple-soft);border-color:var(--c-purple);color:var(--c-purple);}
+.step[data-color="purple"] .step-body{border-color:rgba(199,146,255,.2);}
+.step[data-color="purple"] .step-body:hover,.step[data-color="purple"] .step-body.open{border-color:var(--c-purple-border);background:var(--c-purple-soft);}
+.step[data-color="purple"] .step-label{color:#e7d2ff;}
+.step[data-color="purple"] .step-tag{background:var(--c-purple-soft);border:1px solid var(--c-purple-border);color:#e7d2ff;}
+
+.step[data-color="teal"] .step-badge{background:var(--c-teal-soft);border-color:var(--c-teal);color:var(--c-teal);}
+.step[data-color="teal"] .step-body{border-color:rgba(78,205,196,.2);}
+.step[data-color="teal"] .step-body:hover,.step[data-color="teal"] .step-body.open{border-color:var(--c-teal-border);background:var(--c-teal-soft);}
+.step[data-color="teal"] .step-label{color:#b2f0ec;}
+.step[data-color="teal"] .step-tag{background:var(--c-teal-soft);border:1px solid var(--c-teal-border);color:#b2f0ec;}
+
+.step[data-color="red"] .step-badge{background:var(--c-red-soft);border-color:var(--c-red);color:var(--c-red);}
+.step[data-color="red"] .step-body{border-color:rgba(255,107,107,.2);}
+.step[data-color="red"] .step-body:hover,.step[data-color="red"] .step-body.open{border-color:var(--c-red-border);background:var(--c-red-soft);}
+.step[data-color="red"] .step-label{color:#ffd2d2;}
+.step[data-color="red"] .step-tag{background:var(--c-red-soft);border:1px solid var(--c-red-border);color:#ffd2d2;}
+
+.step[data-color="pink"] .step-badge{background:var(--c-pink-soft);border-color:var(--c-pink);color:var(--c-pink);}
+.step[data-color="pink"] .step-body{border-color:rgba(247,143,179,.2);}
+.step[data-color="pink"] .step-body:hover,.step[data-color="pink"] .step-body.open{border-color:var(--c-pink-border);background:var(--c-pink-soft);}
+.step[data-color="pink"] .step-label{color:#fdd5e4;}
+.step[data-color="pink"] .step-tag{background:var(--c-pink-soft);border:1px solid var(--c-pink-border);color:#fdd5e4;}
+
+/* ── Fork / Decision ── */
+.fork{
+  margin:4px 0 4px 70px;position:relative;z-index:1;
+  background:var(--c-amber-soft);border:1px solid var(--c-amber-border);border-radius:16px;
+  padding:14px 18px;
 }
-.d-doc:hover{background:rgba(255,255,255,.12);color:var(--text-1);border-color:rgba(124,140,255,.45);transform:translateX(2px);}
-
-/* color variants — box + badge + tag + doc accent, per fase color */
-.d-box[data-color="orange"]{border-color:rgba(255,140,66,.25);}
-.d-box[data-color="orange"]:hover{border-color:var(--c-orange-border);background:var(--c-orange-soft);}
-.d-box[data-color="orange"] .d-box-badge{background:var(--c-orange-soft);border-color:var(--c-orange);color:var(--c-orange);}
-.d-box[data-color="orange"] .d-box-label{color:#ffd5b0;}
-.d-box[data-color="orange"] .d-box-tag{background:var(--c-orange-soft);border:1px solid var(--c-orange-border);color:#ffd5b0;}
-.d-doc[data-color="orange"]{border-left-color:var(--c-orange);}
-
-.d-box[data-color="blue"]{border-color:rgba(77,163,255,.25);}
-.d-box[data-color="blue"]:hover{border-color:var(--c-blue-border);background:var(--c-blue-soft);}
-.d-box[data-color="blue"] .d-box-badge{background:var(--c-blue-soft);border-color:var(--c-blue);color:var(--c-blue);}
-.d-box[data-color="blue"] .d-box-label{color:#bfe0ff;}
-.d-box[data-color="blue"] .d-box-tag{background:var(--c-blue-soft);border:1px solid var(--c-blue-border);color:#bfe0ff;}
-.d-doc[data-color="blue"]{border-left-color:var(--c-blue);}
-
-.d-box[data-color="green"]{border-color:rgba(94,214,143,.25);}
-.d-box[data-color="green"]:hover{border-color:var(--c-green-border);background:var(--c-green-soft);}
-.d-box[data-color="green"] .d-box-badge{background:var(--c-green-soft);border-color:var(--c-green);color:var(--c-green);}
-.d-box[data-color="green"] .d-box-label{color:#c4f3da;}
-.d-box[data-color="green"] .d-box-tag{background:var(--c-green-soft);border:1px solid var(--c-green-border);color:#c4f3da;}
-.d-doc[data-color="green"]{border-left-color:var(--c-green);}
-
-.d-box[data-color="amber"]{border-color:rgba(255,180,94,.25);}
-.d-box[data-color="amber"]:hover{border-color:var(--c-amber-border);background:var(--c-amber-soft);}
-.d-box[data-color="amber"] .d-box-badge{background:var(--c-amber-soft);border-color:var(--c-amber);color:var(--c-amber);}
-.d-box[data-color="amber"] .d-box-label{color:#ffdfb8;}
-.d-box[data-color="amber"] .d-box-tag{background:var(--c-amber-soft);border:1px solid var(--c-amber-border);color:#ffdfb8;}
-.d-doc[data-color="amber"]{border-left-color:var(--c-amber);}
-
-.d-box[data-color="purple"]{border-color:rgba(199,146,255,.25);}
-.d-box[data-color="purple"]:hover{border-color:var(--c-purple-border);background:var(--c-purple-soft);}
-.d-box[data-color="purple"] .d-box-badge{background:var(--c-purple-soft);border-color:var(--c-purple);color:var(--c-purple);}
-.d-box[data-color="purple"] .d-box-label{color:#e7d2ff;}
-.d-box[data-color="purple"] .d-box-tag{background:var(--c-purple-soft);border:1px solid var(--c-purple-border);color:#e7d2ff;}
-.d-doc[data-color="purple"]{border-left-color:var(--c-purple);}
-
-.d-box[data-color="teal"]{border-color:rgba(78,205,196,.25);}
-.d-box[data-color="teal"]:hover{border-color:var(--c-teal-border);background:var(--c-teal-soft);}
-.d-box[data-color="teal"] .d-box-badge{background:var(--c-teal-soft);border-color:var(--c-teal);color:var(--c-teal);}
-.d-box[data-color="teal"] .d-box-label{color:#b2f0ec;}
-.d-box[data-color="teal"] .d-box-tag{background:var(--c-teal-soft);border:1px solid var(--c-teal-border);color:#b2f0ec;}
-.d-doc[data-color="teal"]{border-left-color:var(--c-teal);}
-
-.d-box[data-color="red"]{border-color:rgba(255,107,107,.25);}
-.d-box[data-color="red"]:hover{border-color:var(--c-red-border);background:var(--c-red-soft);}
-.d-box[data-color="red"] .d-box-badge{background:var(--c-red-soft);border-color:var(--c-red);color:var(--c-red);}
-.d-box[data-color="red"] .d-box-label{color:#ffd2d2;}
-.d-box[data-color="red"] .d-box-tag{background:var(--c-red-soft);border:1px solid var(--c-red-border);color:#ffd2d2;}
-.d-doc[data-color="red"]{border-left-color:var(--c-red);}
-
-.d-box[data-color="pink"]{border-color:rgba(247,143,179,.25);}
-.d-box[data-color="pink"]:hover{border-color:var(--c-pink-border);background:var(--c-pink-soft);}
-.d-box[data-color="pink"] .d-box-badge{background:var(--c-pink-soft);border-color:var(--c-pink);color:var(--c-pink);}
-.d-box[data-color="pink"] .d-box-label{color:#fdd5e4;}
-.d-box[data-color="pink"] .d-box-tag{background:var(--c-pink-soft);border:1px solid var(--c-pink-border);color:#fdd5e4;}
-.d-doc[data-color="pink"]{border-left-color:var(--c-pink);}
+.fork-label{
+  display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--c-amber);margin-bottom:12px;
+}
+.fork-label svg{width:14px;height:14px;}
+.fork-row{display:flex;gap:10px;flex-wrap:wrap;}
+.fork-branch{
+  flex:1;min-width:200px;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;cursor:pointer;
+  transition:all .2s ease;
+}
+.fork-branch:hover{background:rgba(255,255,255,.10);border-color:var(--border-strong);transform:translateY(-1px);}
+.fork-branch-label{font-size:13px;font-weight:700;color:var(--text-1);margin-bottom:3px;}
+.fork-branch-sub{font-size:11px;color:var(--text-2);}
 
 /* ── Section divider ── */
 .divider{
-  margin:8px 0 22px 405px;display:flex;align-items:center;gap:12px;
-  font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);position:relative;z-index:1;
+  margin:24px 0 14px 70px;display:flex;align-items:center;gap:12px;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);
 }
 .divider::after{content:'';flex:1;height:1px;background:var(--border);}
-
-@media(max-width:980px){
-  .diagram{overflow-x:auto;padding-bottom:8px;}
-  .diagram-inner{width:1110px;}
-  #diagram-svg{width:1110px;}
-}
 
 /* ── Modal Overlay ── */
 #modal-overlay{
@@ -182,13 +197,6 @@ body{
   background:rgba(5,8,16,.6);backdrop-filter:blur(5px);
 }
 #modal-overlay.active{display:flex;}
-
-#edit-overlay{
-  position:fixed;inset:0;z-index:220;display:none;
-  align-items:center;justify-content:flex-end;
-  background:rgba(5,8,16,.65);backdrop-filter:blur(5px);
-}
-#edit-overlay.active{display:flex;}
 
 .modal-panel{
   width:min(580px,96vw);height:100vh;overflow-y:auto;
@@ -249,7 +257,7 @@ body{
 
 /* ── Legend ── */
 .legend{
-  max-width:1110px;margin:36px auto 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
+  max-width:780px;margin:36px auto 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
 }
 .leg{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-2);}
 .leg-dot{width:10px;height:10px;border-radius:50%;}
@@ -262,80 +270,98 @@ body{
 }
 
 @media(max-width:600px){
+  .flow::before{left:28px;}
+  .step-num{width:56px;}
+  .step-badge{width:28px;height:28px;font-size:11px;}
+  .fork,.divider{margin-left:56px;}
   .modal-panel{width:100vw;border-left:none;border-top:1px solid var(--border-strong);}
+  #q-drawer{width:100vw;border-right:none;}
 }
 
-/* ── Edit mode: toolbar ── */
-.toolbar-fixed{
-  position:fixed;top:18px;right:18px;z-index:150;
-  display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;max-width:260px;
+/* ── Question badges on step cards ── */
+.q-badge-wrap{
+  display:inline-flex;align-items:center;gap:3px;
+  background:rgba(77,163,255,.10);border:1px solid rgba(77,163,255,.25);
+  border-radius:999px;padding:2px 8px 2px 6px;
+  font-size:10px;font-weight:700;color:var(--c-blue);
+  cursor:default;transition:all .15s ease;flex-shrink:0;white-space:nowrap;
 }
-.tb-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--surface);border:1px solid var(--border-strong);border-radius:999px;
-  padding:8px 14px;font-size:12px;font-weight:700;color:var(--text-2);cursor:pointer;
-  transition:all .15s ease;white-space:nowrap;
-}
-.tb-btn:hover{background:var(--surface-hover);color:var(--text-1);transform:translateY(-1px);}
-.tb-btn.active{background:rgba(94,214,143,.18);border-color:var(--c-green-border);color:#c4f3da;}
-.tb-btn.danger:hover{background:rgba(255,107,107,.15);border-color:var(--c-red-border);color:#ffd2d2;}
+.q-badge-wrap.has-q{background:rgba(77,163,255,.12);border-color:rgba(77,163,255,.35);}
+.q-badge-wrap.no-q{opacity:.3;color:var(--text-3);border-color:rgba(255,255,255,.1);}
+.q-dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0;}
 
-/* ── Edit mode: per-box action bar ── */
-.edit-bar{display:none;gap:4px;justify-content:flex-end;margin-bottom:6px;}
-body.edit-mode .edit-bar{display:flex;}
-.eb-btn{
-  width:22px;height:22px;border-radius:6px;border:1px solid var(--border-strong);
-  background:rgba(255,255,255,.07);color:var(--text-2);font-size:11px;line-height:1;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s ease;
+/* ── Question drawer (left side) ── */
+#q-drawer{
+  position:fixed;left:0;top:0;height:100vh;overflow-y:auto;
+  width:min(440px,92vw);
+  background:linear-gradient(160deg,rgba(16,24,44,.98),rgba(9,13,23,.99));
+  border-right:1px solid var(--border-strong);
+  padding:24px 22px 60px;z-index:300;
+  transform:translateX(-100%);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  box-shadow:8px 0 32px rgba(0,0,0,.4);
 }
-.eb-btn:hover{background:var(--surface-hover);color:var(--text-1);}
-.eb-btn[data-act="del"]:hover{background:rgba(255,107,107,.2);color:#ffd2d2;border-color:var(--c-red-border);}
-body.edit-mode .d-box{outline:1px dashed transparent;}
-body.edit-mode .d-box:hover{outline-color:rgba(255,255,255,.25);}
+#q-drawer.open{transform:translateX(0);}
+#q-drawer::-webkit-scrollbar{width:5px;}
+#q-drawer::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:5px;}
 
-/* ── Edit mode: insert-row controls ── */
-.add-row{display:none;align-items:center;gap:10px;margin:0 0 18px 405px;position:relative;z-index:1;}
-body.edit-mode .add-row{display:flex;}
-.add-row::before,.add-row::after{content:'';flex:0 0 14px;height:1px;background:var(--border);}
-.ar-btn{
-  display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
-  border:1px dashed var(--border-strong);border-radius:999px;background:rgba(255,255,255,.04);
-  color:var(--text-3);padding:5px 12px;cursor:pointer;transition:all .15s ease;white-space:nowrap;
+.qd-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.qd-close{
+  width:30px;height:30px;border-radius:9px;border:1px solid var(--border-strong);
+  background:var(--surface);color:var(--text-2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s ease;flex-shrink:0;
 }
-.ar-btn:hover{color:var(--text-1);background:var(--surface-hover);border-color:var(--c-blue-border);}
-
-/* ── Edit form fields (inside edit panel) ── */
-.ef-field{margin-bottom:16px;}
-.ef-label{font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;display:block;}
-.ef-input,.ef-textarea,.ef-select{
-  width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border-strong);border-radius:9px;
-  padding:9px 11px;font-size:13px;color:var(--text-1);font-family:inherit;resize:vertical;
+.qd-close:hover{background:var(--surface-hover);color:var(--text-1);transform:rotate(90deg);}
+.qd-close svg{width:14px;height:14px;}
+.qd-tag{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 10px;border-radius:6px;margin-bottom:8px;display:inline-block;}
+.qd-title{font-size:15px;font-weight:800;letter-spacing:-.01em;line-height:1.3;margin-bottom:10px;color:var(--text-1);}
+.qd-stats{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.qd-stat{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;
+  background:var(--surface);border:1px solid var(--border);
+  font-size:11px;font-weight:600;color:var(--text-2);
 }
-.ef-input:focus,.ef-textarea:focus,.ef-select:focus{outline:none;border-color:var(--c-blue-border);background:rgba(255,255,255,.09);}
-.ef-textarea{min-height:64px;line-height:1.5;}
-.ef-help{font-size:10.5px;color:var(--text-3);margin-top:6px;line-height:1.5;}
-.ef-pill-row{display:flex;gap:6px;margin-bottom:6px;}
-.ef-pill-row .ef-input{flex:1;}
-.ef-pill-del{
-  width:32px;flex-shrink:0;border-radius:9px;border:1px solid var(--border-strong);
-  background:rgba(255,107,107,.1);color:#ffb0b0;cursor:pointer;font-size:14px;
+.qd-stat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.qd-list{display:flex;flex-direction:column;gap:5px;}
+.qd-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:11px;
+  overflow:hidden;cursor:pointer;
+  transition:border-color .15s ease,background .15s ease;
 }
-.ef-add-pill{
-  font-size:11.5px;font-weight:700;color:var(--c-blue);background:none;border:1px dashed var(--c-blue-border);
-  border-radius:8px;padding:6px 12px;cursor:pointer;margin-top:2px;
+.qd-item:hover{background:var(--surface-hover);border-color:var(--border-strong);}
+.qd-item-head{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;}
+.qd-sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.sdot-green{background:#5ed68f;}
+.sdot-amber{background:#ffb45e;}
+.sdot-red{background:#ff6b6b;}
+.sdot-gray{background:var(--text-3);}
+.qd-q{font-size:12.5px;color:var(--text-1);line-height:1.5;flex:1;}
+.qd-org{font-size:10.5px;color:var(--text-3);margin-top:2px;}
+.qd-chev{width:14px;height:14px;color:var(--text-3);flex-shrink:0;margin-top:3px;
+  transition:transform .2s ease;}
+.qd-item.expanded .qd-chev{transform:rotate(90deg);}
+.qd-item-body{display:none;border-top:1px solid var(--border);padding:10px 12px 13px 29px;}
+.qd-item.expanded .qd-item-body{display:block;}
+.qdf{margin-bottom:7px;}
+.qdf .l{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:2px;}
+.qdf .v{font-size:12px;color:var(--text-1);line-height:1.5;}
+.qd-ans{
+  background:rgba(94,214,143,.07);border:1px solid rgba(94,214,143,.22);border-radius:9px;
+  padding:8px 10px;margin-top:4px;font-size:12px;color:#c4f3da;line-height:1.5;
 }
-.ef-add-pill:hover{background:var(--c-blue-soft);}
-.ef-actions{display:flex;gap:10px;margin-top:6px;position:sticky;bottom:-48px;padding:14px 0 4px;background:linear-gradient(to top,rgba(10,14,24,1),rgba(10,14,24,.85) 70%,transparent);}
-.ef-save{flex:1;background:linear-gradient(135deg,#4da3ff,#3b82f6);color:#fff;border:none;border-radius:10px;padding:11px;font-size:13.5px;font-weight:800;cursor:pointer;}
-.ef-save:hover{filter:brightness(1.1);}
-.ef-cancel{background:var(--surface);border:1px solid var(--border-strong);color:var(--text-2);border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
-.ef-cancel:hover{background:var(--surface-hover);}
-.ef-delete{background:rgba(255,107,107,.12);border:1px solid var(--c-red-border);color:#ffb0b0;border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
-.ef-delete:hover{background:rgba(255,107,107,.22);}
-
-@media(max-width:600px){
-  .toolbar-fixed{max-width:160px;}
+.qd-no-ans{font-size:12px;color:var(--text-3);font-style:italic;margin-top:4px;}
+.qd-docs-btn{
+  display:flex;align-items:center;gap:7px;width:100%;margin-top:18px;
+  padding:9px 14px;border-radius:10px;border:1px solid var(--border-strong);
+  background:var(--surface);color:var(--text-2);font-size:12.5px;font-weight:600;
+  cursor:pointer;transition:all .15s ease;
 }
+.qd-docs-btn:hover{background:var(--surface-hover);color:var(--text-1);}
+.qd-docs-btn svg{width:13px;height:13px;flex-shrink:0;}
+.qd-empty{text-align:center;padding:28px 12px;color:var(--text-3);font-size:13px;line-height:1.6;}
 </style>
 </head>
 <body>
@@ -353,10 +379,7 @@ body.edit-mode .add-row{display:flex;}
   </a>
 </div>
 
-<div class="diagram" id="diagram">
-  <svg id="diagram-svg"></svg>
-  <div class="diagram-inner" id="flow"></div>
-</div>
+<div class="flow" id="flow"></div>
 
 <div class="legend">
   <div class="leg"><div class="leg-dot" style="background:#ff8c42"></div>Prospecção / Estruturação</div>
@@ -379,29 +402,16 @@ body.edit-mode .add-row{display:flex;}
   </div>
 </div>
 
-<!-- Toolbar de edição -->
-<div class="toolbar-fixed">
-  <button class="tb-btn" id="tb-edit-toggle">✎ Modo Edição</button>
-  <button class="tb-btn" id="tb-export">⬇ Exportar JSON</button>
-  <button class="tb-btn" id="tb-import">⬆ Importar JSON</button>
-  <button class="tb-btn danger" id="tb-reset">↺ Restaurar padrão</button>
-  <input type="file" id="tb-import-input" accept="application/json" style="display:none;">
-</div>
+<!-- Question drawer -->
+<div id="q-drawer"><div id="q-drawer-content"></div></div>
 
-<!-- Painel de edição de etapa -->
-<div id="edit-overlay">
-  <div class="modal-panel" id="edit-panel">
-    <button class="modal-close" id="edit-close" aria-label="Fechar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <div id="edit-content"></div>
-  </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/data.js"></script>
 <script>
-const DEFAULT_DATA = [
+const STEPS = [
   {
-    num:1, color:'orange', tag:'Prospecção', label:'Prospecção e Análise de Viabilidade',
+    num:1, nodeId:'prospeccao', color:'orange', tag:'Prospecção', label:'Prospecção e Análise de Viabilidade',
     sub:'Identificar área, tecnologia e modalidade de comercialização',
     pills:['Identificação da área','Estudo técnico preliminar','Ponto de conexão','Tecnologia SAE'],
     modal:{
@@ -431,7 +441,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:2, color:'orange', tag:'Jurídico', label:'Constituição Jurídica da Empresa / SPE',
+    num:2, nodeId:'juridico', color:'orange', tag:'Jurídico', label:'Constituição Jurídica da Empresa / SPE',
     sub:'Criar a pessoa jurídica apta a deter a outorga e participar do leilão',
     pills:['Contrato social','CNPJ','Representação legal','Organograma societário'],
     modal:{
@@ -469,7 +479,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:3, color:'blue', tag:'Fundiário', label:'Processo Fundiário — Área do Empreendimento',
+    num:3, nodeId:'fundiario', color:'blue', tag:'Fundiário', label:'Processo Fundiário — Área do Empreendimento',
     sub:'Matrícula, georreferenciamento, escritura e direito de uso do local',
     pills:['Matrícula RGI','Georreferenciamento INCRA','Escritura / Arrendamento','Certidão inteiro teor','Declaração Anexo VI'],
     modal:{
@@ -510,7 +520,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:4, color:'pink', tag:'Ambiental', label:'Licenciamento Ambiental',
+    num:4, nodeId:'ambiental', color:'pink', tag:'Ambiental', label:'Licenciamento Ambiental',
     sub:'Licença Prévia → Licença de Instalação → Licença de Operação',
     pills:['Licença Prévia (LP)','Licença de Instalação (LI)','Licença de Operação (LO)','EIA/RAS'],
     modal:{
@@ -545,7 +555,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:5, color:'purple', tag:'ANEEL', label:'Outorga de Autorização (ANEEL)',
+    num:5, nodeId:'aneel', color:'purple', tag:'ANEEL', label:'Outorga de Autorização (ANEEL)',
     sub:'DRO-SAE (opcional) → Qualificação Jurídica + Técnica → Publicação no DOU',
     pills:['DRO-SAE (opc.)','Qualificação Jurídica','Qualificação Técnica','Licença Ambiental','Outorga 35 anos'],
     modal:{
@@ -593,12 +603,11 @@ const DEFAULT_DATA = [
     }
   },
 
-  // FORK: DISTRIBUIÇÃO / TRANSMISSÃO — caminhos alternativos (escolha um, conforme o
-  // ponto de conexão do projeto), renderizados como duas colunas paralelas.
-  { type:'fork-pair', branches:[
+  // FORK: DISTRIBUIÇÃO / TRANSMISSÃO
+  { type:'fork' },
 
   {
-    num:'6A', color:'amber', tag:'Conexão · Distribuição', label:'Processo de Conexão — Distribuição',
+    num:6, nodeId:'conexao-distribuicao', color:'amber', tag:'Conexão · Distribuição', label:'Processo de Conexão — Distribuição',
     sub:'DAL / Orçamento de Conexão via distribuidora local (RN ANEEL 1000/2021)',
     pills:['Pedido de acesso','Estudo distribuidora','DAL / Orç. Conexão','CUSD + CCD','Faixa de servidão'],
     modal:{
@@ -634,7 +643,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:'6B', color:'amber', tag:'Conexão · Transmissão', label:'Processo de Conexão — Rede Básica / Transmissão',
+    num:'6B', nodeId:'conexao-transmissao', color:'amber', tag:'Conexão · Transmissão', label:'Processo de Conexão — Rede Básica / Transmissão',
     sub:'Parecer de Acesso ONS para Rede Básica ou DIT (Procedimentos de Rede)',
     pills:['Pedido ao ONS','Parecer de Acesso ONS','CUST','LT / Subestação','Faixa de servidão'],
     modal:{
@@ -673,11 +682,8 @@ const DEFAULT_DATA = [
       note:null
     }
   },
-
-  ]}, // fim do fork-pair (Conexão — Distribuição × Rede Básica/Transmissão)
-
   {
-    num:7, color:'green', tag:'EPE / AEGE', dividerBefore:'EPE — Cadastramento para o Leilão', label:'Pré-Cadastro EPE — Sistema AEGE',
+    num:7, nodeId:'epe-aege', color:'green', tag:'EPE / AEGE', label:'Pré-Cadastro EPE — Sistema AEGE',
     sub:'Adesão ao AEGE → Login → Cadastro da empresa → Inscrição no LRCAP-2026',
     pills:['Adesão AEGE','Login e senha','Dados do empreendedor','Inscrição LRCAP-2026','Campos azuis'],
     modal:{
@@ -723,7 +729,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:8, color:'green', tag:'EPE / Documentos', label:'Cadastramento Técnico EPE',
+    num:8, nodeId:'epe-documentos', color:'green', tag:'EPE / Documentos', label:'Cadastramento Técnico EPE',
     sub:'Memoriais A–F + Ficha de Dados + Documento de Acesso + Declarações',
     pills:['Memorial A — Tecnologia','Memorial B–F','Ficha de Dados AEGE','Doc. Acesso','Direito de Uso','Decl. CN'],
     modal:{
@@ -793,7 +799,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:9, color:'green', tag:'EPE / Análise', label:'Análise Técnica e Habilitação EPE',
+    num:9, nodeId:'epe-analise', color:'green', tag:'EPE / Análise', label:'Análise Técnica e Habilitação EPE',
     sub:'EPE analisa documentação → Habilitado (CEG) ou Inabilitado (Recurso)',
     pills:['Análise EPE','Complementação (se solicitada)','Habilitação Técnica','CEG gerado','Recurso (se necessário)'],
     modal:{
@@ -821,7 +827,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:10, color:'teal', tag:'Leilão', dividerBefore:'Leilão e Contratação', label:'Leilão LRCAP-2026',
+    num:10, nodeId:'leilao', color:'teal', tag:'Leilão', label:'Leilão LRCAP-2026',
     sub:'Participar do leilão com habilitação técnica em mãos → CRCAP',
     pills:['Data do leilão','Garantia de proposta','Lances (leilão)','CRCAP assinado'],
     modal:{
@@ -850,7 +856,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:11, color:'red', tag:'Pós-Leilão', dividerBefore:'Implantação e Operação', label:'Implantação e Início da Operação Comercial',
+    num:11, nodeId:'pos-leilao', color:'red', tag:'Pós-Leilão', label:'Implantação e Início da Operação Comercial',
     sub:'Obras → Conexão → Operação em Teste → Operação Comercial',
     pills:['Comunicar início de obras','Marcos de implantação','Operação em teste','COD — Operação Comercial','Fiscalização ANEEL'],
     modal:{
@@ -896,110 +902,88 @@ const DEFAULT_DATA = [
   },
 ];
 
-// ── Build Hierarchical Diagram (vertical trunk + right-angle connectors) ──
+// ── Build Flowchart ──
 const flow = document.getElementById('flow');
-const STORAGE_KEY = 'lrcap_flow_data_v1';
+
+const chevron = `<svg class="step-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
+
+let stepIndex = 0;
+
+function buildPills(pills){
+  if(!pills || !pills.length) return '';
+  return `<div class="step-pills">${pills.map(p=>`<div class="pill">${p}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>`).join('')}</div>`;
+}
+
+STEPS.forEach((step, i) => {
+  if(step.type === 'fork'){
+    flow.innerHTML += `
+    <div class="divider">Tipo de conexão</div>
+    <div class="fork">
+      <div class="fork-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9 9-9z"/></svg>
+        Decisão — Ponto de Conexão ao Sistema Elétrico
+      </div>
+      <div class="fork-row">
+        <div class="fork-branch">
+          <div class="fork-branch-label">Distribuição</div>
+          <div class="fork-branch-sub">Conexão via distribuidora local · RN ANEEL 1000/2021 · Prosseguir no Passo 6A</div>
+        </div>
+        <div class="fork-branch">
+          <div class="fork-branch-label">Rede Básica / Transmissão</div>
+          <div class="fork-branch-sub">Conexão via ONS · Procedimentos de Rede · Prosseguir no Passo 6B</div>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  if(typeof step.num === 'number'){
+    if(step.num === 6){
+      flow.innerHTML += `<div class="divider">Conexão à Rede</div>`;
+    } else if(step.num === 7){
+      flow.innerHTML += `<div class="divider">EPE — Cadastramento para o Leilão</div>`;
+    } else if(step.num === 10){
+      flow.innerHTML += `<div class="divider">Leilão e Contratação</div>`;
+    } else if(step.num === 11){
+      flow.innerHTML += `<div class="divider">Implantação e Operação</div>`;
+    }
+  }
+
+  const isAlt = step.num === '6B';
+  const numDisplay = isAlt ? '6B' : step.num;
+
+  flow.innerHTML += `
+  <div class="step" data-color="${step.color}" data-step-index="${i}">
+    <div class="step-num">
+      <div class="step-badge">${numDisplay}</div>
+    </div>
+    <div class="step-body" id="step-${i}">
+      <div class="step-top">
+        <div>
+          <div class="step-label">${step.label}</div>
+          <div class="step-sub">${step.sub}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;flex-shrink:0">
+          ${step.nodeId ? `<span class="q-badge-wrap no-q" data-badge-node="${step.nodeId}" title="Carregando…"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:9px;height:9px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>0</span>` : ''}
+          <span class="step-tag">${step.tag}</span>
+          ${chevron}
+        </div>
+      </div>
+      ${buildPills(step.pills)}
+    </div>
+  </div>`;
+});
+
+// ── Modal Logic ──
+const overlay = document.getElementById('modal-overlay');
+const panel = document.getElementById('modal-panel');
+const content = document.getElementById('modal-content');
+const closeBtn = document.getElementById('modal-close');
 
 const COLOR_MAP = {
   orange:'#ff8c42', blue:'#4da3ff', green:'#5ed68f', amber:'#ffb45e',
   purple:'#c792ff', teal:'#4ecdc4', red:'#ff6b6b', pink:'#f78fb3'
 };
-const COLOR_OPTIONS = ['orange','blue','green','amber','purple','teal','red','pink'];
-const COLOR_LABELS = { orange:'Laranja', blue:'Azul', green:'Verde', amber:'Âmbar', purple:'Roxo', teal:'Verde-água', red:'Vermelho', pink:'Rosa' };
-
-function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
-function escAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function loadData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw) return JSON.parse(raw);
-  }catch(e){}
-  return deepClone(DEFAULT_DATA);
-}
-function saveData(){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(flowData)); }catch(e){}
-}
-
-let flowData = loadData();
-let editMode = false;
-
-// Registro plano de todas as etapas com modal, na ordem em que são renderizadas
-// (inclui as que ficam dentro de pares de bifurcação), usado pelos handlers de clique.
-const MODAL_STEPS = [];
-
-function buildDocsHTML(pills, color, idx){
-  if(!pills || !pills.length) return '';
-  const docs = pills.map(p=>`<div class="d-doc" data-color="${color}" data-step-index="${idx}">${p}</div>`).join('');
-  return `<div class="d-docs">${docs}</div>`;
-}
-
-function buildBoxHTML(step, idx, entryIndex, branch){
-  const isBranch = branch === 'left' || branch === 'right';
-  let btns = `<button class="eb-btn" data-act="edit" title="Editar">✎</button>`;
-  btns += isBranch
-    ? `<button class="eb-btn" data-act="swap" title="Trocar lado">⇄</button>`
-    : `<button class="eb-btn" data-act="up" title="Mover para cima">↑</button><button class="eb-btn" data-act="down" title="Mover para baixo">↓</button>`;
-  btns += `<button class="eb-btn" data-act="del" title="Excluir">🗑</button>`;
-  return `
-  <div class="d-box" data-color="${step.color}" data-step-index="${idx}" data-entry-index="${entryIndex}" data-branch="${branch||''}">
-    <div class="edit-bar">${btns}</div>
-    <div class="d-box-top">
-      <div class="d-box-badge">${step.num}</div>
-      <span class="d-box-tag">${step.tag}</span>
-    </div>
-    <div class="d-box-label">${step.label}</div>
-    <div class="d-box-sub">${step.sub}</div>
-  </div>`;
-}
-
-function registerStep(step, entryIndex, branch){
-  const idx = MODAL_STEPS.length;
-  MODAL_STEPS.push(step);
-  return { idx, boxHTML: buildBoxHTML(step, idx, entryIndex, branch), docsHTML: buildDocsHTML(step.pills, step.color, idx) };
-}
-
-function buildAddRow(insertIndex){
-  return `<div class="add-row">
-    <button type="button" class="ar-btn" data-add="step" data-insert="${insertIndex}">+ Etapa</button>
-    <button type="button" class="ar-btn" data-add="fork" data-insert="${insertIndex}">+ Bifurcação</button>
-  </div>`;
-}
-
-function renderFlow(){
-  MODAL_STEPS.length = 0;
-  let html = `<div class="d-root" id="d-root"><b>LRCAP 2026</b><span>Sistema de Armazenamento de Energia (SAE)</span></div>`;
-  html += buildAddRow(0);
-
-  flowData.forEach((entry, i) => {
-    if(entry.dividerBefore){
-      html += `<div class="divider">${escHtml(entry.dividerBefore)}</div>`;
-    }
-    if(entry.type === 'fork-pair'){
-      const [stepA, stepB] = entry.branches;
-      const a = registerStep(stepA, i, 'left'), b = registerStep(stepB, i, 'right');
-      html += `
-      <div class="d-fork-row" data-entry-index="${i}">
-        <div class="d-branch" data-side="left">${a.docsHTML}${a.boxHTML}</div>
-        <div class="d-branch" data-side="right">${b.boxHTML}${b.docsHTML}</div>
-      </div>`;
-    } else {
-      const r = registerStep(entry, i, '');
-      html += `<div class="d-row" data-entry-index="${i}">${r.boxHTML}${r.docsHTML}</div>`;
-    }
-    html += buildAddRow(i + 1);
-  });
-
-  flow.innerHTML = html;
-  redrawDiagram(300);
-}
-
-// ── Modal Logic (painel de leitura) ──
-const overlay = document.getElementById('modal-overlay');
-const panel = document.getElementById('modal-panel');
-const content = document.getElementById('modal-content');
-const closeBtn = document.getElementById('modal-close');
 
 function buildModalContent(step){
   const m = step.modal;
@@ -1009,7 +993,7 @@ function buildModalContent(step){
     <div class="modal-title">${m.title}</div>
     <div class="modal-subtitle">${m.subtitle}</div>`;
 
-  (m.sections||[]).forEach(sec => {
+  m.sections.forEach(sec => {
     html += `<div class="modal-section">
       <div class="modal-section-title">${sec.title}</div>
       <div class="doc-list">`;
@@ -1040,388 +1024,179 @@ function openModal(step){
 
 function closeModal(){
   overlay.classList.remove('active');
+  document.querySelectorAll('.step-body.open').forEach(b => b.classList.remove('open'));
 }
 
 closeBtn.addEventListener('click', closeModal);
 overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape') { closeModal(); closeDrawer(); } });
 
-// ── Edição: estado e helpers do formulário ──
-let editingCtx = null;
-const editOverlay = document.getElementById('edit-overlay');
-const editPanel = document.getElementById('edit-panel');
-const editContent = document.getElementById('edit-content');
+document.querySelectorAll('.step-body').forEach(body => {
+  body.addEventListener('click', () => {
+    const stepEl = body.closest('.step');
+    const idx = parseInt(stepEl.dataset.stepIndex);
+    const step = STEPS[idx];
+    if(!step) return;
+    body.classList.toggle('open');
+    if(body.classList.contains('open')){
+      document.querySelectorAll('.step-body.open').forEach(b => { if(b !== body) b.classList.remove('open'); });
+      openDrawer(step);
+    } else {
+      closeDrawer();
+      closeModal();
+    }
+  });
+});
 
-function getCardData(entryIndex, branch){
-  const entry = flowData[entryIndex];
-  if(branch === 'left') return entry.branches[0];
-  if(branch === 'right') return entry.branches[1];
-  return entry;
+document.querySelectorAll('.pill').forEach(pill => {
+  pill.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const stepEl = pill.closest('.step');
+    const idx = parseInt(stepEl.dataset.stepIndex);
+    const step = STEPS[idx];
+    if(!step) return;
+    const body = document.getElementById(`step-${idx}`);
+    body.classList.add('open');
+    openDrawer(step);
+  });
+});
+
+// ── DataStore integration ──
+let allRecords = [];
+let activeDrawerStep = null;
+const qDrawer = document.getElementById('q-drawer');
+const qContent = document.getElementById('q-drawer-content');
+
+function xesc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function xfmtDate(d){ if(!d) return ''; const p=d.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d; }
+function xIsAns(r){ return !!(r.resposta && r.resposta.trim()); }
+function xSdot(r){
+  const s=(r.status||'').toLowerCase();
+  if(xIsAns(r)) return 'sdot-green';
+  if(s.includes('andamento')) return 'sdot-amber';
+  if(s.includes('cancel')) return 'sdot-gray';
+  return 'sdot-red';
 }
+function xRecs(nodeId){ return nodeId ? allRecords.filter(r=>r.fluxo_topico===nodeId) : []; }
 
-function serializeSections(sections){
-  return (sections||[]).map(sec => {
-    const head = `## ${sec.title || ''}`;
-    const items = (sec.items||[]).map(it => `- ${it.text}${it.ref ? ' :: ' + it.ref : ''}`).join('\n');
-    return items ? `${head}\n${items}` : head;
-  }).join('\n\n');
-}
-
-function parseSections(text, colorHex){
-  return text.split(/\n(?=##\s)/).map(b => b.trim()).filter(Boolean).map(block => {
-    const lines = block.split('\n');
-    const title = lines[0].replace(/^##\s*/, '').trim();
-    const items = lines.slice(1).filter(l => l.trim().startsWith('-')).map(l => {
-      const body = l.trim().replace(/^-\s*/, '');
-      const sep = body.split(' :: ');
-      return sep.length > 1 ? { text: sep[0], ref: sep.slice(1).join(' :: ') } : { text: body };
-    });
-    return { title, color: colorHex, items };
+function updateBadges(){
+  document.querySelectorAll('[data-badge-node]').forEach(el=>{
+    const recs=xRecs(el.dataset.badgeNode);
+    const total=recs.length, ans=recs.filter(xIsAns).length;
+    if(total===0){
+      el.className='q-badge-wrap no-q';
+      el.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:9px;height:9px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>0`;
+      el.title='Nenhuma pergunta registrada';
+    } else {
+      el.className='q-badge-wrap has-q';
+      el.innerHTML=`<span class="q-dot" style="background:#5ed68f"></span>${ans}<span class="q-dot" style="background:#ff6b6b;margin-left:2px"></span>${total-ans}`;
+      el.title=`Total: ${total} · Respondidas: ${ans} · Pendentes: ${total-ans}`;
+    }
   });
 }
 
-function renderPillInputs(pills){
-  const list = document.getElementById('ef-pills-list');
-  list.innerHTML = '';
-  (pills||[]).forEach(p => addPillInput(p));
-}
-
-function addPillInput(value){
-  const list = document.getElementById('ef-pills-list');
-  const row = document.createElement('div');
-  row.className = 'ef-pill-row';
-  row.innerHTML = `<input class="ef-input ef-pill-text" value="${escAttr(value)}" placeholder="Nome do documento"><button type="button" class="ef-pill-del">×</button>`;
-  row.querySelector('.ef-pill-del').addEventListener('click', () => row.remove());
-  list.appendChild(row);
-}
-
-function openEditPanel(entryIndex, branch){
-  editingCtx = { entryIndex, branch };
-  const d = getCardData(entryIndex, branch);
-  const m = d.modal || { tag:'', title:'', subtitle:'', sections:[], note:null };
-
-  editContent.innerHTML = `
-    <div class="modal-title" style="margin-bottom:18px;">${branch ? 'Editar ramo da bifurcação' : 'Editar etapa'}</div>
-
-    <div class="ef-field"><label class="ef-label">Cor</label>
-      <select class="ef-select" id="ef-color">${COLOR_OPTIONS.map(c=>`<option value="${c}" ${c===d.color?'selected':''}>${COLOR_LABELS[c]}</option>`).join('')}</select>
+function buildDrawerHTML(step){
+  const c=COLOR_MAP[step.color]||'#4da3ff';
+  const recs=xRecs(step.nodeId);
+  const ans=recs.filter(xIsAns).length, pend=recs.length-ans;
+  let h=`<div class="qd-head">
+    <div>
+      <div class="qd-tag" style="background:${c}22;border:1px solid ${c}55;color:${c}">${step.modal?step.modal.tag:step.tag}</div>
+      <div class="qd-title">${xesc(step.label)}</div>
     </div>
-    <div class="ef-field"><label class="ef-label">Número / código (selo)</label><input class="ef-input" id="ef-num" value="${escAttr(d.num)}"></div>
-    <div class="ef-field"><label class="ef-label">Etiqueta (tag)</label><input class="ef-input" id="ef-tag" value="${escAttr(d.tag)}"></div>
-    <div class="ef-field"><label class="ef-label">Título do card</label><input class="ef-input" id="ef-label" value="${escAttr(d.label)}"></div>
-    <div class="ef-field"><label class="ef-label">Descrição curta</label><textarea class="ef-textarea" id="ef-sub" rows="2">${escHtml(d.sub||'')}</textarea></div>
-    <div class="ef-field"><label class="ef-label">Divisor de seção (opcional, aparece acima deste card)</label><input class="ef-input" id="ef-divider" value="${escAttr(d.dividerBefore||'')}"></div>
-
-    <div class="ef-field">
-      <label class="ef-label">Documentos / pílulas (lista lateral)</label>
-      <div id="ef-pills-list"></div>
-      <button type="button" class="ef-add-pill" id="ef-add-pill">+ Adicionar documento</button>
-    </div>
-
-    <div class="modal-section-title" style="margin:22px 0 14px;">Painel de detalhe (abre ao clicar no card)</div>
-    <div class="ef-field"><label class="ef-label">Tag do painel</label><input class="ef-input" id="ef-mtag" value="${escAttr(m.tag)}"></div>
-    <div class="ef-field"><label class="ef-label">Título do painel</label><input class="ef-input" id="ef-mtitle" value="${escAttr(m.title)}"></div>
-    <div class="ef-field"><label class="ef-label">Subtítulo / introdução</label><textarea class="ef-textarea" id="ef-msub" rows="3">${escHtml(m.subtitle||'')}</textarea></div>
-    <div class="ef-field">
-      <label class="ef-label">Seções do painel</label>
-      <textarea class="ef-textarea" id="ef-msections" rows="12" style="font-family:Consolas,monospace;font-size:12px;">${escHtml(serializeSections(m.sections))}</textarea>
-      <div class="ef-help">Formato: uma linha "## Título da Seção" seguida de linhas "- texto do item" (acrescente " :: referência" no fim da linha para citar uma norma). Pode usar &lt;strong&gt;negrito&lt;/strong&gt;. Deixe uma linha em branco entre seções.</div>
-    </div>
-    <div class="ef-field"><label class="ef-label">Nota de atenção (opcional)</label><textarea class="ef-textarea" id="ef-mnote" rows="2">${escHtml(m.note||'')}</textarea></div>
-
-    <div class="ef-actions">
-      <button type="button" class="ef-save" id="ef-save">Salvar</button>
-      <button type="button" class="ef-cancel" id="ef-cancel">Cancelar</button>
-    </div>
-  `;
-
-  renderPillInputs(d.pills);
-  document.getElementById('ef-add-pill').addEventListener('click', () => addPillInput(''));
-  document.getElementById('ef-save').addEventListener('click', saveEditPanel);
-  document.getElementById('ef-cancel').addEventListener('click', closeEditPanel);
-
-  editOverlay.classList.add('active');
-  editPanel.scrollTop = 0;
-}
-
-function saveEditPanel(){
-  const d = getCardData(editingCtx.entryIndex, editingCtx.branch);
-  d.color = document.getElementById('ef-color').value;
-  d.num = document.getElementById('ef-num').value;
-  d.tag = document.getElementById('ef-tag').value;
-  d.label = document.getElementById('ef-label').value;
-  d.sub = document.getElementById('ef-sub').value;
-  const divider = document.getElementById('ef-divider').value.trim();
-  if(divider) d.dividerBefore = divider; else delete d.dividerBefore;
-  d.pills = Array.from(document.querySelectorAll('#ef-pills-list .ef-pill-text')).map(i=>i.value.trim()).filter(Boolean);
-
-  const colorHex = COLOR_MAP[d.color] || '#4da3ff';
-  d.modal = d.modal || {};
-  d.modal.tag = document.getElementById('ef-mtag').value;
-  d.modal.title = document.getElementById('ef-mtitle').value;
-  d.modal.subtitle = document.getElementById('ef-msub').value;
-  d.modal.sections = parseSections(document.getElementById('ef-msections').value, colorHex);
-  const note = document.getElementById('ef-mnote').value.trim();
-  d.modal.note = note || null;
-
-  saveData();
-  closeEditPanel();
-  renderFlow();
-}
-
-function closeEditPanel(){
-  editOverlay.classList.remove('active');
-  editingCtx = null;
-}
-
-document.getElementById('edit-close').addEventListener('click', closeEditPanel);
-editOverlay.addEventListener('click', (e) => { if(e.target === editOverlay) closeEditPanel(); });
-document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); closeEditPanel(); } });
-
-// ── Mutações na estrutura do fluxo ──
-function moveEntry(i, dir){
-  const j = i + dir;
-  if(j < 0 || j >= flowData.length) return;
-  [flowData[i], flowData[j]] = [flowData[j], flowData[i]];
-  saveData(); renderFlow();
-}
-
-function swapBranches(i){
-  const entry = flowData[i];
-  if(entry.type !== 'fork-pair') return;
-  entry.branches.reverse();
-  saveData(); renderFlow();
-}
-
-function deleteCard(i, branch){
-  const entry = flowData[i];
-  if(branch === 'left' || branch === 'right'){
-    if(!confirm('Excluir este ramo da bifurcação? O outro ramo passa a ser uma etapa única.')) return;
-    flowData[i] = entry.branches[branch === 'left' ? 1 : 0];
+    <button class="qd-close" id="qd-close" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="qd-stats">
+    <div class="qd-stat"><div class="qd-stat-dot" style="background:#76819a"></div>${recs.length} total</div>
+    <div class="qd-stat"><div class="qd-stat-dot" style="background:#5ed68f"></div>${ans} respondidas</div>
+    <div class="qd-stat"><div class="qd-stat-dot" style="background:#ff6b6b"></div>${pend} pendentes</div>
+  </div>`;
+  if(recs.length===0){
+    h+=`<div class="qd-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;opacity:.25;margin:0 auto 10px;display:block"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <div>Nenhuma pergunta registrada<br>para esta etapa.</div>
+      <div style="font-size:11px;margin-top:8px;color:var(--text-3)">No módulo <strong>Cadastro</strong>, selecione<br><em>"${xesc(step.label)}"</em><br>no campo <em>Tópico no Fluxograma</em>.</div>
+    </div>`;
   } else {
-    if(!confirm('Excluir esta etapa do fluxo?')) return;
-    flowData.splice(i, 1);
-  }
-  saveData(); renderFlow();
-}
-
-function addStepAt(insertIndex){
-  flowData.splice(insertIndex, 0, {
-    num:'', color:'blue', tag:'Nova Tag', label:'Nova Etapa',
-    sub:'Clique em editar (✎) para preencher a descrição.',
-    pills:[], modal:{ tag:'Detalhe', title:'Nova Etapa', subtitle:'', sections:[], note:null }
-  });
-  saveData(); renderFlow();
-}
-
-function addForkAt(insertIndex){
-  flowData.splice(insertIndex, 0, {
-    type:'fork-pair', branches:[
-      { num:'A', color:'amber', tag:'Ramo A', label:'Novo Ramo A', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo A', subtitle:'', sections:[], note:null } },
-      { num:'B', color:'amber', tag:'Ramo B', label:'Novo Ramo B', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo B', subtitle:'', sections:[], note:null } },
-    ]
-  });
-  saveData(); renderFlow();
-}
-
-// Delegação de cliques no diagrama: abre modal de leitura, ações de edição e botões "+".
-flow.addEventListener('click', (e) => {
-  const ebBtn = e.target.closest('.eb-btn');
-  if(ebBtn){
-    e.stopPropagation();
-    const box = ebBtn.closest('.d-box');
-    const entryIndex = parseInt(box.dataset.entryIndex, 10);
-    const branch = box.dataset.branch || '';
-    const act = ebBtn.dataset.act;
-    if(act === 'edit') openEditPanel(entryIndex, branch);
-    else if(act === 'swap') swapBranches(entryIndex);
-    else if(act === 'up') moveEntry(entryIndex, -1);
-    else if(act === 'down') moveEntry(entryIndex, 1);
-    else if(act === 'del') deleteCard(entryIndex, branch);
-    return;
-  }
-
-  const arBtn = e.target.closest('.ar-btn');
-  if(arBtn){
-    e.stopPropagation();
-    const insertIndex = parseInt(arBtn.dataset.insert, 10);
-    if(arBtn.dataset.add === 'step') addStepAt(insertIndex);
-    else addForkAt(insertIndex);
-    return;
-  }
-
-  const card = e.target.closest('.d-box, .d-doc');
-  if(card){
-    const idx = parseInt(card.dataset.stepIndex, 10);
-    const step = MODAL_STEPS[idx];
-    if(step && step.modal) openModal(step);
-  }
-});
-
-// ── Toolbar: modo de edição, exportar/importar/restaurar ──
-const editToggleBtn = document.getElementById('tb-edit-toggle');
-editToggleBtn.addEventListener('click', () => {
-  editMode = !editMode;
-  document.body.classList.toggle('edit-mode', editMode);
-  editToggleBtn.classList.toggle('active', editMode);
-  editToggleBtn.textContent = editMode ? '✓ Sair do Modo Edição' : '✎ Modo Edição';
-  redrawDiagram(300);
-});
-
-document.getElementById('tb-export').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(flowData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'fluxograma_lrcap_dados.json';
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-});
-
-const importInput = document.getElementById('tb-import-input');
-document.getElementById('tb-import').addEventListener('click', () => importInput.click());
-importInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try{
-      const parsed = JSON.parse(reader.result);
-      if(!Array.isArray(parsed)) throw new Error('o arquivo não contém uma lista de etapas');
-      flowData = parsed;
-      saveData();
-      renderFlow();
-    }catch(err){
-      alert('Não foi possível importar o arquivo: ' + err.message);
-    }
-  };
-  reader.readAsText(file);
-  importInput.value = '';
-});
-
-document.getElementById('tb-reset').addEventListener('click', () => {
-  if(!confirm('Restaurar o fluxograma para o conteúdo original? As edições salvas neste navegador serão perdidas.')) return;
-  flowData = deepClone(DEFAULT_DATA);
-  saveData();
-  renderFlow();
-});
-
-// ── Connectors (right-angle, no curves) ──
-function drawDiagramConnectors(){
-  const svg = document.getElementById('diagram-svg');
-  const wrap = document.getElementById('diagram');
-  if(!svg || !wrap) return;
-  const wrapRect = wrap.getBoundingClientRect();
-  svg.setAttribute('viewBox', `0 0 ${wrapRect.width} ${wrapRect.height}`);
-
-  const rel = rect => ({
-    left: rect.left - wrapRect.left, right: rect.right - wrapRect.left,
-    top: rect.top - wrapRect.top, bottom: rect.bottom - wrapRect.top,
-    midX: (rect.left + rect.right) / 2 - wrapRect.left,
-    midY: (rect.top + rect.bottom) / 2 - wrapRect.top,
-  });
-
-  let svgHTML = '';
-  const TRUNK_COLOR = 'rgba(255,255,255,.32)';
-  function line(x1, y1, x2, y2, color){
-    svgHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="2" stroke-linecap="round" opacity="0.65"/>`;
-  }
-  function dot(x, y, color){
-    svgHTML += `<circle cx="${x}" cy="${y}" r="3" fill="${color}" opacity="0.9"/>`;
-  }
-  function colorOf(el){ return COLOR_MAP[el.dataset.color] || '#7c8cff'; }
-
-  // Liga uma caixa principal aos seus documentos laterais (à esquerda ou à direita).
-  function docFan(boxEl, docEls, color, side){
-    if(!docEls.length) return;
-    const b = rel(boxEl.getBoundingClientRect());
-    const boxEdgeX = side === 'right' ? b.right : b.left;
-    const spineX = side === 'right' ? boxEdgeX + 25 : boxEdgeX - 25;
-    const docs = docEls.map(d => rel(d.getBoundingClientRect()));
-    const ys = docs.map(d => d.midY).concat([b.midY]);
-    const spineTop = Math.min(...ys), spineBottom = Math.max(...ys);
-    line(boxEdgeX, b.midY, spineX, b.midY, color);
-    if(docs.length > 1) line(spineX, spineTop, spineX, spineBottom, color);
-    docs.forEach(d => {
-      const docEdgeX = side === 'right' ? d.left : d.right;
-      line(spineX, d.midY, docEdgeX, d.midY, color);
-      dot(docEdgeX, d.midY, color);
+    h+=`<div class="qd-list">`;
+    recs.forEach((r,i)=>{
+      const q=r.pergunta||'(sem texto)';
+      h+=`<div class="qd-item" data-qi="${i}">
+        <div class="qd-item-head">
+          <div class="qd-sdot ${xSdot(r)}"></div>
+          <div style="flex:1">
+            <div class="qd-q">${xesc(q.length>110?q.slice(0,110)+'…':q)}</div>
+            ${r.orgao_responsavel?`<div class="qd-org">${xesc(r.orgao_responsavel)}</div>`:''}
+          </div>
+          <svg class="qd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="qd-item-body">
+          ${r.item_referente?`<div class="qdf"><div class="l">Item</div><div class="v">${xesc(r.item_referente)}</div></div>`:''}
+          ${r.classificacao?`<div class="qdf"><div class="l">Tipo</div><div class="v">${xesc(r.classificacao)}</div></div>`:''}
+          ${r.data_protocolo?`<div class="qdf"><div class="l">Data</div><div class="v">${xfmtDate(r.data_protocolo)}</div></div>`:''}
+          ${r.status?`<div class="qdf"><div class="l">Status</div><div class="v">${xesc(r.status)}</div></div>`:''}
+          <div class="qdf"><div class="l">Pergunta completa</div><div class="v">${xesc(r.pergunta||'')}</div></div>
+          <div class="qdf"><div class="l">Resposta</div>${xIsAns(r)?`<div class="qd-ans">${xesc(r.resposta)}</div>`:`<div class="qd-no-ans">Sem resposta ainda.</div>`}</div>
+        </div>
+      </div>`;
     });
+    h+=`</div>`;
   }
+  if(step.modal){
+    h+=`<button class="qd-docs-btn" id="qd-docs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Ver checklist de documentos
+    </button>`;
+  }
+  return h;
+}
 
-  const root = document.getElementById('d-root');
-  let prevRect = root.getBoundingClientRect();
-  dot(rel(prevRect).midX, rel(prevRect).bottom, '#7c8cff');
-
-  Array.from(flow.children).forEach(rowEl => {
-    if(rowEl.id === 'd-root') return;
-
-    if(rowEl.classList.contains('d-row')){
-      const box = rowEl.querySelector('.d-box');
-      const docs = Array.from(rowEl.querySelectorAll('.d-doc'));
-      const color = colorOf(box);
-      docFan(box, docs, color, 'right');
-
-      const p = rel(prevRect), c = rel(box.getBoundingClientRect());
-      line(c.midX, p.bottom, c.midX, c.top, TRUNK_COLOR);
-      dot(c.midX, c.top, color);
-      prevRect = box.getBoundingClientRect();
-
-    } else if(rowEl.classList.contains('d-fork-row')){
-      const branchL = rowEl.querySelector('.d-branch[data-side="left"]');
-      const branchR = rowEl.querySelector('.d-branch[data-side="right"]');
-      const boxL = branchL.querySelector('.d-box'), boxR = branchR.querySelector('.d-box');
-      const docsL = Array.from(branchL.querySelectorAll('.d-doc'));
-      const docsR = Array.from(branchR.querySelectorAll('.d-doc'));
-      docFan(boxL, docsL, colorOf(boxL), 'left');
-      docFan(boxR, docsR, colorOf(boxR), 'right');
-
-      const rL = rel(boxL.getBoundingClientRect()), rR = rel(boxR.getBoundingClientRect());
-      const splitY = Math.min(rL.top, rR.top) - 24;
-      const splitMidX = (rL.midX + rR.midX) / 2;
-
-      const p = rel(prevRect);
-      line(splitMidX, p.bottom, splitMidX, splitY, TRUNK_COLOR);
-      line(rL.midX, splitY, rR.midX, splitY, TRUNK_COLOR);
-      line(rL.midX, splitY, rL.midX, rL.top, colorOf(boxL));
-      line(rR.midX, splitY, rR.midX, rR.top, colorOf(boxR));
-      dot(splitMidX, splitY, '#9aa6c2');
-      dot(rL.midX, rL.top, colorOf(boxL));
-      dot(rR.midX, rR.top, colorOf(boxR));
-
-      const lastL = docsL.length ? docsL[docsL.length - 1] : boxL;
-      const lastR = docsR.length ? docsR[docsR.length - 1] : boxR;
-      const bL = rel(lastL.getBoundingClientRect()), bR = rel(lastR.getBoundingClientRect());
-      const mergeY = Math.max(rL.bottom, bL.bottom, rR.bottom, bR.bottom) + 24;
-      const mergeMidX = splitMidX;
-
-      line(rL.midX, rL.bottom, rL.midX, mergeY, colorOf(boxL));
-      line(rR.midX, rR.bottom, rR.midX, mergeY, colorOf(boxR));
-      line(rL.midX, mergeY, rR.midX, mergeY, TRUNK_COLOR);
-      dot(mergeMidX, mergeY, '#9aa6c2');
-
-      prevRect = { left: mergeMidX + wrapRect.left - 1, right: mergeMidX + wrapRect.left + 1, top: mergeY + wrapRect.top, bottom: mergeY + wrapRect.top };
-    }
+function wireDrawer(step){
+  const cb=document.getElementById('qd-close');
+  if(cb) cb.addEventListener('click',closeDrawer);
+  const db=document.getElementById('qd-docs');
+  if(db) db.addEventListener('click',()=>step.modal&&openModal(step));
+  qContent.querySelectorAll('.qd-item').forEach(item=>{
+    item.addEventListener('click',()=>item.classList.toggle('expanded'));
   });
-
-  svg.innerHTML = svgHTML;
 }
 
-let _diagramRaf = null;
-function redrawDiagram(durationMs){
-  drawDiagramConnectors();
-  if(_diagramRaf) cancelAnimationFrame(_diagramRaf);
-  if(!durationMs) return;
-  const start = performance.now();
-  const tick = () => {
-    drawDiagramConnectors();
-    if(performance.now() - start < durationMs) _diagramRaf = requestAnimationFrame(tick);
-  };
-  _diagramRaf = requestAnimationFrame(tick);
+function openDrawer(step){
+  activeDrawerStep=step;
+  qContent.innerHTML=buildDrawerHTML(step);
+  qDrawer.classList.add('open');
+  wireDrawer(step);
 }
 
-renderFlow();
-redrawDiagram(700); // re-medir por alguns frames cobre o reflow do carregamento da fonte
-window.addEventListener('resize', () => drawDiagramConnectors());
-if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>drawDiagramConnectors()); }
+function closeDrawer(){
+  qDrawer.classList.remove('open');
+  activeDrawerStep=null;
+  document.querySelectorAll('.step-body.open').forEach(b=>b.classList.remove('open'));
+}
+
+function refreshDrawer(){
+  if(activeDrawerStep&&qDrawer.classList.contains('open')){
+    const st=qDrawer.scrollTop;
+    qContent.innerHTML=buildDrawerHTML(activeDrawerStep);
+    qDrawer.scrollTop=st;
+    wireDrawer(activeDrawerStep);
+  }
+}
+
+async function initDataStore(){
+  if(typeof DataStore==='undefined') return;
+  try{
+    allRecords=await DataStore.list();
+    updateBadges();
+    DataStore.onChange(()=>{
+      DataStore.list().then(r=>{ allRecords=r; updateBadges(); refreshDrawer(); });
+    });
+  }catch(e){ console.warn('DataStore indisponível:',e); }
+}
+
+initDataStore();
 </script>
 </body>
 </html>

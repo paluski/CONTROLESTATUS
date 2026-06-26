@@ -903,6 +903,7 @@
       orgao_responsavel: $("f_orgao").value.trim(),
       responsavel: $("f_responsavel").value.trim(),
       status: $("f_status").value.trim(),
+      fluxo_topico: $("f_fluxo_topico").value || null,
       pergunta: $("f_pergunta").value.trim(),
       resposta: $("f_resposta").value.trim(),
     };
@@ -938,6 +939,7 @@
     $("f_orgao").value = "";
     $("f_responsavel").value = "";
     $("f_status").value = "";
+    $("f_fluxo_topico").value = "";
     $("f_pergunta").value = "";
     $("f_resposta").value = "";
     fillItemSelect("", "");
@@ -957,6 +959,7 @@
     $("f_orgao").value = r.orgao_responsavel || "";
     $("f_responsavel").value = r.responsavel || "";
     $("f_status").value = r.status || "";
+    $("f_fluxo_topico").value = r.fluxo_topico || "";
     $("f_pergunta").value = r.pergunta || "";
     $("f_resposta").value = r.resposta || "";
     $("formTitle").textContent = "Editar registro";

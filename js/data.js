@@ -44,6 +44,7 @@
     // campos de texto legados não usados no modelo relacional
     delete out.documento;
     delete out.capitulo;
+    if ("fluxo_topico" in out && !out.fluxo_topico) delete out.fluxo_topico;
     return out;
   }
 
