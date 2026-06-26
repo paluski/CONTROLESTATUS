@@ -188,14 +188,14 @@ body{
 #modal-overlay{
   position:fixed;inset:0;z-index:200;display:none;
   align-items:center;justify-content:flex-end;
-  background:rgba(5,8,16,.6);backdrop-filter:blur(5px);
+  background:transparent;
 }
 #modal-overlay.active{display:flex;}
 
 #edit-overlay{
   position:fixed;inset:0;z-index:220;display:none;
   align-items:center;justify-content:flex-end;
-  background:rgba(5,8,16,.65);backdrop-filter:blur(5px);
+  background:transparent;
 }
 #edit-overlay.active{display:flex;}
 
@@ -260,7 +260,7 @@ body{
 #drawer-overlay{
   position:fixed;inset:0;z-index:210;display:none;
   align-items:center;justify-content:flex-start;
-  background:rgba(5,8,16,.6);backdrop-filter:blur(5px);
+  background:transparent;
 }
 #drawer-overlay.active{display:flex;}
 .drawer-panel{
@@ -321,6 +321,27 @@ body{
 @media(max-width:600px){
   .drawer-panel{width:100vw;border-right:none;border-bottom:1px solid var(--border-strong);}
 }
+
+/* ── Balão de escolha (Perguntas × Detalhamento) ── */
+.card-choice{
+  position:fixed;z-index:230;display:none;flex-direction:column;gap:6px;
+  background:linear-gradient(165deg,rgba(24,32,52,.98),rgba(13,18,30,.99));
+  border:1px solid var(--border-strong);border-radius:12px;padding:7px;
+  box-shadow:var(--shadow-lg);min-width:180px;
+  animation:ccPop .15s cubic-bezier(.2,.8,.2,1) both;
+}
+.card-choice.active{display:flex;}
+@keyframes ccPop{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+.cc-btn{
+  display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;
+  padding:9px 11px;font-size:12.5px;font-weight:700;color:var(--text-1);cursor:pointer;
+  transition:all .15s ease;font-family:inherit;
+}
+.cc-btn:hover{background:var(--surface-hover);border-color:var(--c-blue-border);transform:translateX(2px);}
+.cc-btn svg{width:15px;height:15px;color:var(--text-2);flex-shrink:0;}
+.cc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.cc-count{margin-left:auto;font-size:10.5px;font-weight:800;color:var(--text-2);background:rgba(255,255,255,.08);border-radius:999px;padding:1px 7px;}
 
 /* ── Legend ── */
 .legend{
@@ -469,6 +490,9 @@ body.edit-mode .add-row{display:flex;}
     <div id="drawer-body"></div>
   </div>
 </div>
+
+<!-- Balão de escolha: Perguntas × Detalhamento -->
+<div id="card-choice" class="card-choice"></div>
 
 <!-- Toolbar de edição -->
 <div class="toolbar-fixed">
@@ -1316,6 +1340,71 @@ function refreshOpenDrawer(){
 drawerClose.addEventListener('click', closeFlowDrawer);
 drawerOverlay.addEventListener('click', (e) => { if(e.target === drawerOverlay) closeFlowDrawer(); });
 
+// ── Balão de escolha (Perguntas × Detalhamento) ao clicar num bloco ──
+const cardChoice = document.getElementById('card-choice');
+
+function openCardChoice(boxEl, step, flowId){
+  const hasQ = !!flowId;
+  const hasD = !!(step && step.modal);
+  if(!hasQ && !hasD) return;
+
+  const list = hasQ ? perguntasDoBloco(flowId) : [];
+  const pendentes = list.filter(r => !window.isAnswered(r)).length;
+
+  cardChoice.innerHTML = `
+    ${hasQ ? `<button type="button" class="cc-btn" data-act="q">
+      <span class="cc-dot ${pendentes ? 'qb-red' : 'qb-green'}"></span>
+      Perguntas${list.length ? ` <span class="cc-count">${list.length}</span>` : ''}
+    </button>` : ''}
+    ${hasD ? `<button type="button" class="cc-btn" data-act="d">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      Detalhamento
+    </button>` : ''}`;
+
+  cardChoice._step = step;
+  cardChoice._flowId = flowId;
+  cardChoice._label = step ? step.label : flowId;
+
+  const r = boxEl.getBoundingClientRect();
+  cardChoice.style.left = '0px';
+  cardChoice.style.top = '0px';
+  cardChoice.classList.add('active');
+
+  const cr = cardChoice.getBoundingClientRect();
+  let left = r.right + 10;
+  let top = r.top;
+  if(left + cr.width > window.innerWidth - 8) left = r.left - cr.width - 10;
+  if(left < 8) left = Math.min(r.left, window.innerWidth - cr.width - 8);
+  if(top + cr.height > window.innerHeight - 8) top = window.innerHeight - cr.height - 8;
+  if(top < 8) top = 8;
+  cardChoice.style.left = left + 'px';
+  cardChoice.style.top = top + 'px';
+}
+
+function closeCardChoice(){
+  cardChoice.classList.remove('active');
+  cardChoice._step = null;
+  cardChoice._flowId = null;
+}
+
+cardChoice.addEventListener('click', (e) => {
+  const btn = e.target.closest('.cc-btn');
+  if(!btn) return;
+  const step = cardChoice._step;
+  const flowId = cardChoice._flowId;
+  const label = cardChoice._label;
+  if(btn.dataset.act === 'd' && step && step.modal) openModal(step);
+  else if(btn.dataset.act === 'q' && flowId) openFlowDrawer(flowId, label);
+  closeCardChoice();
+});
+document.addEventListener('click', (e) => {
+  if(cardChoice.classList.contains('active') && !cardChoice.contains(e.target) && !e.target.closest('.d-box')){
+    closeCardChoice();
+  }
+});
+window.addEventListener('resize', closeCardChoice);
+window.addEventListener('scroll', closeCardChoice, true);
+
 // ── Edição: estado e helpers do formulário ──
 let editingCtx = null;
 const editOverlay = document.getElementById('edit-overlay');
@@ -1446,7 +1535,7 @@ function closeEditPanel(){
 
 document.getElementById('edit-close').addEventListener('click', closeEditPanel);
 editOverlay.addEventListener('click', (e) => { if(e.target === editOverlay) closeEditPanel(); });
-document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); closeEditPanel(); closeFlowDrawer(); } });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); closeEditPanel(); closeFlowDrawer(); closeCardChoice(); } });
 
 // ── Mutações na estrutura do fluxo ──
 function moveEntry(i, dir){
@@ -1520,15 +1609,21 @@ flow.addEventListener('click', (e) => {
     return;
   }
 
-  const card = e.target.closest('.d-box, .d-doc');
-  if(card){
-    const idx = parseInt(card.dataset.stepIndex, 10);
+  // Documento lateral: abre direto o modal de detalhamento (sem balão de escolha).
+  const doc = e.target.closest('.d-doc');
+  if(doc){
+    const idx = parseInt(doc.dataset.stepIndex, 10);
     const step = MODAL_STEPS[idx];
     if(step && step.modal) openModal(step);
-    // Bloco principal: também abre o drawer de perguntas (lado esquerdo).
-    if(card.classList.contains('d-box') && card.dataset.flowId){
-      openFlowDrawer(card.dataset.flowId, step ? step.label : card.dataset.flowId);
-    }
+    return;
+  }
+
+  // Bloco principal: mostra um balão para a pessoa escolher Perguntas ou Detalhamento.
+  const box = e.target.closest('.d-box');
+  if(box && !e.target.closest('.edit-bar')){
+    const idx = parseInt(box.dataset.stepIndex, 10);
+    const step = MODAL_STEPS[idx];
+    openCardChoice(box, step, box.dataset.flowId);
   }
 });
 
