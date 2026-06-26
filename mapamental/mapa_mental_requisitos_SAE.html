@@ -26,6 +26,9 @@
   --amber:#ffb45e;    --amber-soft:rgba(255,180,94,.14);   --amber-text:#ffdfb8;
   --gray:#9aa6c2;     --gray-soft:rgba(154,166,194,.14);   --gray-text:#dde2ee;
   --purple:#c792ff;   --purple-soft:rgba(199,146,255,.14); --purple-text:#e7d2ff;
+  --orange:#ff8c42;   --orange-soft:rgba(255,140,66,.14);  --orange-text:#ffd5b0;
+  --teal:#4ecdc4;      --teal-soft:rgba(78,205,196,.14);    --teal-text:#b2f0ec;
+  --pink:#f78fb3;      --pink-soft:rgba(247,143,179,.14);   --pink-text:#fdd5e4;
   --root:#7c8cff;     --root-soft:rgba(124,140,255,.18);
 }
 
@@ -107,6 +110,9 @@ h1.mm-title{
 .leg-dot.c-amber{color:var(--amber-soft); background:var(--amber);}
 .leg-dot.c-gray{color:var(--gray-soft); background:var(--gray);}
 .leg-dot.c-purple{color:var(--purple-soft); background:var(--purple);}
+.leg-dot.c-orange{color:var(--orange-soft); background:var(--orange);}
+.leg-dot.c-teal{color:var(--teal-soft); background:var(--teal);}
+.leg-dot.c-pink{color:var(--pink-soft); background:var(--pink);}
 
 /* type selector (fluxograma) */
 .type-switch{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
@@ -142,13 +148,13 @@ h1.mm-title{
 .root-card .rc-label{ font-size:22px; font-weight:800; letter-spacing:-.01em; }
 .root-card .rc-sub{ font-size:12.5px; color:var(--text-2); margin-top:4px; }
 
+.tree-canvas-wrap{ position:relative; width:100%; }
+#connector-svg{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:visible; }
+#connector-svg path{ transition:d .25s ease, opacity .25s ease; }
+
 .branches-row{
-  display:flex; gap:26px; flex-wrap:wrap; justify-content:center;
-  position:relative; padding-top:30px; width:100%;
-}
-.branches-row::before{
-  content:''; position:absolute; top:0; left:50%; width:2px; height:30px;
-  background:linear-gradient(var(--border-strong), transparent); transform:translateX(-50%);
+  display:flex; gap:30px 36px; flex-wrap:wrap; justify-content:center; align-items:flex-start;
+  position:relative; z-index:1; padding-top:54px; width:100%;
 }
 
 .branch{ width:255px; display:flex; flex-direction:column; align-items:center; }
@@ -197,6 +203,33 @@ h1.mm-title{
 .branch[data-color="gray"] .node-card.open, .branch[data-color="gray"] .node-card:hover{ border-color:rgba(154,166,194,.55); background:var(--gray-soft); }
 .branch[data-color="gray"] .nc-dot{ background:var(--gray); color:var(--gray); }
 .branch[data-color="gray"] .nc-label{ color:var(--gray-text); }
+
+.branch[data-color="purple"] .node-card{ border-color:rgba(199,146,255,.22); }
+.branch[data-color="purple"] .node-card.open, .branch[data-color="purple"] .node-card:hover{ border-color:rgba(199,146,255,.55); background:var(--purple-soft); }
+.branch[data-color="purple"] .nc-dot{ background:var(--purple); color:var(--purple); }
+.branch[data-color="purple"] .nc-label{ color:var(--purple-text); }
+
+.branch[data-color="orange"] .node-card{ border-color:rgba(255,140,66,.22); }
+.branch[data-color="orange"] .node-card.open, .branch[data-color="orange"] .node-card:hover{ border-color:rgba(255,140,66,.55); background:var(--orange-soft); }
+.branch[data-color="orange"] .nc-dot{ background:var(--orange); color:var(--orange); }
+.branch[data-color="orange"] .nc-label{ color:var(--orange-text); }
+
+.branch[data-color="teal"] .node-card{ border-color:rgba(78,205,196,.22); }
+.branch[data-color="teal"] .node-card.open, .branch[data-color="teal"] .node-card:hover{ border-color:rgba(78,205,196,.55); background:var(--teal-soft); }
+.branch[data-color="teal"] .nc-dot{ background:var(--teal); color:var(--teal); }
+.branch[data-color="teal"] .nc-label{ color:var(--teal-text); }
+
+.branch[data-color="pink"] .node-card{ border-color:rgba(247,143,179,.22); }
+.branch[data-color="pink"] .node-card.open, .branch[data-color="pink"] .node-card:hover{ border-color:rgba(247,143,179,.55); background:var(--pink-soft); }
+.branch[data-color="pink"] .nc-dot{ background:var(--pink); color:var(--pink); }
+.branch[data-color="pink"] .nc-label{ color:var(--pink-text); }
+
+/* "OU" divider between mutually exclusive alternative children */
+.or-divider{
+  display:flex; align-items:center; gap:8px; width:100%;
+  font-size:9.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--text-3);
+}
+.or-divider::before, .or-divider::after{ content:''; flex:1; height:1px; background:var(--border-strong); }
 
 .children-wrap{ display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .38s ease; width:100%; margin-top:0; }
 .branch.expanded > .children-wrap{ grid-template-rows:1fr; }
@@ -430,6 +463,10 @@ h1.mm-title{
   </div>
 
   <div class="mm-legend" id="legend-mindmap">
+    <div class="leg-item"><div class="leg-dot c-orange"></div>Prospecção</div>
+    <div class="leg-item"><div class="leg-dot c-purple"></div>Jurídico / SPE</div>
+    <div class="leg-item"><div class="leg-dot c-teal"></div>Fundiário</div>
+    <div class="leg-item"><div class="leg-dot c-pink"></div>Ambiental</div>
     <div class="leg-item"><div class="leg-dot c-blue"></div>ANEEL — autorização</div>
     <div class="leg-item"><div class="leg-dot c-green"></div>EPE — habilitação técnica</div>
     <div class="leg-item"><div class="leg-dot c-amber"></div>Tipo de conexão</div>
@@ -471,6 +508,65 @@ h1.mm-title{
 const DATA = {
   label:'SAE', sub:'Requisitos regulatórios',
   branches:[
+    { id:'prospeccao', color:'orange', label:'Prospecção', sub:'Viabilidade e área',
+      tip:'Primeiro passo: avaliar a viabilidade técnica, regulatória e comercial antes de qualquer investimento.',
+      children:[
+        { id:'area', label:'Área e Local', sub:'Viabilidade física',
+          tip:'Identificação e avaliação preliminar do terreno candidato ao empreendimento.',
+          leaves:['Localização, acesso e infraestrutura existente','Restrições de uso do solo (zoneamento, APP, APA, UC)','Distância ao ponto de conexão na rede','Topografia e condições geotécnicas'] },
+        { id:'estudotec', label:'Estudo Técnico', sub:'Tecnologia e dimensionamento',
+          tip:'Definição da tecnologia e dimensionamento preliminar do SAE.',
+          leaves:['Definir tecnologia: Bateria ou UHR','Dimensionar potência (MW) e capacidade (MWh)','Estimar CAPEX/OPEX e receita CRCAP','Regime de operação: arbitragem, regulação de frequência, reserva de capacidade'] },
+        { id:'enquadre', label:'Enquadramento', sub:'LRCAP-2026',
+          tip:'Verificação do enquadramento comercial e regulatório no leilão.',
+          leaves:['Produto Potência Armazenamento (PA) 2028-A / 2028-B','Cronograma e Portaria MME do leilão','Modalidade de acesso: Rede Básica/DIT (ONS) ou Distribuição','Exigência de Conteúdo Nacional (conforme leilão)'] },
+      ]
+    },
+    { id:'juridico', color:'purple', label:'Jurídico', sub:'Constituição / SPE',
+      tip:'A ANEEL e a EPE exigem que o requerente seja pessoa jurídica com objeto social compatível com a exploração de SAE.',
+      children:[
+        { id:'spe', label:'Constituição', sub:'SPE / titular',
+          tip:'Criação da pessoa jurídica apta a deter a outorga e participar do leilão.',
+          leaves:['Constituir a SPE ou empresa titular','CNPJ ativo na Receita Federal','Designar Representante Legal e Interlocutor'] },
+        { id:'jur2', label:'Qualificação', sub:'Jurídica (Anexo II)',
+          tip:'Mesma documentação exigida na fase de outorga ANEEL — reaproveitada aqui como pré-requisito.',
+          leaves:['Regularidade fiscal completa','Organograma societário (>5%)','Ato constitutivo + adm. atual','Representação legal','Contrato de consórcio (se houver)'] },
+      ]
+    },
+    { id:'fundiario', color:'teal', label:'Fundiário', sub:'Área do empreendimento',
+      tip:'Comprovação do direito de usar ou dispor do local, com georreferenciamento averbado no RGI. Um dos itens mais complexos e demorados do processo.',
+      children:[
+        { id:'regimob', label:'Regularização', sub:'Imobiliária',
+          tip:'Levantamento da situação registral do imóvel candidato.',
+          leaves:['Matrícula no Registro Geral de Imóveis (RGI)','Verificar ônus, hipotecas e restrições','Certidão RGI (até 30 dias)'] },
+        { id:'georref', label:'Georreferenciamento', sub:'INCRA',
+          tip:'Certificação técnica das coordenadas do imóvel junto ao INCRA.',
+          leaves:['Levantamento conforme normas INCRA (Lei 10.267/2001)','Certificação via SIGEF/INCRA','Averbação do georreferenciamento na matrícula'] },
+        { id:'aquisicao', label:'Aquisição', sub:'ou arrendamento',
+          tip:'Formalização do direito sobre o terreno onde o SAE será implantado.',
+          leaves:['Escritura de Compra e Venda ou Contrato de Arrendamento','Prazo compatível com a outorga (35 anos + margem)','Empreendimento contido na poligonal comprovada'] },
+        { id:'decldir', label:'Declaração de Uso', sub:'EPE — Anexo VI',
+          tip:'Documentos exigidos pela EPE para comprovar o direito de uso do local.',
+          leaves:['Direito de uso do local (Anexo VI)','DWG em UTM/SIRGAS 2000 com RGI'] },
+      ]
+    },
+    { id:'ambiental', color:'pink', label:'Ambiental', sub:'Licenciamento',
+      tip:'Exigido pela ANEEL para emissão da outorga definitiva (Anexo II, item 11). Pode ser federal (IBAMA) ou estadual, conforme porte e localização.',
+      children:[
+        { id:'enquadraamb', label:'Enquadramento', sub:'Órgão licenciador',
+          tip:'Definição de quem licencia o empreendimento e qual estudo é exigido.',
+          leaves:['Competência federal (IBAMA), estadual ou municipal','EIA/RIMA para grande porte ou impacto significativo','RAS/RCA para menor impacto'] },
+        { id:'lp', label:'Licença Prévia', sub:'LP',
+          tip:'Primeira licença do tripé ambiental: atesta a viabilidade do projeto.',
+          leaves:['Protocolar com EIA/RIMA ou estudo correspondente','Audiência pública (quando aplicável)','Atesta viabilidade ambiental + condicionantes'] },
+        { id:'li', label:'Licença de Instalação', sub:'LI',
+          tip:'Autoriza o início físico das obras, condicionada ao cumprimento da LP.',
+          leaves:['Comprovar atendimento às condicionantes da LP','Autoriza o início das obras','Licença ambiental'] },
+        { id:'lo', label:'Licença de Operação', sub:'LO',
+          tip:'Última licença: condiciona a entrada em operação em teste e comercial.',
+          leaves:['Requerida após conclusão das obras','Pode condicionar operação em teste e comercial'] },
+      ]
+    },
     { id:'aneel', color:'blue', label:'ANEEL', sub:'Autorização SAE\nRN 1.161/2026',
       tip:'Requisitos para obter a autorização de exploração de SAE junto à ANEEL.',
       children:[
@@ -483,8 +579,8 @@ const DATA = {
         { id:'tecbat', label:'Técnica', sub:'Bateria',
           tip:'Qualificação técnica específica para SAE de bateria eletroquímica.',
           leaves:['Arranjo Geral + rede de interesse restrito','Estudo técnico: injeção anual','Potência de descarga + capacidade','Eficiência global + tecnologia'] },
-        { id:'tecuhr', label:'Técnica', sub:'UHR',
-          tip:'Qualificação técnica para usina hidrelétrica reversível em ciclo fechado.',
+        { id:'tecuhr', label:'Técnica', sub:'UHR', orBefore:true,
+          tip:'Qualificação técnica para usina hidrelétrica reversível em ciclo fechado. Alternativa à tecnologia de bateria — escolha apenas uma.',
           leaves:['Arranjo Geral com reservatórios e dutos','Outorga de uso de recursos hídricos','Potência injetável e bombeável','Altura de queda + vazão + eficiência'] },
         { id:'adoc', label:'Docs adicionais', sub:'Para autorização',
           tip:'Documentos adicionais necessários para emissão do ato de autorização.',
@@ -512,16 +608,16 @@ const DATA = {
       ]
     },
     { id:'conn', color:'amber', label:'Conexão', sub:'Tipo × documentos',
-      tip:'Matriz de documentos de acesso por tipo de conexão à rede elétrica.',
+      tip:'Matriz de documentos de acesso por tipo de conexão à rede elétrica — escolha o caminho conforme o ponto de conexão do projeto.',
       children:[
         { id:'rb', label:'Rede Básica', sub:'/ DIT — ONS',
           tip:'Conexão na Rede Básica ou DIT operada pelo ONS.',
           leaves:['Parecer de Acesso ONS','Suprimento ≤ 5 anos da data do leilão','Validade 90 dias (Proc. de Rede)','Até 75 dias antes do leilão para EPE','Obrigatório em leilões sem disputa de margem'] },
-        { id:'dist', label:'Distribuição', sub:'(distribuidora)',
-          tip:'Conexão na rede de distribuição da concessionária ou permissionária.',
+        { id:'dist', label:'Distribuição', sub:'(distribuidora)', orBefore:true,
+          tip:'Conexão na rede de distribuição da concessionária ou permissionária. Alternativa à Rede Básica/DIT — depende do ponto de conexão do projeto.',
           leaves:['Orçamento Estimado (DAL) — exclusivo por leilão','Orçamento de Conexão — prazo da distribuidora','CUSD + CCD (contratos assinados)','Prazo: até 75 dias antes do leilão'] },
-        { id:'epeinf', label:'Info. Acesso', sub:'EPE (>3 anos)',
-          tip:'Informação de Acesso emitida pela EPE para suprimento acima de 3 anos.',
+        { id:'epeinf', label:'Info. Acesso', sub:'EPE (>3 anos)', orBefore:true,
+          tip:'Informação de Acesso emitida pela EPE para suprimento acima de 3 anos — alternativa apenas para Rede Básica/DIT/ICG, conforme o prazo de suprimento.',
           leaves:['Solicitada pelo cadastro no AEGE','Somente Rede Básica / DIT / ICG','Exclusiva por leilão — não reutilizável','Não substitui solicitação ao ONS pós-leilão'] },
       ]
     },
@@ -548,6 +644,7 @@ const DATA = {
 const ANEEL_SRC = 'RN ANEEL 1.161/2026';
 const EPE_SRC = 'EPE-DEE-RE-079/2024-R2';
 const MANUAL_SRC = 'Manual do Empreendedor — EPE-DEE-RE-028/2009';
+const FLUXO_SRC = 'Fluxograma LRCAP-2026 — Fases 1 a 4';
 
 const DECL_ATENDIMENTO = {
   source:`${ANEEL_SRC} — Anexo III`,
@@ -1128,6 +1225,174 @@ const LEAF_DETAILS = {
     detail:[ '"O não cumprimento dos prazos e requisitos implicará no indeferimento do requerimento."' ]
   },
 
+  // ---------- Prospecção e Viabilidade ----------
+  'Localização, acesso e infraestrutura existente':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Primeiro filtro de viabilidade: identificar a área candidata observando acesso físico e infraestrutura elétrica/viária já existente nas proximidades.',
+    detail:[ 'Avaliação preliminar do terreno candidato ao empreendimento, considerando vias de acesso, proximidade de subestações e linhas existentes.' ]
+  },
+  'Restrições de uso do solo (zoneamento, APP, APA, UC)':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Verificação de restrições legais de uso do solo que podem inviabilizar ou limitar a implantação na área pretendida.',
+    detail:[ 'Checar zoneamento municipal, Área de Preservação Permanente (APP), Área de Proteção Ambiental (APA) e unidades de conservação que incidam sobre o terreno.' ]
+  },
+  'Distância ao ponto de conexão na rede':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Quanto mais próximo de um ponto de conexão disponível (subestação ou linha), menor o custo e o prazo da rede de interesse restrito.',
+    detail:[ 'Verificar a distância até o ponto de conexão na rede elétrica, em kV, considerando subestação ou linha de transmissão/distribuição disponível.' ]
+  },
+  'Topografia e condições geotécnicas':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Condições físicas do terreno que afetam o projeto de engenharia e o custo de implantação, especialmente relevante para UHR.',
+    detail:[ 'Analisar topografia e condições geotécnicas do terreno para fins de implantação do SAE.' ]
+  },
+  'Definir tecnologia: Bateria ou UHR':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Decisão estratégica inicial que direciona toda a qualificação técnica subsequente na ANEEL (Anexo II, itens 6-7 para bateria ou 8-10 para UHR).',
+    detail:[ 'Definição entre Bateria Eletroquímica ou Usina Hidrelétrica Reversível (UHR), conforme características da área e objetivo de negócio.' ]
+  },
+  'Dimensionar potência (MW) e capacidade (MWh)':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Dimensionamento preliminar que orienta os estudos técnicos detalhados exigidos posteriormente pela ANEEL e pela EPE.',
+    detail:[ 'Dimensionar potência (MW) e capacidade de armazenamento (MWh) do empreendimento ainda na fase de viabilidade.' ]
+  },
+  'Estimar CAPEX/OPEX e receita CRCAP':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Análise econômico-financeira preliminar para decidir se o empreendimento é viável antes de iniciar investimentos em documentação.',
+    detail:[ 'Estimativa de investimento (CAPEX), custos operacionais (OPEX) e retorno esperado via receita do Contrato de Reserva de Capacidade (CRCAP).' ]
+  },
+  'Regime de operação: arbitragem, regulação de frequência, reserva de capacidade':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Define o modelo de negócio do SAE — para o LRCAP-2026, o regime relevante é a reserva de capacidade de potência.',
+    detail:[ 'Avaliação do regime de operação pretendido: arbitragem de preços, regulação de frequência ou reserva de capacidade (produto do LRCAP-2026).' ]
+  },
+  'Produto Potência Armazenamento (PA) 2028-A / 2028-B':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Produtos específicos do leilão LRCAP-2026 para armazenamento, diferenciados pelo ano-alvo de início de disponibilidade.',
+    detail:[ 'Verificar o enquadramento do projeto no LRCAP 2026: produto Potência Armazenamento (PA) 2028-A ou 2028-B, conforme Edital.' ]
+  },
+  'Cronograma e Portaria MME do leilão':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'A Portaria de Diretrizes do MME define todos os prazos do certame — cadastramento, habilitação e data do leilão.',
+    detail:[ 'Confirmar o prazo de publicação da Portaria MME e o cronograma completo do leilão LRCAP-2026.' ]
+  },
+  'Modalidade de acesso: Rede Básica/DIT (ONS) ou Distribuição':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Decisão que define qual trilha documental de conexão será seguida mais adiante (ver branch "Conexão").',
+    detail:[ 'Avaliar, ainda na prospecção, a modalidade de acesso à rede: Rede Básica/DIT via ONS, ou rede de Distribuição via distribuidora local.' ]
+  },
+  'Exigência de Conteúdo Nacional (conforme leilão)':{
+    source:`${FLUXO_SRC} — Fase 1`,
+    summary:'Alguns leilões exigem percentual mínimo de conteúdo nacional nos equipamentos — verificar antes de fechar fornecedores.',
+    detail:[ 'Verificar se a Portaria de Diretrizes do leilão exige Conteúdo Nacional, item que também gera a Declaração do Anexo VII da EPE.' ]
+  },
+
+  // ---------- Jurídico / SPE ----------
+  'Constituir a SPE ou empresa titular':{
+    source:`${FLUXO_SRC} — Fase 2`,
+    summary:'Passo fundacional: sem uma pessoa jurídica regularmente constituída, não é possível protocolar nenhum pedido junto à ANEEL ou à EPE.',
+    detail:[ 'Constituição da Sociedade de Propósito Específico (SPE) ou da empresa que será titular da outorga, com objeto social compatível com a exploração de SAE.' ]
+  },
+  'CNPJ ativo na Receita Federal':{
+    source:`${FLUXO_SRC} — Fase 2`,
+    summary:'Pré-requisito básico de existência fiscal da empresa, verificado tanto pela ANEEL quanto pela EPE.',
+    detail:[ 'CNPJ ativo junto à Receita Federal, condição de base para toda a qualificação jurídica subsequente.' ]
+  },
+
+  // ---------- Processo Fundiário ----------
+  'Matrícula no Registro Geral de Imóveis (RGI)':{
+    source:`${FLUXO_SRC} — Fase 3`,
+    summary:'Documento que identifica formalmente o imóvel onde o SAE será implantado, base de toda a regularização fundiária.',
+    detail:[ 'Identificar o imóvel e obter a matrícula no Cartório de Registro de Imóveis (RGI) da comarca correspondente.' ]
+  },
+  'Verificar ônus, hipotecas e restrições':{
+    source:`${FLUXO_SRC} — Fase 3`,
+    summary:'Due diligence imobiliária: ônus não identificados podem comprometer o direito de uso exigido pela EPE mais adiante.',
+    detail:[ 'Checar eventuais ônus, hipotecas, penhoras ou restrições registradas na matrícula do imóvel.' ]
+  },
+  'Levantamento conforme normas INCRA (Lei 10.267/2001)':{
+    source:`${FLUXO_SRC} — Fase 3 / Lei 10.267/2001`,
+    summary:'Etapa técnica que precede a averbação do georreferenciamento, exigida para a comprovação fundiária junto à EPE.',
+    detail:[ 'Contratar profissional habilitado para realizar o georreferenciamento do imóvel conforme normas INCRA (Lei 10.267/2001 e Decreto 4.449/2002).' ]
+  },
+  'Certificação via SIGEF/INCRA':{
+    source:`${FLUXO_SRC} — Fase 3`,
+    summary:'Validação oficial do levantamento de georreferenciamento pelo sistema federal do INCRA, condição para a averbação posterior.',
+    detail:[ 'Submeter o levantamento de georreferenciamento ao SIGEF/INCRA para certificação.' ]
+  },
+  'Averbação do georreferenciamento na matrícula':{
+    source:`${FLUXO_SRC} — Fase 3`,
+    summary:'Etapa final do processo fundiário: costuma levar de 60 a 180 dias e é item bloqueador do cadastramento na EPE.',
+    detail:[ 'Após a certificação pelo INCRA, averbar o georreferenciamento na matrícula do RGI; deve estar consistente com a poligonal declarada no AEGE.' ]
+  },
+  'Escritura de Compra e Venda ou Contrato de Arrendamento':{
+    source:`${FLUXO_SRC} — Fase 3`,
+    summary:'Instrumento que formaliza o direito de uso do terreno, com prazo que deve acompanhar toda a vigência da outorga.',
+    detail:[ 'Assinar Escritura de Compra e Venda (registrada no RGI) ou Contrato de Arrendamento/Locação com prazo compatível com a outorga.' ]
+  },
+  'Prazo compatível com a outorga (35 anos + margem)':{
+    source:`${FLUXO_SRC} — Fase 3`,
+    summary:'O instrumento de uso do imóvel deve cobrir toda a vigência da outorga ANEEL, sob risco de o empreendimento perder o direito de uso antes do fim do prazo regulatório.',
+    detail:[ 'Os instrumentos de uso/arrendamento devem assegurar o direito sobre o imóvel por todo o prazo de vigência da outorga (35 anos), com margem de segurança.' ]
+  },
+  'Empreendimento contido na poligonal comprovada':{
+    source:`${FLUXO_SRC} — Fase 3`,
+    summary:'Regra de consistência exigida pela EPE: o projeto não pode extrapolar a área cujo direito de uso foi efetivamente comprovado.',
+    detail:[ 'O empreendimento deve estar integralmente contido dentro da(s) poligonal(is) comprovada(s) por escritura, arrendamento ou outro instrumento equivalente.' ]
+  },
+
+  // ---------- Licenciamento Ambiental ----------
+  'Competência federal (IBAMA), estadual ou municipal':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'Primeiro passo do licenciamento: identificar corretamente o órgão competente evita protocolos no lugar errado e perda de tempo.',
+    detail:[ 'Verificar se a competência para licenciar é federal (IBAMA), estadual (ex.: SEMA, SEMAD) ou municipal, conforme porte e localização do projeto.' ]
+  },
+  'EIA/RIMA para grande porte ou impacto significativo':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'Estudo ambiental mais robusto, exigido quando o porte ou a localização do projeto indicam potencial impacto significativo.',
+    detail:[ 'Empreendimentos de grande porte ou impacto significativo exigem Estudo de Impacto Ambiental / Relatório de Impacto Ambiental (EIA/RIMA).' ]
+  },
+  'RAS/RCA para menor impacto':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'Estudo simplificado, alternativa ao EIA/RIMA para projetos de menor impacto ambiental — reduz prazo e custo do licenciamento.',
+    detail:[ 'Para empreendimentos de menor impacto, pode ser exigido apenas Relatório Ambiental Simplificado (RAS) ou Relatório de Controle Ambiental (RCA).' ]
+  },
+  'Protocolar com EIA/RIMA ou estudo correspondente':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'Ato formal que abre o processo de Licença Prévia junto ao órgão ambiental competente.',
+    detail:[ 'Protocolar o requerimento de Licença Prévia (LP) acompanhado do EIA/RIMA ou do estudo ambiental correspondente ao porte do projeto.' ]
+  },
+  'Audiência pública (quando aplicável)':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'Etapa de participação social exigida em projetos de maior impacto, podendo adicionar prazo relevante ao licenciamento.',
+    detail:[ 'O órgão ambiental pode realizar audiência pública antes de decidir sobre a Licença Prévia, conforme o impacto do empreendimento.' ]
+  },
+  'Atesta viabilidade ambiental + condicionantes':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'A LP é o primeiro "sim" formal do órgão ambiental — mas já vem acompanhada de condicionantes que precisam ser cumpridas nas fases seguintes.',
+    detail:[ 'A Licença Prévia concedida atesta a viabilidade ambiental do empreendimento e estabelece as condicionantes para a Licença de Instalação.' ]
+  },
+  'Comprovar atendimento às condicionantes da LP':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'Pré-requisito para avançar da Licença Prévia para a Licença de Instalação.',
+    detail:[ 'Apresentar ao órgão ambiental a comprovação de atendimento a todas as condicionantes fixadas na Licença Prévia.' ]
+  },
+  'Autoriza o início das obras':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'A Licença de Instalação (LI) é o documento ambiental que efetivamente libera o início físico das obras.',
+    detail:[ 'A Licença de Instalação (LI), uma vez concedida, autoriza o início das obras de implantação do empreendimento.' ]
+  },
+  'Requerida após conclusão das obras':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'Última licença do tripé ambiental, fecha o ciclo de licenciamento iniciado com a LP.',
+    detail:[ 'A Licença de Operação (LO) deve ser requerida após a conclusão das obras, comprovando o atendimento às condicionantes da Licença de Instalação.' ]
+  },
+  'Pode condicionar operação em teste e comercial':{
+    source:`${FLUXO_SRC} — Fase 4`,
+    summary:'Em diversos estados, a LO é pré-requisito para o início da operação em teste e obrigatória para a operação comercial.',
+    detail:[ 'Conforme o órgão ambiental, a LO pode ser exigida para a entrada em operação em teste e é, em regra, obrigatória para a operação comercial.' ]
+  },
+
   // ---------- Itens exclusivos do FLUXOGRAMA (passo a passo) ----------
   // Qualificação Jurídica (redação do fluxo)
   'Regularidade fiscal: FGTS + Fazendas Municipal/Estadual/Federal':{
@@ -1672,7 +1937,8 @@ function escAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;
 
 function buildChild(child){
   const leaves = (child.leaves||[]).map(l=>`<div class="leaf-chip" data-leaf="${escAttr(l)}">${l}<svg class="leaf-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>`).join('');
-  return `
+  const orDivider = child.orBefore ? `<div class="or-divider">ou</div>` : '';
+  return orDivider + `
   <div class="child-card" data-id="${child.id}">
     <div class="node-card child-toggle">
       <div class="nc-top"><div class="nc-label">${child.label}</div></div>
@@ -1696,17 +1962,26 @@ function buildBranch(branch){
     <div class="children-wrap"><div class="children-inner"><div class="children-stack">${children}</div></div></div>
   </div>`;
 }
+const BRANCH_HEX = {
+  blue:'#4da3ff', green:'#5ed68f', amber:'#ffb45e', gray:'#9aa6c2',
+  purple:'#c792ff', orange:'#ff8c42', teal:'#4ecdc4', pink:'#f78fb3'
+};
+
 function renderMindmap(){
   const root = document.getElementById('tree');
   root.innerHTML = `
-    <div class="root-card"><div class="rc-label">${DATA.label}</div><div class="rc-sub">${DATA.sub}</div></div>
-    <div class="branches-row">${DATA.branches.map(buildBranch).join('')}</div>`;
+    <div class="tree-canvas-wrap" id="tree-canvas-wrap">
+      <svg id="connector-svg"></svg>
+      <div class="root-card"><div class="rc-label">${DATA.label}</div><div class="rc-sub">${DATA.sub}</div></div>
+      <div class="branches-row">${DATA.branches.map(buildBranch).join('')}</div>
+    </div>`;
 
   root.querySelectorAll('.branch-toggle').forEach(el=>{
     el.addEventListener('click', ()=>{
       const branch = el.closest('.branch');
       const isOpen = branch.classList.toggle('expanded');
       el.classList.toggle('open', isOpen);
+      animateRedraw(420);
     });
   });
   root.querySelectorAll('.child-toggle').forEach(el=>{
@@ -1715,6 +1990,7 @@ function renderMindmap(){
       const card = el.closest('.child-card');
       const isOpen = card.classList.toggle('open');
       el.classList.toggle('open', isOpen);
+      animateRedraw(360);
     });
   });
   root.querySelectorAll('.leaf-chip').forEach(el=>{
@@ -1723,7 +1999,96 @@ function renderMindmap(){
       openLeafModal(el.dataset.leaf);
     });
   });
+
+  animateRedraw(0);
 }
+
+/* Curved connectors from the root card to each branch — gives the tree its "mind map" look */
+function fanCurve(ax, ay, x, y, color){
+  const midY = ay + (y - ay) * 0.55;
+  return `<path d="M ${ax} ${ay} C ${ax} ${midY}, ${x} ${midY}, ${x} ${y}"
+            stroke="${color}" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>`;
+}
+
+function drawConnectors(){
+  const svg = document.getElementById('connector-svg');
+  const wrap = document.getElementById('tree-canvas-wrap');
+  if(!svg || !wrap) return;
+  if(wrap.offsetWidth === 0) return; // view not visible (e.g. flow tab active)
+
+  const wrapRect = wrap.getBoundingClientRect();
+  svg.setAttribute('viewBox', `0 0 ${wrapRect.width} ${wrapRect.height}`);
+
+  const rootCard = wrap.querySelector('.root-card');
+  if(!rootCard) return;
+  const rootRect = rootCard.getBoundingClientRect();
+  const rootX = rootRect.left + rootRect.width/2 - wrapRect.left;
+  const rootY = rootRect.bottom - wrapRect.top;
+
+  // Read every branch's card position + the branch's full bottom edge
+  // (including any expanded children), so wrapped rows never get crossed.
+  const items = Array.from(wrap.querySelectorAll('.branch')).map(branchEl=>{
+    const card = branchEl.querySelector('.node-card');
+    if(!card) return null;
+    const cardRect = card.getBoundingClientRect();
+    const branchRect = branchEl.getBoundingClientRect();
+    return {
+      color: BRANCH_HEX[branchEl.dataset.color] || '#7c8cff',
+      x: cardRect.left + cardRect.width/2 - wrapRect.left,
+      top: cardRect.top - wrapRect.top,
+      bottom: branchRect.bottom - wrapRect.top,
+    };
+  }).filter(Boolean);
+
+  // Cluster into visual rows (flex-wrap lines) by matching card top values.
+  const sorted = items.slice().sort((a,b)=>a.top-b.top);
+  const rows = [];
+  sorted.forEach(it=>{
+    let row = rows.find(r=>Math.abs(r.top-it.top)<6);
+    if(!row){ row = { top:it.top, bottom:it.bottom, items:[] }; rows.push(row); }
+    row.items.push(it);
+    row.bottom = Math.max(row.bottom, it.bottom);
+  });
+  rows.sort((a,b)=>a.top-b.top);
+
+  let paths = '';
+  let prevBottom = rootY;
+  rows.forEach((row, i)=>{
+    let anchorX = rootX, anchorY;
+    if(i === 0){
+      anchorY = rootY;
+    } else {
+      anchorY = Math.max(prevBottom + 2, row.top - 22);
+      paths += `<line x1="${rootX}" y1="${prevBottom}" x2="${anchorX}" y2="${anchorY}"
+                  stroke="rgba(255,255,255,.18)" stroke-width="2" stroke-linecap="round"/>`;
+      paths += `<circle cx="${anchorX}" cy="${anchorY}" r="2.5" fill="rgba(255,255,255,.4)"/>`;
+    }
+    row.items.forEach(it=>{
+      paths += fanCurve(anchorX, anchorY, it.x, row.top, it.color);
+      paths += `<circle cx="${it.x}" cy="${row.top}" r="3" fill="${it.color}" opacity="0.85"/>`;
+    });
+    prevBottom = row.bottom;
+  });
+  paths += `<circle cx="${rootX}" cy="${rootY}" r="3.5" fill="#7c8cff" opacity="0.9"/>`;
+  svg.innerHTML = paths;
+}
+
+let _redrawRaf = null;
+function animateRedraw(durationMs){
+  drawConnectors();
+  if(_redrawRaf) cancelAnimationFrame(_redrawRaf);
+  if(durationMs <= 0) return;
+  const start = performance.now();
+  const tick = ()=>{
+    drawConnectors();
+    if(performance.now() - start < durationMs){
+      _redrawRaf = requestAnimationFrame(tick);
+    }
+  };
+  _redrawRaf = requestAnimationFrame(tick);
+}
+
+window.addEventListener('resize', ()=>{ drawConnectors(); });
 
 /* =========================================================
    RENDER — FLUXOGRAMA
@@ -1841,6 +2206,7 @@ function setAll(expand){
       c.classList.toggle('open', expand);
       c.querySelector('.child-toggle').classList.toggle('open', expand);
     });
+    animateRedraw(420);
   } else {
     activeView.querySelectorAll('.flow-toggle').forEach(el=>{ el.classList.toggle('open', expand); });
     activeView.querySelectorAll('.flow-phase').forEach(el=>{ el.classList.toggle('collapsed', !expand); });
@@ -1861,6 +2227,7 @@ document.getElementById('view-switch').addEventListener('click', (e)=>{
   document.getElementById('legend-mindmap').style.display = view==='mindmap' ? 'flex' : 'none';
   document.getElementById('legend-flow').style.display = view==='flow' ? 'flex' : 'none';
   if(view==='flow' && !document.getElementById('flow-container').innerHTML){ renderFlow(currentFlowType); }
+  if(view==='mindmap'){ animateRedraw(120); }
 });
 
 document.getElementById('type-switch').addEventListener('click', (e)=>{

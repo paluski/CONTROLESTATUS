@@ -64,131 +64,116 @@ body{
 .back-btn:hover{background:var(--surface-hover);color:var(--text-1);transform:translateY(-1px);}
 .back-btn svg{width:14px;height:14px;}
 
-/* ── Flowchart ── */
-.flow{max-width:780px;margin:0 auto;position:relative;}
+/* ── Hierarchical diagram (org-chart style: vertical trunk, right-angle connectors) ── */
+.diagram{max-width:1110px;margin:0 auto;padding:0 20px;position:relative;}
+#diagram-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible;}
 
-/* central spine */
-.flow::before{
-  content:'';position:absolute;left:35px;top:0;bottom:0;width:2px;
-  background:linear-gradient(180deg,transparent 0%,var(--border-strong) 8%,var(--border-strong) 92%,transparent 100%);
-  z-index:0;
+.d-root{
+  width:260px;margin:0 0 50px 405px;text-align:center;position:relative;z-index:1;
+  background:linear-gradient(155deg, rgba(124,140,255,.35), rgba(124,140,255,.12));
+  border:1px solid rgba(124,140,255,.45);border-radius:14px;padding:16px 18px;
+  box-shadow:var(--shadow-lg);
 }
+.d-root b{font-size:16px;font-weight:800;letter-spacing:-.01em;color:#fff;}
+.d-root span{display:block;font-size:10.5px;color:var(--text-2);margin-top:5px;line-height:1.4;}
 
-/* ── Step card ── */
-.step{position:relative;display:flex;gap:0;margin-bottom:10px;z-index:1;}
+.d-row{position:relative;z-index:1;display:flex;align-items:flex-start;gap:50px;margin:0 0 50px 405px;}
+.d-fork-row{position:relative;z-index:1;display:flex;align-items:flex-start;gap:70px;margin:0 0 50px;}
+.d-branch{display:flex;align-items:flex-start;gap:50px;}
 
-.step-num{
-  width:70px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;
-  padding-top:16px;
-}
-.step-badge{
-  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:800;letter-spacing:-.01em;border:2px solid;
-  flex-shrink:0;position:relative;z-index:2;
-}
-
-.step-body{
-  flex:1;background:var(--surface);border:1px solid var(--border);border-radius:18px;
-  padding:16px 18px 16px;cursor:pointer;user-select:none;
+.d-box{
+  width:260px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:13px 16px;cursor:pointer;user-select:none;
   transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
   box-shadow:var(--shadow-sm);
 }
-.step-body:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
-.step-body:active{transform:translateY(-1px);}
-
-.step-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.step-label{font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1.3;}
-.step-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
-.step-sub{font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.5;}
-.step-arrow{width:16px;height:16px;color:var(--text-3);flex-shrink:0;transition:transform .25s ease,color .2s ease;}
-.step-body.open .step-arrow{transform:rotate(90deg);color:var(--text-1);}
-
-.step-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
-.pill{
-  font-size:11.5px;font-weight:500;padding:5px 10px;border-radius:8px;
-  background:rgba(255,255,255,.06);border:1px solid var(--border);
-  color:var(--text-2);cursor:pointer;transition:all .15s ease;
-  display:inline-flex;align-items:center;gap:5px;line-height:1.3;
+.d-box:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.d-box-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.d-box-badge{
+  width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:10.5px;font-weight:800;letter-spacing:-.01em;border:2px solid;flex-shrink:0;
 }
-.pill:hover{background:rgba(255,255,255,.13);color:var(--text-1);border-color:rgba(124,140,255,.45);transform:translateY(-1px);}
-.pill svg{width:10px;height:10px;opacity:.5;}
+.d-box-label{font-size:13.5px;font-weight:700;letter-spacing:-.01em;line-height:1.3;margin-top:1px;}
+.d-box-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
+.d-box-sub{font-size:11px;color:var(--text-2);margin-top:5px;line-height:1.45;}
 
-/* color variants */
-.step[data-color="orange"] .step-badge{background:var(--c-orange-soft);border-color:var(--c-orange);color:var(--c-orange);}
-.step[data-color="orange"] .step-body{border-color:rgba(255,140,66,.2);}
-.step[data-color="orange"] .step-body:hover,.step[data-color="orange"] .step-body.open{border-color:var(--c-orange-border);background:var(--c-orange-soft);}
-.step[data-color="orange"] .step-label{color:#ffd5b0;}
-.step[data-color="orange"] .step-tag{background:var(--c-orange-soft);border:1px solid var(--c-orange-border);color:#ffd5b0;}
-
-.step[data-color="blue"] .step-badge{background:var(--c-blue-soft);border-color:var(--c-blue);color:var(--c-blue);}
-.step[data-color="blue"] .step-body{border-color:rgba(77,163,255,.2);}
-.step[data-color="blue"] .step-body:hover,.step[data-color="blue"] .step-body.open{border-color:var(--c-blue-border);background:var(--c-blue-soft);}
-.step[data-color="blue"] .step-label{color:#bfe0ff;}
-.step[data-color="blue"] .step-tag{background:var(--c-blue-soft);border:1px solid var(--c-blue-border);color:#bfe0ff;}
-
-.step[data-color="green"] .step-badge{background:var(--c-green-soft);border-color:var(--c-green);color:var(--c-green);}
-.step[data-color="green"] .step-body{border-color:rgba(94,214,143,.2);}
-.step[data-color="green"] .step-body:hover,.step[data-color="green"] .step-body.open{border-color:var(--c-green-border);background:var(--c-green-soft);}
-.step[data-color="green"] .step-label{color:#c4f3da;}
-.step[data-color="green"] .step-tag{background:var(--c-green-soft);border:1px solid var(--c-green-border);color:#c4f3da;}
-
-.step[data-color="amber"] .step-badge{background:var(--c-amber-soft);border-color:var(--c-amber);color:var(--c-amber);}
-.step[data-color="amber"] .step-body{border-color:rgba(255,180,94,.2);}
-.step[data-color="amber"] .step-body:hover,.step[data-color="amber"] .step-body.open{border-color:var(--c-amber-border);background:var(--c-amber-soft);}
-.step[data-color="amber"] .step-label{color:#ffdfb8;}
-.step[data-color="amber"] .step-tag{background:var(--c-amber-soft);border:1px solid var(--c-amber-border);color:#ffdfb8;}
-
-.step[data-color="purple"] .step-badge{background:var(--c-purple-soft);border-color:var(--c-purple);color:var(--c-purple);}
-.step[data-color="purple"] .step-body{border-color:rgba(199,146,255,.2);}
-.step[data-color="purple"] .step-body:hover,.step[data-color="purple"] .step-body.open{border-color:var(--c-purple-border);background:var(--c-purple-soft);}
-.step[data-color="purple"] .step-label{color:#e7d2ff;}
-.step[data-color="purple"] .step-tag{background:var(--c-purple-soft);border:1px solid var(--c-purple-border);color:#e7d2ff;}
-
-.step[data-color="teal"] .step-badge{background:var(--c-teal-soft);border-color:var(--c-teal);color:var(--c-teal);}
-.step[data-color="teal"] .step-body{border-color:rgba(78,205,196,.2);}
-.step[data-color="teal"] .step-body:hover,.step[data-color="teal"] .step-body.open{border-color:var(--c-teal-border);background:var(--c-teal-soft);}
-.step[data-color="teal"] .step-label{color:#b2f0ec;}
-.step[data-color="teal"] .step-tag{background:var(--c-teal-soft);border:1px solid var(--c-teal-border);color:#b2f0ec;}
-
-.step[data-color="red"] .step-badge{background:var(--c-red-soft);border-color:var(--c-red);color:var(--c-red);}
-.step[data-color="red"] .step-body{border-color:rgba(255,107,107,.2);}
-.step[data-color="red"] .step-body:hover,.step[data-color="red"] .step-body.open{border-color:var(--c-red-border);background:var(--c-red-soft);}
-.step[data-color="red"] .step-label{color:#ffd2d2;}
-.step[data-color="red"] .step-tag{background:var(--c-red-soft);border:1px solid var(--c-red-border);color:#ffd2d2;}
-
-.step[data-color="pink"] .step-badge{background:var(--c-pink-soft);border-color:var(--c-pink);color:var(--c-pink);}
-.step[data-color="pink"] .step-body{border-color:rgba(247,143,179,.2);}
-.step[data-color="pink"] .step-body:hover,.step[data-color="pink"] .step-body.open{border-color:var(--c-pink-border);background:var(--c-pink-soft);}
-.step[data-color="pink"] .step-label{color:#fdd5e4;}
-.step[data-color="pink"] .step-tag{background:var(--c-pink-soft);border:1px solid var(--c-pink-border);color:#fdd5e4;}
-
-/* ── Fork / Decision ── */
-.fork{
-  margin:4px 0 4px 70px;position:relative;z-index:1;
-  background:var(--c-amber-soft);border:1px solid var(--c-amber-border);border-radius:16px;
-  padding:14px 18px;
+.d-docs{width:190px;flex-shrink:0;display:flex;flex-direction:column;gap:9px;padding-top:1px;}
+.d-doc{
+  background:rgba(255,255,255,.05);border:1px solid var(--border);border-left:3px solid var(--border-strong);
+  border-radius:7px;padding:7px 10px;font-size:11px;font-weight:500;color:var(--text-2);
+  cursor:pointer;transition:all .15s ease;line-height:1.35;
 }
-.fork-label{
-  display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--c-amber);margin-bottom:12px;
-}
-.fork-label svg{width:14px;height:14px;}
-.fork-row{display:flex;gap:10px;flex-wrap:wrap;}
-.fork-branch{
-  flex:1;min-width:200px;background:rgba(255,255,255,.05);border:1px solid var(--border);
-  border-radius:12px;padding:12px 14px;cursor:pointer;
-  transition:all .2s ease;
-}
-.fork-branch:hover{background:rgba(255,255,255,.10);border-color:var(--border-strong);transform:translateY(-1px);}
-.fork-branch-label{font-size:13px;font-weight:700;color:var(--text-1);margin-bottom:3px;}
-.fork-branch-sub{font-size:11px;color:var(--text-2);}
+.d-doc:hover{background:rgba(255,255,255,.12);color:var(--text-1);border-color:rgba(124,140,255,.45);transform:translateX(2px);}
+
+/* color variants — box + badge + tag + doc accent, per fase color */
+.d-box[data-color="orange"]{border-color:rgba(255,140,66,.25);}
+.d-box[data-color="orange"]:hover{border-color:var(--c-orange-border);background:var(--c-orange-soft);}
+.d-box[data-color="orange"] .d-box-badge{background:var(--c-orange-soft);border-color:var(--c-orange);color:var(--c-orange);}
+.d-box[data-color="orange"] .d-box-label{color:#ffd5b0;}
+.d-box[data-color="orange"] .d-box-tag{background:var(--c-orange-soft);border:1px solid var(--c-orange-border);color:#ffd5b0;}
+.d-doc[data-color="orange"]{border-left-color:var(--c-orange);}
+
+.d-box[data-color="blue"]{border-color:rgba(77,163,255,.25);}
+.d-box[data-color="blue"]:hover{border-color:var(--c-blue-border);background:var(--c-blue-soft);}
+.d-box[data-color="blue"] .d-box-badge{background:var(--c-blue-soft);border-color:var(--c-blue);color:var(--c-blue);}
+.d-box[data-color="blue"] .d-box-label{color:#bfe0ff;}
+.d-box[data-color="blue"] .d-box-tag{background:var(--c-blue-soft);border:1px solid var(--c-blue-border);color:#bfe0ff;}
+.d-doc[data-color="blue"]{border-left-color:var(--c-blue);}
+
+.d-box[data-color="green"]{border-color:rgba(94,214,143,.25);}
+.d-box[data-color="green"]:hover{border-color:var(--c-green-border);background:var(--c-green-soft);}
+.d-box[data-color="green"] .d-box-badge{background:var(--c-green-soft);border-color:var(--c-green);color:var(--c-green);}
+.d-box[data-color="green"] .d-box-label{color:#c4f3da;}
+.d-box[data-color="green"] .d-box-tag{background:var(--c-green-soft);border:1px solid var(--c-green-border);color:#c4f3da;}
+.d-doc[data-color="green"]{border-left-color:var(--c-green);}
+
+.d-box[data-color="amber"]{border-color:rgba(255,180,94,.25);}
+.d-box[data-color="amber"]:hover{border-color:var(--c-amber-border);background:var(--c-amber-soft);}
+.d-box[data-color="amber"] .d-box-badge{background:var(--c-amber-soft);border-color:var(--c-amber);color:var(--c-amber);}
+.d-box[data-color="amber"] .d-box-label{color:#ffdfb8;}
+.d-box[data-color="amber"] .d-box-tag{background:var(--c-amber-soft);border:1px solid var(--c-amber-border);color:#ffdfb8;}
+.d-doc[data-color="amber"]{border-left-color:var(--c-amber);}
+
+.d-box[data-color="purple"]{border-color:rgba(199,146,255,.25);}
+.d-box[data-color="purple"]:hover{border-color:var(--c-purple-border);background:var(--c-purple-soft);}
+.d-box[data-color="purple"] .d-box-badge{background:var(--c-purple-soft);border-color:var(--c-purple);color:var(--c-purple);}
+.d-box[data-color="purple"] .d-box-label{color:#e7d2ff;}
+.d-box[data-color="purple"] .d-box-tag{background:var(--c-purple-soft);border:1px solid var(--c-purple-border);color:#e7d2ff;}
+.d-doc[data-color="purple"]{border-left-color:var(--c-purple);}
+
+.d-box[data-color="teal"]{border-color:rgba(78,205,196,.25);}
+.d-box[data-color="teal"]:hover{border-color:var(--c-teal-border);background:var(--c-teal-soft);}
+.d-box[data-color="teal"] .d-box-badge{background:var(--c-teal-soft);border-color:var(--c-teal);color:var(--c-teal);}
+.d-box[data-color="teal"] .d-box-label{color:#b2f0ec;}
+.d-box[data-color="teal"] .d-box-tag{background:var(--c-teal-soft);border:1px solid var(--c-teal-border);color:#b2f0ec;}
+.d-doc[data-color="teal"]{border-left-color:var(--c-teal);}
+
+.d-box[data-color="red"]{border-color:rgba(255,107,107,.25);}
+.d-box[data-color="red"]:hover{border-color:var(--c-red-border);background:var(--c-red-soft);}
+.d-box[data-color="red"] .d-box-badge{background:var(--c-red-soft);border-color:var(--c-red);color:var(--c-red);}
+.d-box[data-color="red"] .d-box-label{color:#ffd2d2;}
+.d-box[data-color="red"] .d-box-tag{background:var(--c-red-soft);border:1px solid var(--c-red-border);color:#ffd2d2;}
+.d-doc[data-color="red"]{border-left-color:var(--c-red);}
+
+.d-box[data-color="pink"]{border-color:rgba(247,143,179,.25);}
+.d-box[data-color="pink"]:hover{border-color:var(--c-pink-border);background:var(--c-pink-soft);}
+.d-box[data-color="pink"] .d-box-badge{background:var(--c-pink-soft);border-color:var(--c-pink);color:var(--c-pink);}
+.d-box[data-color="pink"] .d-box-label{color:#fdd5e4;}
+.d-box[data-color="pink"] .d-box-tag{background:var(--c-pink-soft);border:1px solid var(--c-pink-border);color:#fdd5e4;}
+.d-doc[data-color="pink"]{border-left-color:var(--c-pink);}
 
 /* ── Section divider ── */
 .divider{
-  margin:24px 0 14px 70px;display:flex;align-items:center;gap:12px;
-  font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);
+  margin:8px 0 22px 405px;display:flex;align-items:center;gap:12px;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);position:relative;z-index:1;
 }
 .divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+@media(max-width:980px){
+  .diagram{overflow-x:auto;padding-bottom:8px;}
+  .diagram-inner{width:1110px;}
+  #diagram-svg{width:1110px;}
+}
 
 /* ── Modal Overlay ── */
 #modal-overlay{
@@ -257,7 +242,7 @@ body{
 
 /* ── Legend ── */
 .legend{
-  max-width:780px;margin:36px auto 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
+  max-width:1110px;margin:36px auto 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
 }
 .leg{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-2);}
 .leg-dot{width:10px;height:10px;border-radius:50%;}
@@ -270,10 +255,6 @@ body{
 }
 
 @media(max-width:600px){
-  .flow::before{left:28px;}
-  .step-num{width:56px;}
-  .step-badge{width:28px;height:28px;font-size:11px;}
-  .fork,.divider{margin-left:56px;}
   .modal-panel{width:100vw;border-left:none;border-top:1px solid var(--border-strong);}
 }
 </style>
@@ -293,7 +274,10 @@ body{
   </a>
 </div>
 
-<div class="flow" id="flow"></div>
+<div class="diagram" id="diagram">
+  <svg id="diagram-svg"></svg>
+  <div class="diagram-inner" id="flow"></div>
+</div>
 
 <div class="legend">
   <div class="leg"><div class="leg-dot" style="background:#ff8c42"></div>Prospecção / Estruturação</div>
@@ -511,11 +495,12 @@ const STEPS = [
     }
   },
 
-  // FORK: DISTRIBUIÇÃO / TRANSMISSÃO
-  { type:'fork' },
+  // FORK: DISTRIBUIÇÃO / TRANSMISSÃO — caminhos alternativos (escolha um, conforme o
+  // ponto de conexão do projeto), renderizados como duas colunas paralelas.
+  { type:'fork-pair', branches:[
 
   {
-    num:6, color:'amber', tag:'Conexão · Distribuição', label:'Processo de Conexão — Distribuição',
+    num:'6A', color:'amber', tag:'Conexão · Distribuição', label:'Processo de Conexão — Distribuição',
     sub:'DAL / Orçamento de Conexão via distribuidora local (RN ANEEL 1000/2021)',
     pills:['Pedido de acesso','Estudo distribuidora','DAL / Orç. Conexão','CUSD + CCD','Faixa de servidão'],
     modal:{
@@ -590,8 +575,11 @@ const STEPS = [
       note:null
     }
   },
+
+  ]}, // fim do fork-pair (Conexão — Distribuição × Rede Básica/Transmissão)
+
   {
-    num:7, color:'green', tag:'EPE / AEGE', label:'Pré-Cadastro EPE — Sistema AEGE',
+    num:7, color:'green', tag:'EPE / AEGE', dividerBefore:'EPE — Cadastramento para o Leilão', label:'Pré-Cadastro EPE — Sistema AEGE',
     sub:'Adesão ao AEGE → Login → Cadastro da empresa → Inscrição no LRCAP-2026',
     pills:['Adesão AEGE','Login e senha','Dados do empreendedor','Inscrição LRCAP-2026','Campos azuis'],
     modal:{
@@ -735,7 +723,7 @@ const STEPS = [
     }
   },
   {
-    num:10, color:'teal', tag:'Leilão', label:'Leilão LRCAP-2026',
+    num:10, color:'teal', tag:'Leilão', dividerBefore:'Leilão e Contratação', label:'Leilão LRCAP-2026',
     sub:'Participar do leilão com habilitação técnica em mãos → CRCAP',
     pills:['Data do leilão','Garantia de proposta','Lances (leilão)','CRCAP assinado'],
     modal:{
@@ -764,7 +752,7 @@ const STEPS = [
     }
   },
   {
-    num:11, color:'red', tag:'Pós-Leilão', label:'Implantação e Início da Operação Comercial',
+    num:11, color:'red', tag:'Pós-Leilão', dividerBefore:'Implantação e Operação', label:'Implantação e Início da Operação Comercial',
     sub:'Obras → Conexão → Operação em Teste → Operação Comercial',
     pills:['Comunicar início de obras','Marcos de implantação','Operação em teste','COD — Operação Comercial','Fiscalização ANEEL'],
     modal:{
@@ -810,73 +798,53 @@ const STEPS = [
   },
 ];
 
-// ── Build Flowchart ──
+// ── Build Hierarchical Diagram (vertical trunk + right-angle connectors) ──
 const flow = document.getElementById('flow');
 
-const chevron = `<svg class="step-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
+// Registro plano de todas as etapas com modal, na ordem em que são renderizadas
+// (inclui as que ficam dentro de pares de bifurcação), usado pelos handlers de clique.
+const MODAL_STEPS = [];
 
-let stepIndex = 0;
-
-function buildPills(pills){
+function buildDocsHTML(pills, color, idx){
   if(!pills || !pills.length) return '';
-  return `<div class="step-pills">${pills.map(p=>`<div class="pill">${p}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>`).join('')}</div>`;
+  const docs = pills.map(p=>`<div class="d-doc" data-color="${color}" data-step-index="${idx}">${p}</div>`).join('');
+  return `<div class="d-docs">${docs}</div>`;
 }
 
-STEPS.forEach((step, i) => {
-  if(step.type === 'fork'){
+function buildBoxHTML(step, idx){
+  return `
+  <div class="d-box" data-color="${step.color}" data-step-index="${idx}">
+    <div class="d-box-top">
+      <div class="d-box-badge">${step.num}</div>
+      <span class="d-box-tag">${step.tag}</span>
+    </div>
+    <div class="d-box-label">${step.label}</div>
+    <div class="d-box-sub">${step.sub}</div>
+  </div>`;
+}
+
+function renderStep(step){
+  const idx = MODAL_STEPS.length;
+  MODAL_STEPS.push(step);
+  return { idx, boxHTML: buildBoxHTML(step, idx), docsHTML: buildDocsHTML(step.pills, step.color, idx) };
+}
+
+flow.innerHTML += `<div class="d-root" id="d-root"><b>LRCAP 2026</b><span>Sistema de Armazenamento de Energia (SAE)</span></div>`;
+
+STEPS.forEach((step) => {
+  if(step.type === 'fork-pair'){
+    const [stepA, stepB] = step.branches;
+    const a = renderStep(stepA), b = renderStep(stepB);
     flow.innerHTML += `
-    <div class="divider">Tipo de conexão</div>
-    <div class="fork">
-      <div class="fork-label">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9 9-9z"/></svg>
-        Decisão — Ponto de Conexão ao Sistema Elétrico
-      </div>
-      <div class="fork-row">
-        <div class="fork-branch">
-          <div class="fork-branch-label">Distribuição</div>
-          <div class="fork-branch-sub">Conexão via distribuidora local · RN ANEEL 1000/2021 · Prosseguir no Passo 6A</div>
-        </div>
-        <div class="fork-branch">
-          <div class="fork-branch-label">Rede Básica / Transmissão</div>
-          <div class="fork-branch-sub">Conexão via ONS · Procedimentos de Rede · Prosseguir no Passo 6B</div>
-        </div>
-      </div>
+    <div class="d-fork-row" id="d-fork-row">
+      <div class="d-branch" data-side="left">${a.docsHTML}${a.boxHTML}</div>
+      <div class="d-branch" data-side="right">${b.boxHTML}${b.docsHTML}</div>
     </div>`;
     return;
   }
 
-  if(typeof step.num === 'number'){
-    if(step.num === 6){
-      flow.innerHTML += `<div class="divider">Conexão à Rede</div>`;
-    } else if(step.num === 7){
-      flow.innerHTML += `<div class="divider">EPE — Cadastramento para o Leilão</div>`;
-    } else if(step.num === 10){
-      flow.innerHTML += `<div class="divider">Leilão e Contratação</div>`;
-    } else if(step.num === 11){
-      flow.innerHTML += `<div class="divider">Implantação e Operação</div>`;
-    }
-  }
-
-  const isAlt = step.num === '6B';
-  const numDisplay = isAlt ? '6B' : step.num;
-
-  flow.innerHTML += `
-  <div class="step" data-color="${step.color}" data-step-index="${i}">
-    <div class="step-num">
-      <div class="step-badge">${numDisplay}</div>
-    </div>
-    <div class="step-body" id="step-${i}">
-      <div class="step-top">
-        <div>
-          <div class="step-label">${step.label}</div>
-          <div class="step-sub">${step.sub}</div>
-        </div>
-        <span class="step-tag">${step.tag}</span>
-        ${chevron}
-      </div>
-      ${buildPills(step.pills)}
-    </div>
-  </div>`;
+  const r = renderStep(step);
+  flow.innerHTML += `<div class="d-row">${r.boxHTML}${r.docsHTML}</div>`;
 });
 
 // ── Modal Logic ──
@@ -929,43 +897,140 @@ function openModal(step){
 
 function closeModal(){
   overlay.classList.remove('active');
-  document.querySelectorAll('.step-body.open').forEach(b => b.classList.remove('open'));
 }
 
 closeBtn.addEventListener('click', closeModal);
 overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
 document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
 
-document.querySelectorAll('.step-body').forEach(body => {
-  body.addEventListener('click', () => {
-    const stepEl = body.closest('.step');
-    const idx = parseInt(stepEl.dataset.stepIndex);
-    const step = STEPS[idx];
-    if(!step || !step.modal) return;
-    body.classList.toggle('open');
-    if(body.classList.contains('open')){
-      // close others
-      document.querySelectorAll('.step-body.open').forEach(b => { if(b !== body) b.classList.remove('open'); });
-      openModal(step);
-    } else {
-      closeModal();
-    }
-  });
-});
-
-// pill clicks also open modal
-document.querySelectorAll('.pill').forEach(pill => {
-  pill.addEventListener('click', (e) => {
+// Caixa principal (etapa) e caixas de documento abrem o mesmo modal de detalhe.
+document.querySelectorAll('.d-box, .d-doc').forEach(el => {
+  el.addEventListener('click', (e) => {
     e.stopPropagation();
-    const stepEl = pill.closest('.step');
-    const idx = parseInt(stepEl.dataset.stepIndex);
-    const step = STEPS[idx];
+    const idx = parseInt(el.dataset.stepIndex);
+    const step = MODAL_STEPS[idx];
     if(!step || !step.modal) return;
-    const body = document.getElementById(`step-${idx}`);
-    body.classList.add('open');
     openModal(step);
   });
 });
+
+// ── Connectors (right-angle, no curves) ──
+function drawDiagramConnectors(){
+  const svg = document.getElementById('diagram-svg');
+  const wrap = document.getElementById('diagram');
+  if(!svg || !wrap) return;
+  const wrapRect = wrap.getBoundingClientRect();
+  svg.setAttribute('viewBox', `0 0 ${wrapRect.width} ${wrapRect.height}`);
+
+  const rel = rect => ({
+    left: rect.left - wrapRect.left, right: rect.right - wrapRect.left,
+    top: rect.top - wrapRect.top, bottom: rect.bottom - wrapRect.top,
+    midX: (rect.left + rect.right) / 2 - wrapRect.left,
+    midY: (rect.top + rect.bottom) / 2 - wrapRect.top,
+  });
+
+  let svgHTML = '';
+  const TRUNK_COLOR = 'rgba(255,255,255,.32)';
+  function line(x1, y1, x2, y2, color){
+    svgHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="2" stroke-linecap="round" opacity="0.65"/>`;
+  }
+  function dot(x, y, color){
+    svgHTML += `<circle cx="${x}" cy="${y}" r="3" fill="${color}" opacity="0.9"/>`;
+  }
+  function colorOf(el){ return COLOR_MAP[el.dataset.color] || '#7c8cff'; }
+
+  // Liga uma caixa principal aos seus documentos laterais (à esquerda ou à direita).
+  function docFan(boxEl, docEls, color, side){
+    if(!docEls.length) return;
+    const b = rel(boxEl.getBoundingClientRect());
+    const boxEdgeX = side === 'right' ? b.right : b.left;
+    const spineX = side === 'right' ? boxEdgeX + 25 : boxEdgeX - 25;
+    const docs = docEls.map(d => rel(d.getBoundingClientRect()));
+    const ys = docs.map(d => d.midY).concat([b.midY]);
+    const spineTop = Math.min(...ys), spineBottom = Math.max(...ys);
+    line(boxEdgeX, b.midY, spineX, b.midY, color);
+    if(docs.length > 1) line(spineX, spineTop, spineX, spineBottom, color);
+    docs.forEach(d => {
+      const docEdgeX = side === 'right' ? d.left : d.right;
+      line(spineX, d.midY, docEdgeX, d.midY, color);
+      dot(docEdgeX, d.midY, color);
+    });
+  }
+
+  const root = document.getElementById('d-root');
+  let prevRect = root.getBoundingClientRect();
+  dot(rel(prevRect).midX, rel(prevRect).bottom, '#7c8cff');
+
+  Array.from(flow.children).forEach(rowEl => {
+    if(rowEl.id === 'd-root') return;
+
+    if(rowEl.classList.contains('d-row')){
+      const box = rowEl.querySelector('.d-box');
+      const docs = Array.from(rowEl.querySelectorAll('.d-doc'));
+      const color = colorOf(box);
+      docFan(box, docs, color, 'right');
+
+      const p = rel(prevRect), c = rel(box.getBoundingClientRect());
+      line(c.midX, p.bottom, c.midX, c.top, TRUNK_COLOR);
+      dot(c.midX, c.top, color);
+      prevRect = box.getBoundingClientRect();
+
+    } else if(rowEl.classList.contains('d-fork-row')){
+      const branchL = rowEl.querySelector('.d-branch[data-side="left"]');
+      const branchR = rowEl.querySelector('.d-branch[data-side="right"]');
+      const boxL = branchL.querySelector('.d-box'), boxR = branchR.querySelector('.d-box');
+      const docsL = Array.from(branchL.querySelectorAll('.d-doc'));
+      const docsR = Array.from(branchR.querySelectorAll('.d-doc'));
+      docFan(boxL, docsL, colorOf(boxL), 'left');
+      docFan(boxR, docsR, colorOf(boxR), 'right');
+
+      const rL = rel(boxL.getBoundingClientRect()), rR = rel(boxR.getBoundingClientRect());
+      const splitY = Math.min(rL.top, rR.top) - 24;
+      const splitMidX = (rL.midX + rR.midX) / 2;
+
+      const p = rel(prevRect);
+      line(splitMidX, p.bottom, splitMidX, splitY, TRUNK_COLOR);
+      line(rL.midX, splitY, rR.midX, splitY, TRUNK_COLOR);
+      line(rL.midX, splitY, rL.midX, rL.top, colorOf(boxL));
+      line(rR.midX, splitY, rR.midX, rR.top, colorOf(boxR));
+      dot(splitMidX, splitY, '#9aa6c2');
+      dot(rL.midX, rL.top, colorOf(boxL));
+      dot(rR.midX, rR.top, colorOf(boxR));
+
+      const lastL = docsL.length ? docsL[docsL.length - 1] : boxL;
+      const lastR = docsR.length ? docsR[docsR.length - 1] : boxR;
+      const bL = rel(lastL.getBoundingClientRect()), bR = rel(lastR.getBoundingClientRect());
+      const mergeY = Math.max(rL.bottom, bL.bottom, rR.bottom, bR.bottom) + 24;
+      const mergeMidX = splitMidX;
+
+      line(rL.midX, rL.bottom, rL.midX, mergeY, colorOf(boxL));
+      line(rR.midX, rR.bottom, rR.midX, mergeY, colorOf(boxR));
+      line(rL.midX, mergeY, rR.midX, mergeY, TRUNK_COLOR);
+      dot(mergeMidX, mergeY, '#9aa6c2');
+
+      prevRect = { left: mergeMidX + wrapRect.left - 1, right: mergeMidX + wrapRect.left + 1, top: mergeY + wrapRect.top, bottom: mergeY + wrapRect.top };
+    }
+  });
+
+  svg.innerHTML = svgHTML;
+}
+
+let _diagramRaf = null;
+function redrawDiagram(durationMs){
+  drawDiagramConnectors();
+  if(_diagramRaf) cancelAnimationFrame(_diagramRaf);
+  if(!durationMs) return;
+  const start = performance.now();
+  const tick = () => {
+    drawDiagramConnectors();
+    if(performance.now() - start < durationMs) _diagramRaf = requestAnimationFrame(tick);
+  };
+  _diagramRaf = requestAnimationFrame(tick);
+}
+
+redrawDiagram(700); // re-medir por alguns frames cobre o reflow do carregamento da fonte
+window.addEventListener('resize', () => drawDiagramConnectors());
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>drawDiagramConnectors()); }
 </script>
 </body>
 </html>
