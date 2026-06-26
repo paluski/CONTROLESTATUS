@@ -183,6 +183,13 @@ body{
 }
 #modal-overlay.active{display:flex;}
 
+#edit-overlay{
+  position:fixed;inset:0;z-index:220;display:none;
+  align-items:center;justify-content:flex-end;
+  background:rgba(5,8,16,.65);backdrop-filter:blur(5px);
+}
+#edit-overlay.active{display:flex;}
+
 .modal-panel{
   width:min(580px,96vw);height:100vh;overflow-y:auto;
   background:linear-gradient(175deg,rgba(18,26,46,.98),rgba(10,14,24,.99));
@@ -257,6 +264,78 @@ body{
 @media(max-width:600px){
   .modal-panel{width:100vw;border-left:none;border-top:1px solid var(--border-strong);}
 }
+
+/* ── Edit mode: toolbar ── */
+.toolbar-fixed{
+  position:fixed;top:18px;right:18px;z-index:150;
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;max-width:260px;
+}
+.tb-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--surface);border:1px solid var(--border-strong);border-radius:999px;
+  padding:8px 14px;font-size:12px;font-weight:700;color:var(--text-2);cursor:pointer;
+  transition:all .15s ease;white-space:nowrap;
+}
+.tb-btn:hover{background:var(--surface-hover);color:var(--text-1);transform:translateY(-1px);}
+.tb-btn.active{background:rgba(94,214,143,.18);border-color:var(--c-green-border);color:#c4f3da;}
+.tb-btn.danger:hover{background:rgba(255,107,107,.15);border-color:var(--c-red-border);color:#ffd2d2;}
+
+/* ── Edit mode: per-box action bar ── */
+.edit-bar{display:none;gap:4px;justify-content:flex-end;margin-bottom:6px;}
+body.edit-mode .edit-bar{display:flex;}
+.eb-btn{
+  width:22px;height:22px;border-radius:6px;border:1px solid var(--border-strong);
+  background:rgba(255,255,255,.07);color:var(--text-2);font-size:11px;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s ease;
+}
+.eb-btn:hover{background:var(--surface-hover);color:var(--text-1);}
+.eb-btn[data-act="del"]:hover{background:rgba(255,107,107,.2);color:#ffd2d2;border-color:var(--c-red-border);}
+body.edit-mode .d-box{outline:1px dashed transparent;}
+body.edit-mode .d-box:hover{outline-color:rgba(255,255,255,.25);}
+
+/* ── Edit mode: insert-row controls ── */
+.add-row{display:none;align-items:center;gap:10px;margin:0 0 18px 405px;position:relative;z-index:1;}
+body.edit-mode .add-row{display:flex;}
+.add-row::before,.add-row::after{content:'';flex:0 0 14px;height:1px;background:var(--border);}
+.ar-btn{
+  display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
+  border:1px dashed var(--border-strong);border-radius:999px;background:rgba(255,255,255,.04);
+  color:var(--text-3);padding:5px 12px;cursor:pointer;transition:all .15s ease;white-space:nowrap;
+}
+.ar-btn:hover{color:var(--text-1);background:var(--surface-hover);border-color:var(--c-blue-border);}
+
+/* ── Edit form fields (inside edit panel) ── */
+.ef-field{margin-bottom:16px;}
+.ef-label{font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;display:block;}
+.ef-input,.ef-textarea,.ef-select{
+  width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border-strong);border-radius:9px;
+  padding:9px 11px;font-size:13px;color:var(--text-1);font-family:inherit;resize:vertical;
+}
+.ef-input:focus,.ef-textarea:focus,.ef-select:focus{outline:none;border-color:var(--c-blue-border);background:rgba(255,255,255,.09);}
+.ef-textarea{min-height:64px;line-height:1.5;}
+.ef-help{font-size:10.5px;color:var(--text-3);margin-top:6px;line-height:1.5;}
+.ef-pill-row{display:flex;gap:6px;margin-bottom:6px;}
+.ef-pill-row .ef-input{flex:1;}
+.ef-pill-del{
+  width:32px;flex-shrink:0;border-radius:9px;border:1px solid var(--border-strong);
+  background:rgba(255,107,107,.1);color:#ffb0b0;cursor:pointer;font-size:14px;
+}
+.ef-add-pill{
+  font-size:11.5px;font-weight:700;color:var(--c-blue);background:none;border:1px dashed var(--c-blue-border);
+  border-radius:8px;padding:6px 12px;cursor:pointer;margin-top:2px;
+}
+.ef-add-pill:hover{background:var(--c-blue-soft);}
+.ef-actions{display:flex;gap:10px;margin-top:6px;position:sticky;bottom:-48px;padding:14px 0 4px;background:linear-gradient(to top,rgba(10,14,24,1),rgba(10,14,24,.85) 70%,transparent);}
+.ef-save{flex:1;background:linear-gradient(135deg,#4da3ff,#3b82f6);color:#fff;border:none;border-radius:10px;padding:11px;font-size:13.5px;font-weight:800;cursor:pointer;}
+.ef-save:hover{filter:brightness(1.1);}
+.ef-cancel{background:var(--surface);border:1px solid var(--border-strong);color:var(--text-2);border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
+.ef-cancel:hover{background:var(--surface-hover);}
+.ef-delete{background:rgba(255,107,107,.12);border:1px solid var(--c-red-border);color:#ffb0b0;border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
+.ef-delete:hover{background:rgba(255,107,107,.22);}
+
+@media(max-width:600px){
+  .toolbar-fixed{max-width:160px;}
+}
 </style>
 </head>
 <body>
@@ -300,8 +379,27 @@ body{
   </div>
 </div>
 
+<!-- Toolbar de edição -->
+<div class="toolbar-fixed">
+  <button class="tb-btn" id="tb-edit-toggle">✎ Modo Edição</button>
+  <button class="tb-btn" id="tb-export">⬇ Exportar JSON</button>
+  <button class="tb-btn" id="tb-import">⬆ Importar JSON</button>
+  <button class="tb-btn danger" id="tb-reset">↺ Restaurar padrão</button>
+  <input type="file" id="tb-import-input" accept="application/json" style="display:none;">
+</div>
+
+<!-- Painel de edição de etapa -->
+<div id="edit-overlay">
+  <div class="modal-panel" id="edit-panel">
+    <button class="modal-close" id="edit-close" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div id="edit-content"></div>
+  </div>
+</div>
+
 <script>
-const STEPS = [
+const DEFAULT_DATA = [
   {
     num:1, color:'orange', tag:'Prospecção', label:'Prospecção e Análise de Viabilidade',
     sub:'Identificar área, tecnologia e modalidade de comercialização',
@@ -800,6 +898,32 @@ const STEPS = [
 
 // ── Build Hierarchical Diagram (vertical trunk + right-angle connectors) ──
 const flow = document.getElementById('flow');
+const STORAGE_KEY = 'lrcap_flow_data_v1';
+
+const COLOR_MAP = {
+  orange:'#ff8c42', blue:'#4da3ff', green:'#5ed68f', amber:'#ffb45e',
+  purple:'#c792ff', teal:'#4ecdc4', red:'#ff6b6b', pink:'#f78fb3'
+};
+const COLOR_OPTIONS = ['orange','blue','green','amber','purple','teal','red','pink'];
+const COLOR_LABELS = { orange:'Laranja', blue:'Azul', green:'Verde', amber:'Âmbar', purple:'Roxo', teal:'Verde-água', red:'Vermelho', pink:'Rosa' };
+
+function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
+function escAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return deepClone(DEFAULT_DATA);
+}
+function saveData(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(flowData)); }catch(e){}
+}
+
+let flowData = loadData();
+let editMode = false;
 
 // Registro plano de todas as etapas com modal, na ordem em que são renderizadas
 // (inclui as que ficam dentro de pares de bifurcação), usado pelos handlers de clique.
@@ -811,9 +935,16 @@ function buildDocsHTML(pills, color, idx){
   return `<div class="d-docs">${docs}</div>`;
 }
 
-function buildBoxHTML(step, idx){
+function buildBoxHTML(step, idx, entryIndex, branch){
+  const isBranch = branch === 'left' || branch === 'right';
+  let btns = `<button class="eb-btn" data-act="edit" title="Editar">✎</button>`;
+  btns += isBranch
+    ? `<button class="eb-btn" data-act="swap" title="Trocar lado">⇄</button>`
+    : `<button class="eb-btn" data-act="up" title="Mover para cima">↑</button><button class="eb-btn" data-act="down" title="Mover para baixo">↓</button>`;
+  btns += `<button class="eb-btn" data-act="del" title="Excluir">🗑</button>`;
   return `
-  <div class="d-box" data-color="${step.color}" data-step-index="${idx}">
+  <div class="d-box" data-color="${step.color}" data-step-index="${idx}" data-entry-index="${entryIndex}" data-branch="${branch||''}">
+    <div class="edit-bar">${btns}</div>
     <div class="d-box-top">
       <div class="d-box-badge">${step.num}</div>
       <span class="d-box-tag">${step.tag}</span>
@@ -823,40 +954,52 @@ function buildBoxHTML(step, idx){
   </div>`;
 }
 
-function renderStep(step){
+function registerStep(step, entryIndex, branch){
   const idx = MODAL_STEPS.length;
   MODAL_STEPS.push(step);
-  return { idx, boxHTML: buildBoxHTML(step, idx), docsHTML: buildDocsHTML(step.pills, step.color, idx) };
+  return { idx, boxHTML: buildBoxHTML(step, idx, entryIndex, branch), docsHTML: buildDocsHTML(step.pills, step.color, idx) };
 }
 
-flow.innerHTML += `<div class="d-root" id="d-root"><b>LRCAP 2026</b><span>Sistema de Armazenamento de Energia (SAE)</span></div>`;
+function buildAddRow(insertIndex){
+  return `<div class="add-row">
+    <button type="button" class="ar-btn" data-add="step" data-insert="${insertIndex}">+ Etapa</button>
+    <button type="button" class="ar-btn" data-add="fork" data-insert="${insertIndex}">+ Bifurcação</button>
+  </div>`;
+}
 
-STEPS.forEach((step) => {
-  if(step.type === 'fork-pair'){
-    const [stepA, stepB] = step.branches;
-    const a = renderStep(stepA), b = renderStep(stepB);
-    flow.innerHTML += `
-    <div class="d-fork-row" id="d-fork-row">
-      <div class="d-branch" data-side="left">${a.docsHTML}${a.boxHTML}</div>
-      <div class="d-branch" data-side="right">${b.boxHTML}${b.docsHTML}</div>
-    </div>`;
-    return;
-  }
+function renderFlow(){
+  MODAL_STEPS.length = 0;
+  let html = `<div class="d-root" id="d-root"><b>LRCAP 2026</b><span>Sistema de Armazenamento de Energia (SAE)</span></div>`;
+  html += buildAddRow(0);
 
-  const r = renderStep(step);
-  flow.innerHTML += `<div class="d-row">${r.boxHTML}${r.docsHTML}</div>`;
-});
+  flowData.forEach((entry, i) => {
+    if(entry.dividerBefore){
+      html += `<div class="divider">${escHtml(entry.dividerBefore)}</div>`;
+    }
+    if(entry.type === 'fork-pair'){
+      const [stepA, stepB] = entry.branches;
+      const a = registerStep(stepA, i, 'left'), b = registerStep(stepB, i, 'right');
+      html += `
+      <div class="d-fork-row" data-entry-index="${i}">
+        <div class="d-branch" data-side="left">${a.docsHTML}${a.boxHTML}</div>
+        <div class="d-branch" data-side="right">${b.boxHTML}${b.docsHTML}</div>
+      </div>`;
+    } else {
+      const r = registerStep(entry, i, '');
+      html += `<div class="d-row" data-entry-index="${i}">${r.boxHTML}${r.docsHTML}</div>`;
+    }
+    html += buildAddRow(i + 1);
+  });
 
-// ── Modal Logic ──
+  flow.innerHTML = html;
+  redrawDiagram(300);
+}
+
+// ── Modal Logic (painel de leitura) ──
 const overlay = document.getElementById('modal-overlay');
 const panel = document.getElementById('modal-panel');
 const content = document.getElementById('modal-content');
 const closeBtn = document.getElementById('modal-close');
-
-const COLOR_MAP = {
-  orange:'#ff8c42', blue:'#4da3ff', green:'#5ed68f', amber:'#ffb45e',
-  purple:'#c792ff', teal:'#4ecdc4', red:'#ff6b6b', pink:'#f78fb3'
-};
 
 function buildModalContent(step){
   const m = step.modal;
@@ -866,7 +1009,7 @@ function buildModalContent(step){
     <div class="modal-title">${m.title}</div>
     <div class="modal-subtitle">${m.subtitle}</div>`;
 
-  m.sections.forEach(sec => {
+  (m.sections||[]).forEach(sec => {
     html += `<div class="modal-section">
       <div class="modal-section-title">${sec.title}</div>
       <div class="doc-list">`;
@@ -901,17 +1044,264 @@ function closeModal(){
 
 closeBtn.addEventListener('click', closeModal);
 overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
-document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
 
-// Caixa principal (etapa) e caixas de documento abrem o mesmo modal de detalhe.
-document.querySelectorAll('.d-box, .d-doc').forEach(el => {
-  el.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const idx = parseInt(el.dataset.stepIndex);
-    const step = MODAL_STEPS[idx];
-    if(!step || !step.modal) return;
-    openModal(step);
+// ── Edição: estado e helpers do formulário ──
+let editingCtx = null;
+const editOverlay = document.getElementById('edit-overlay');
+const editPanel = document.getElementById('edit-panel');
+const editContent = document.getElementById('edit-content');
+
+function getCardData(entryIndex, branch){
+  const entry = flowData[entryIndex];
+  if(branch === 'left') return entry.branches[0];
+  if(branch === 'right') return entry.branches[1];
+  return entry;
+}
+
+function serializeSections(sections){
+  return (sections||[]).map(sec => {
+    const head = `## ${sec.title || ''}`;
+    const items = (sec.items||[]).map(it => `- ${it.text}${it.ref ? ' :: ' + it.ref : ''}`).join('\n');
+    return items ? `${head}\n${items}` : head;
+  }).join('\n\n');
+}
+
+function parseSections(text, colorHex){
+  return text.split(/\n(?=##\s)/).map(b => b.trim()).filter(Boolean).map(block => {
+    const lines = block.split('\n');
+    const title = lines[0].replace(/^##\s*/, '').trim();
+    const items = lines.slice(1).filter(l => l.trim().startsWith('-')).map(l => {
+      const body = l.trim().replace(/^-\s*/, '');
+      const sep = body.split(' :: ');
+      return sep.length > 1 ? { text: sep[0], ref: sep.slice(1).join(' :: ') } : { text: body };
+    });
+    return { title, color: colorHex, items };
   });
+}
+
+function renderPillInputs(pills){
+  const list = document.getElementById('ef-pills-list');
+  list.innerHTML = '';
+  (pills||[]).forEach(p => addPillInput(p));
+}
+
+function addPillInput(value){
+  const list = document.getElementById('ef-pills-list');
+  const row = document.createElement('div');
+  row.className = 'ef-pill-row';
+  row.innerHTML = `<input class="ef-input ef-pill-text" value="${escAttr(value)}" placeholder="Nome do documento"><button type="button" class="ef-pill-del">×</button>`;
+  row.querySelector('.ef-pill-del').addEventListener('click', () => row.remove());
+  list.appendChild(row);
+}
+
+function openEditPanel(entryIndex, branch){
+  editingCtx = { entryIndex, branch };
+  const d = getCardData(entryIndex, branch);
+  const m = d.modal || { tag:'', title:'', subtitle:'', sections:[], note:null };
+
+  editContent.innerHTML = `
+    <div class="modal-title" style="margin-bottom:18px;">${branch ? 'Editar ramo da bifurcação' : 'Editar etapa'}</div>
+
+    <div class="ef-field"><label class="ef-label">Cor</label>
+      <select class="ef-select" id="ef-color">${COLOR_OPTIONS.map(c=>`<option value="${c}" ${c===d.color?'selected':''}>${COLOR_LABELS[c]}</option>`).join('')}</select>
+    </div>
+    <div class="ef-field"><label class="ef-label">Número / código (selo)</label><input class="ef-input" id="ef-num" value="${escAttr(d.num)}"></div>
+    <div class="ef-field"><label class="ef-label">Etiqueta (tag)</label><input class="ef-input" id="ef-tag" value="${escAttr(d.tag)}"></div>
+    <div class="ef-field"><label class="ef-label">Título do card</label><input class="ef-input" id="ef-label" value="${escAttr(d.label)}"></div>
+    <div class="ef-field"><label class="ef-label">Descrição curta</label><textarea class="ef-textarea" id="ef-sub" rows="2">${escHtml(d.sub||'')}</textarea></div>
+    <div class="ef-field"><label class="ef-label">Divisor de seção (opcional, aparece acima deste card)</label><input class="ef-input" id="ef-divider" value="${escAttr(d.dividerBefore||'')}"></div>
+
+    <div class="ef-field">
+      <label class="ef-label">Documentos / pílulas (lista lateral)</label>
+      <div id="ef-pills-list"></div>
+      <button type="button" class="ef-add-pill" id="ef-add-pill">+ Adicionar documento</button>
+    </div>
+
+    <div class="modal-section-title" style="margin:22px 0 14px;">Painel de detalhe (abre ao clicar no card)</div>
+    <div class="ef-field"><label class="ef-label">Tag do painel</label><input class="ef-input" id="ef-mtag" value="${escAttr(m.tag)}"></div>
+    <div class="ef-field"><label class="ef-label">Título do painel</label><input class="ef-input" id="ef-mtitle" value="${escAttr(m.title)}"></div>
+    <div class="ef-field"><label class="ef-label">Subtítulo / introdução</label><textarea class="ef-textarea" id="ef-msub" rows="3">${escHtml(m.subtitle||'')}</textarea></div>
+    <div class="ef-field">
+      <label class="ef-label">Seções do painel</label>
+      <textarea class="ef-textarea" id="ef-msections" rows="12" style="font-family:Consolas,monospace;font-size:12px;">${escHtml(serializeSections(m.sections))}</textarea>
+      <div class="ef-help">Formato: uma linha "## Título da Seção" seguida de linhas "- texto do item" (acrescente " :: referência" no fim da linha para citar uma norma). Pode usar &lt;strong&gt;negrito&lt;/strong&gt;. Deixe uma linha em branco entre seções.</div>
+    </div>
+    <div class="ef-field"><label class="ef-label">Nota de atenção (opcional)</label><textarea class="ef-textarea" id="ef-mnote" rows="2">${escHtml(m.note||'')}</textarea></div>
+
+    <div class="ef-actions">
+      <button type="button" class="ef-save" id="ef-save">Salvar</button>
+      <button type="button" class="ef-cancel" id="ef-cancel">Cancelar</button>
+    </div>
+  `;
+
+  renderPillInputs(d.pills);
+  document.getElementById('ef-add-pill').addEventListener('click', () => addPillInput(''));
+  document.getElementById('ef-save').addEventListener('click', saveEditPanel);
+  document.getElementById('ef-cancel').addEventListener('click', closeEditPanel);
+
+  editOverlay.classList.add('active');
+  editPanel.scrollTop = 0;
+}
+
+function saveEditPanel(){
+  const d = getCardData(editingCtx.entryIndex, editingCtx.branch);
+  d.color = document.getElementById('ef-color').value;
+  d.num = document.getElementById('ef-num').value;
+  d.tag = document.getElementById('ef-tag').value;
+  d.label = document.getElementById('ef-label').value;
+  d.sub = document.getElementById('ef-sub').value;
+  const divider = document.getElementById('ef-divider').value.trim();
+  if(divider) d.dividerBefore = divider; else delete d.dividerBefore;
+  d.pills = Array.from(document.querySelectorAll('#ef-pills-list .ef-pill-text')).map(i=>i.value.trim()).filter(Boolean);
+
+  const colorHex = COLOR_MAP[d.color] || '#4da3ff';
+  d.modal = d.modal || {};
+  d.modal.tag = document.getElementById('ef-mtag').value;
+  d.modal.title = document.getElementById('ef-mtitle').value;
+  d.modal.subtitle = document.getElementById('ef-msub').value;
+  d.modal.sections = parseSections(document.getElementById('ef-msections').value, colorHex);
+  const note = document.getElementById('ef-mnote').value.trim();
+  d.modal.note = note || null;
+
+  saveData();
+  closeEditPanel();
+  renderFlow();
+}
+
+function closeEditPanel(){
+  editOverlay.classList.remove('active');
+  editingCtx = null;
+}
+
+document.getElementById('edit-close').addEventListener('click', closeEditPanel);
+editOverlay.addEventListener('click', (e) => { if(e.target === editOverlay) closeEditPanel(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); closeEditPanel(); } });
+
+// ── Mutações na estrutura do fluxo ──
+function moveEntry(i, dir){
+  const j = i + dir;
+  if(j < 0 || j >= flowData.length) return;
+  [flowData[i], flowData[j]] = [flowData[j], flowData[i]];
+  saveData(); renderFlow();
+}
+
+function swapBranches(i){
+  const entry = flowData[i];
+  if(entry.type !== 'fork-pair') return;
+  entry.branches.reverse();
+  saveData(); renderFlow();
+}
+
+function deleteCard(i, branch){
+  const entry = flowData[i];
+  if(branch === 'left' || branch === 'right'){
+    if(!confirm('Excluir este ramo da bifurcação? O outro ramo passa a ser uma etapa única.')) return;
+    flowData[i] = entry.branches[branch === 'left' ? 1 : 0];
+  } else {
+    if(!confirm('Excluir esta etapa do fluxo?')) return;
+    flowData.splice(i, 1);
+  }
+  saveData(); renderFlow();
+}
+
+function addStepAt(insertIndex){
+  flowData.splice(insertIndex, 0, {
+    num:'', color:'blue', tag:'Nova Tag', label:'Nova Etapa',
+    sub:'Clique em editar (✎) para preencher a descrição.',
+    pills:[], modal:{ tag:'Detalhe', title:'Nova Etapa', subtitle:'', sections:[], note:null }
+  });
+  saveData(); renderFlow();
+}
+
+function addForkAt(insertIndex){
+  flowData.splice(insertIndex, 0, {
+    type:'fork-pair', branches:[
+      { num:'A', color:'amber', tag:'Ramo A', label:'Novo Ramo A', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo A', subtitle:'', sections:[], note:null } },
+      { num:'B', color:'amber', tag:'Ramo B', label:'Novo Ramo B', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo B', subtitle:'', sections:[], note:null } },
+    ]
+  });
+  saveData(); renderFlow();
+}
+
+// Delegação de cliques no diagrama: abre modal de leitura, ações de edição e botões "+".
+flow.addEventListener('click', (e) => {
+  const ebBtn = e.target.closest('.eb-btn');
+  if(ebBtn){
+    e.stopPropagation();
+    const box = ebBtn.closest('.d-box');
+    const entryIndex = parseInt(box.dataset.entryIndex, 10);
+    const branch = box.dataset.branch || '';
+    const act = ebBtn.dataset.act;
+    if(act === 'edit') openEditPanel(entryIndex, branch);
+    else if(act === 'swap') swapBranches(entryIndex);
+    else if(act === 'up') moveEntry(entryIndex, -1);
+    else if(act === 'down') moveEntry(entryIndex, 1);
+    else if(act === 'del') deleteCard(entryIndex, branch);
+    return;
+  }
+
+  const arBtn = e.target.closest('.ar-btn');
+  if(arBtn){
+    e.stopPropagation();
+    const insertIndex = parseInt(arBtn.dataset.insert, 10);
+    if(arBtn.dataset.add === 'step') addStepAt(insertIndex);
+    else addForkAt(insertIndex);
+    return;
+  }
+
+  const card = e.target.closest('.d-box, .d-doc');
+  if(card){
+    const idx = parseInt(card.dataset.stepIndex, 10);
+    const step = MODAL_STEPS[idx];
+    if(step && step.modal) openModal(step);
+  }
+});
+
+// ── Toolbar: modo de edição, exportar/importar/restaurar ──
+const editToggleBtn = document.getElementById('tb-edit-toggle');
+editToggleBtn.addEventListener('click', () => {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  editToggleBtn.classList.toggle('active', editMode);
+  editToggleBtn.textContent = editMode ? '✓ Sair do Modo Edição' : '✎ Modo Edição';
+  redrawDiagram(300);
+});
+
+document.getElementById('tb-export').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(flowData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'fluxograma_lrcap_dados.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+
+const importInput = document.getElementById('tb-import-input');
+document.getElementById('tb-import').addEventListener('click', () => importInput.click());
+importInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      if(!Array.isArray(parsed)) throw new Error('o arquivo não contém uma lista de etapas');
+      flowData = parsed;
+      saveData();
+      renderFlow();
+    }catch(err){
+      alert('Não foi possível importar o arquivo: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  importInput.value = '';
+});
+
+document.getElementById('tb-reset').addEventListener('click', () => {
+  if(!confirm('Restaurar o fluxograma para o conteúdo original? As edições salvas neste navegador serão perdidas.')) return;
+  flowData = deepClone(DEFAULT_DATA);
+  saveData();
+  renderFlow();
 });
 
 // ── Connectors (right-angle, no curves) ──
@@ -1028,6 +1418,7 @@ function redrawDiagram(durationMs){
   _diagramRaf = requestAnimationFrame(tick);
 }
 
+renderFlow();
 redrawDiagram(700); // re-medir por alguns frames cobre o reflow do carregamento da fonte
 window.addEventListener('resize', () => drawDiagramConnectors());
 if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>drawDiagramConnectors()); }
