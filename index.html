@@ -173,10 +173,22 @@
                 <label for="f_item_link">Item do documento <span class="hint">opcional</span></label>
                 <select id="f_item_link" name="item_id" class="select"><option value="">— Documento inteiro —</option></select>
               </div>
+              <div class="field field-wide">
+                <label for="f_topico_bloco">Etapa do Fluxograma <span class="hint">opcional</span></label>
+                <select id="f_topico_bloco" name="topico_fluxo_bloco" class="select"><option value="">— Sem vínculo com o fluxograma —</option></select>
+              </div>
+              <div class="field field-wide">
+                <label for="f_topico_doc">Documento daquela etapa <span class="hint">opcional</span></label>
+                <select id="f_topico_doc" name="topico_fluxo_doc" class="select"><option value="">— Bloco inteiro —</option></select>
+              </div>
               <div class="form-grid">
                 <div class="field">
                   <label for="f_item">Item referente</label>
                   <input id="f_item" name="item_referente" type="text" placeholder="Ex.: 1.1" />
+                </div>
+                <div class="field">
+                  <label for="f_protocolo">Número do protocolo</label>
+                  <input id="f_protocolo" name="numero_protocolo" type="text" placeholder="Ex.: 2026/00123" />
                 </div>
                 <div class="field">
                   <label for="f_classificacao">Tipo da pergunta</label>
@@ -479,6 +491,7 @@
   <!-- Aplicação -->
   <script src="js/config.js?v=10"></script>
   <script src="js/data.js?v=10"></script>
+  <script src="js/flow-shared.js?v=1"></script>
   <script src="js/app.js?v=10"></script>
 </body>
 </html>

@@ -83,7 +83,8 @@
   function debounce(fn, ms) {
     let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
   }
-  function isAnswered(r) { return !!(r.resposta && String(r.resposta).trim()); }
+  // Definida em js/flow-shared.js — reaproveitada aqui e no Fluxograma (mesma regra, sem duplicar).
+  const isAnswered = window.isAnswered;
   function naturalCompare(a, b) {
     return String(a == null ? "" : a).localeCompare(String(b == null ? "" : b), "pt", { numeric: true, sensitivity: "base" });
   }
@@ -905,7 +906,34 @@
       status: $("f_status").value.trim(),
       pergunta: $("f_pergunta").value.trim(),
       resposta: $("f_resposta").value.trim(),
+      topico_fluxo: $("f_topico_doc").value || $("f_topico_bloco").value || null,
+      numero_protocolo: $("f_protocolo").value.trim(),
     };
+  }
+  /* Selects em cascata (Bloco do Fluxograma -> Documento daquele bloco). */
+  function fillTopicoBlocoSelect() {
+    const sel = $("f_topico_bloco");
+    if (!sel || !window.FLOW_TOPICS) return;
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">— Sem vínculo com o fluxograma —</option>` +
+      window.FLOW_TOPICS.map((t) => `<option value="${txt(t.id)}">${txt(t.label)}</option>`).join("");
+    sel.value = cur;
+  }
+  function fillTopicoDocSelect(blocoId, selected) {
+    const sel = $("f_topico_doc");
+    if (!sel) return;
+    let opts = `<option value="">— Bloco inteiro —</option>`;
+    const bloco = (window.FLOW_TOPICS || []).find((t) => t.id === blocoId);
+    if (bloco) opts += bloco.docs.map((d) => `<option value="${txt(d.id)}">${txt(d.label)}</option>`).join("");
+    sel.innerHTML = opts;
+    sel.value = selected || "";
+  }
+  /* A partir do topico_fluxo salvo (bloco ou bloco__doc), descobre o bloco-pai. */
+  function splitTopicoFluxo(topicoFluxo) {
+    if (!topicoFluxo) return { blocoId: "", docId: "" };
+    const bloco = (window.FLOW_TOPICS || []).find((t) => t.id === topicoFluxo || t.docs.some((d) => d.id === topicoFluxo));
+    if (!bloco) return { blocoId: "", docId: "" };
+    return bloco.id === topicoFluxo ? { blocoId: bloco.id, docId: "" } : { blocoId: bloco.id, docId: topicoFluxo };
   }
   function fillDocSelect() {
     const sel = $("f_documento"); const cur = sel.value;
@@ -940,6 +968,9 @@
     $("f_status").value = "";
     $("f_pergunta").value = "";
     $("f_resposta").value = "";
+    $("f_protocolo").value = "";
+    $("f_topico_bloco").value = "";
+    fillTopicoDocSelect("", "");
     fillItemSelect("", "");
     $("formTitle").textContent = "Novo registro";
     $("saveBtnLabel").textContent = "Salvar registro";
@@ -959,6 +990,10 @@
     $("f_status").value = r.status || "";
     $("f_pergunta").value = r.pergunta || "";
     $("f_resposta").value = r.resposta || "";
+    $("f_protocolo").value = r.numero_protocolo || "";
+    const { blocoId, docId } = splitTopicoFluxo(r.topico_fluxo);
+    $("f_topico_bloco").value = blocoId;
+    fillTopicoDocSelect(blocoId, docId);
     $("formTitle").textContent = "Editar registro";
     $("saveBtnLabel").textContent = "Salvar alterações";
     $("cancelEdit").hidden = false;
@@ -1208,8 +1243,11 @@
     $("recordForm").addEventListener("reset", () => setTimeout(resetForm, 0));
     $("cancelEdit").onclick = resetForm;
     $("f_documento").addEventListener("change", (e) => fillItemSelect(e.target.value, ""));
+    $("f_topico_bloco").addEventListener("change", (e) => fillTopicoDocSelect(e.target.value, ""));
     $("f_pergunta").addEventListener("input", updateCounters);
     $("f_resposta").addEventListener("input", updateCounters);
+    fillTopicoBlocoSelect();
+    fillTopicoDocSelect("", "");
 
     // Aba Documentos
     $("d_anexo").addEventListener("change", (e) => {

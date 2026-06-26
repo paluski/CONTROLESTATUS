@@ -97,6 +97,15 @@ body{
 .d-box-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
 .d-box-sub{font-size:11px;color:var(--text-2);margin-top:5px;line-height:1.45;}
 
+.d-box-qbadge-slot:empty{display:none;}
+.d-box-qbadge{
+  display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:3px 9px 3px 10px;border-radius:999px;
+  background:rgba(255,255,255,.08);border:1px solid var(--border-strong);font-size:11px;font-weight:800;color:var(--text-1);
+}
+.qb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.qb-dot.qb-green{background:var(--c-green);box-shadow:0 0 6px 0 var(--c-green);}
+.qb-dot.qb-red{background:var(--c-red);box-shadow:0 0 6px 0 var(--c-red);}
+
 .d-docs{width:190px;flex-shrink:0;display:flex;flex-direction:column;gap:9px;padding-top:1px;}
 .d-doc{
   background:rgba(255,255,255,.05);border:1px solid var(--border);border-left:3px solid var(--border-strong);
@@ -247,6 +256,72 @@ body{
 }
 .modal-note strong{color:#ffd5a0;}
 
+/* ── Drawer de perguntas (lado esquerdo) ── */
+#drawer-overlay{
+  position:fixed;inset:0;z-index:210;display:none;
+  align-items:center;justify-content:flex-start;
+  background:rgba(5,8,16,.6);backdrop-filter:blur(5px);
+}
+#drawer-overlay.active{display:flex;}
+.drawer-panel{
+  width:min(480px,96vw);height:100vh;overflow-y:auto;
+  background:linear-gradient(175deg,rgba(18,26,46,.98),rgba(10,14,24,.99));
+  border-right:1px solid var(--border-strong);
+  padding:24px 22px 40px;
+  animation:slideInLeft .25s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-40px);}to{opacity:1;transform:translateX(0);}}
+.drawer-panel::-webkit-scrollbar{width:6px;}
+.drawer-panel::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
+
+.drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;}
+.drawer-title{font-size:18px;font-weight:800;letter-spacing:-.01em;line-height:1.3;}
+.drawer-sub{font-size:11.5px;color:var(--text-2);margin-top:4px;}
+.drawer-close{
+  display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--text-2);cursor:pointer;
+  transition:all .15s ease;flex-shrink:0;
+}
+.drawer-close:hover{background:var(--surface-hover);color:var(--text-1);transform:rotate(90deg);}
+.drawer-close svg{width:15px;height:15px;}
+
+.drawer-summary{display:flex;gap:8px;margin:14px 0 18px;}
+.ds-chip{flex:1;text-align:center;border-radius:11px;padding:9px 6px;background:var(--surface);border:1px solid var(--border);}
+.ds-chip b{display:block;font-size:17px;font-weight:800;}
+.ds-chip span{font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;}
+.ds-chip.ds-green b{color:var(--c-green);}
+.ds-chip.ds-red b{color:var(--c-red);}
+
+.drawer-empty{font-size:12.5px;color:var(--text-2);padding:24px 4px;text-align:center;line-height:1.6;}
+
+.q-list{display:flex;flex-direction:column;gap:8px;}
+.q-item{border:1px solid var(--border);border-radius:12px;background:var(--surface);overflow:hidden;transition:border-color .15s ease,background .15s ease;}
+.q-item.open{border-color:var(--border-strong);background:var(--surface-hover);}
+.q-head{display:flex;align-items:flex-start;gap:9px;padding:11px 12px;cursor:pointer;}
+.q-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.q-dot.q-green{background:var(--c-green);box-shadow:0 0 6px 0 var(--c-green);}
+.q-dot.q-red{background:var(--c-red);box-shadow:0 0 6px 0 var(--c-red);}
+.q-head-text{flex:1;min-width:0;}
+.q-orgao{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c-blue);}
+.q-doctag{font-size:9.5px;color:var(--text-3);margin-left:6px;font-weight:600;}
+.q-title{font-size:12.5px;color:var(--text-1);line-height:1.4;margin-top:2px;}
+.q-chevron{width:14px;height:14px;color:var(--text-3);flex-shrink:0;margin-top:4px;transition:transform .2s ease;}
+.q-item.open .q-chevron{transform:rotate(90deg);}
+
+.q-detail{display:none;padding:0 14px 14px;border-top:1px solid var(--border);}
+.q-item.open .q-detail{display:block;}
+.q-detail-row{margin-top:11px;}
+.q-detail-label{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;}
+.q-detail-text{font-size:12.5px;color:var(--text-1);line-height:1.55;white-space:pre-wrap;}
+.q-detail-text.empty{color:var(--text-3);font-style:italic;}
+.q-detail-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:11px;}
+.q-detail-meta div{font-size:11.5px;}
+.q-detail-meta b{display:block;font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:3px;}
+
+@media(max-width:600px){
+  .drawer-panel{width:100vw;border-right:none;border-bottom:1px solid var(--border-strong);}
+}
+
 /* ── Legend ── */
 .legend{
   max-width:1110px;margin:36px auto 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
@@ -379,6 +454,22 @@ body.edit-mode .add-row{display:flex;}
   </div>
 </div>
 
+<!-- Drawer de perguntas (mesma base da página de Perguntas) -->
+<div id="drawer-overlay">
+  <div class="drawer-panel" id="drawer-panel">
+    <div class="drawer-head">
+      <div>
+        <div class="drawer-title" id="drawer-title">—</div>
+        <div class="drawer-sub" id="drawer-sub"></div>
+      </div>
+      <button class="drawer-close" id="drawer-close" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="drawer-body"></div>
+  </div>
+</div>
+
 <!-- Toolbar de edição -->
 <div class="toolbar-fixed">
   <button class="tb-btn" id="tb-edit-toggle">✎ Modo Edição</button>
@@ -398,10 +489,16 @@ body.edit-mode .add-row{display:flex;}
   </div>
 </div>
 
+<!-- Mesma camada de dados da página de Perguntas — sem nova API, sem nova tabela. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js?v=10"></script>
+<script src="../js/data.js?v=10"></script>
+<script src="../js/flow-shared.js?v=1"></script>
+
 <script>
 const DEFAULT_DATA = [
   {
-    num:1, color:'orange', tag:'Prospecção', label:'Prospecção e Análise de Viabilidade',
+    num:1, color:'orange', tag:'Prospecção', flowId:'prospeccao', label:'Prospecção e Análise de Viabilidade',
     sub:'Identificar área, tecnologia e modalidade de comercialização',
     pills:['Identificação da área','Estudo técnico preliminar','Ponto de conexão','Tecnologia SAE'],
     modal:{
@@ -431,7 +528,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:2, color:'orange', tag:'Jurídico', label:'Constituição Jurídica da Empresa / SPE',
+    num:2, color:'orange', tag:'Jurídico', flowId:'juridico', label:'Constituição Jurídica da Empresa / SPE',
     sub:'Criar a pessoa jurídica apta a deter a outorga e participar do leilão',
     pills:['Contrato social','CNPJ','Representação legal','Organograma societário'],
     modal:{
@@ -469,7 +566,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:3, color:'blue', tag:'Fundiário', label:'Processo Fundiário — Área do Empreendimento',
+    num:3, color:'blue', tag:'Fundiário', flowId:'fundiario', label:'Processo Fundiário — Área do Empreendimento',
     sub:'Matrícula, georreferenciamento, escritura e direito de uso do local',
     pills:['Matrícula RGI','Georreferenciamento INCRA','Escritura / Arrendamento','Certidão inteiro teor','Declaração Anexo VI'],
     modal:{
@@ -510,7 +607,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:4, color:'pink', tag:'Ambiental', label:'Licenciamento Ambiental',
+    num:4, color:'pink', tag:'Ambiental', flowId:'ambiental', label:'Licenciamento Ambiental',
     sub:'Licença Prévia → Licença de Instalação → Licença de Operação',
     pills:['Licença Prévia (LP)','Licença de Instalação (LI)','Licença de Operação (LO)','EIA/RAS'],
     modal:{
@@ -545,7 +642,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:5, color:'purple', tag:'ANEEL', label:'Outorga de Autorização (ANEEL)',
+    num:5, color:'purple', tag:'ANEEL', flowId:'aneel', label:'Outorga de Autorização (ANEEL)',
     sub:'DRO-SAE (opcional) → Qualificação Jurídica + Técnica → Publicação no DOU',
     pills:['DRO-SAE (opc.)','Qualificação Jurídica','Qualificação Técnica','Licença Ambiental','Outorga 35 anos'],
     modal:{
@@ -598,7 +695,7 @@ const DEFAULT_DATA = [
   { type:'fork-pair', branches:[
 
   {
-    num:'6A', color:'amber', tag:'Conexão · Distribuição', label:'Processo de Conexão — Distribuição',
+    num:'6A', color:'amber', tag:'Conexão · Distribuição', flowId:'conexao-distribuicao', label:'Processo de Conexão — Distribuição',
     sub:'DAL / Orçamento de Conexão via distribuidora local (RN ANEEL 1000/2021)',
     pills:['Pedido de acesso','Estudo distribuidora','DAL / Orç. Conexão','CUSD + CCD','Faixa de servidão'],
     modal:{
@@ -634,7 +731,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:'6B', color:'amber', tag:'Conexão · Transmissão', label:'Processo de Conexão — Rede Básica / Transmissão',
+    num:'6B', color:'amber', tag:'Conexão · Transmissão', flowId:'conexao-transmissao', label:'Processo de Conexão — Rede Básica / Transmissão',
     sub:'Parecer de Acesso ONS para Rede Básica ou DIT (Procedimentos de Rede)',
     pills:['Pedido ao ONS','Parecer de Acesso ONS','CUST','LT / Subestação','Faixa de servidão'],
     modal:{
@@ -677,7 +774,7 @@ const DEFAULT_DATA = [
   ]}, // fim do fork-pair (Conexão — Distribuição × Rede Básica/Transmissão)
 
   {
-    num:7, color:'green', tag:'EPE / AEGE', dividerBefore:'EPE — Cadastramento para o Leilão', label:'Pré-Cadastro EPE — Sistema AEGE',
+    num:7, color:'green', tag:'EPE / AEGE', flowId:'epe-precadastro', dividerBefore:'EPE — Cadastramento para o Leilão', label:'Pré-Cadastro EPE — Sistema AEGE',
     sub:'Adesão ao AEGE → Login → Cadastro da empresa → Inscrição no LRCAP-2026',
     pills:['Adesão AEGE','Login e senha','Dados do empreendedor','Inscrição LRCAP-2026','Campos azuis'],
     modal:{
@@ -723,7 +820,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:8, color:'green', tag:'EPE / Documentos', label:'Cadastramento Técnico EPE',
+    num:8, color:'green', tag:'EPE / Documentos', flowId:'epe-cadastro-tecnico', label:'Cadastramento Técnico EPE',
     sub:'Memoriais A–F + Ficha de Dados + Documento de Acesso + Declarações',
     pills:['Memorial A — Tecnologia','Memorial B–F','Ficha de Dados AEGE','Doc. Acesso','Direito de Uso','Decl. CN'],
     modal:{
@@ -793,7 +890,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:9, color:'green', tag:'EPE / Análise', label:'Análise Técnica e Habilitação EPE',
+    num:9, color:'green', tag:'EPE / Análise', flowId:'epe-habilitacao', label:'Análise Técnica e Habilitação EPE',
     sub:'EPE analisa documentação → Habilitado (CEG) ou Inabilitado (Recurso)',
     pills:['Análise EPE','Complementação (se solicitada)','Habilitação Técnica','CEG gerado','Recurso (se necessário)'],
     modal:{
@@ -821,7 +918,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:10, color:'teal', tag:'Leilão', dividerBefore:'Leilão e Contratação', label:'Leilão LRCAP-2026',
+    num:10, color:'teal', tag:'Leilão', flowId:'leilao', dividerBefore:'Leilão e Contratação', label:'Leilão LRCAP-2026',
     sub:'Participar do leilão com habilitação técnica em mãos → CRCAP',
     pills:['Data do leilão','Garantia de proposta','Lances (leilão)','CRCAP assinado'],
     modal:{
@@ -850,7 +947,7 @@ const DEFAULT_DATA = [
     }
   },
   {
-    num:11, color:'red', tag:'Pós-Leilão', dividerBefore:'Implantação e Operação', label:'Implantação e Início da Operação Comercial',
+    num:11, color:'red', tag:'Pós-Leilão', flowId:'implantacao', dividerBefore:'Implantação e Operação', label:'Implantação e Início da Operação Comercial',
     sub:'Obras → Conexão → Operação em Teste → Operação Comercial',
     pills:['Comunicar início de obras','Marcos de implantação','Operação em teste','COD — Operação Comercial','Fiscalização ANEEL'],
     modal:{
@@ -922,16 +1019,89 @@ function saveData(){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(flowData)); }catch(e){}
 }
 
+/* Garante que toda etapa (inclusive as criadas/editadas pelo usuário e as salvas
+ * antes desta integração) tenha um flowId estável — é a chave usada para ligar
+ * perguntas (Supabase) a um bloco do fluxograma. Uma vez atribuído, não muda
+ * mais, mesmo que o rótulo da etapa seja editado depois. */
+function ensureFlowIds(data){
+  const used = new Set();
+  let changed = false;
+  function assign(step){
+    if(!step.flowId){
+      let base = (window.flowSlug ? window.flowSlug(step.label || step.tag || 'etapa') : 'etapa') || 'etapa';
+      let id = base, n = 2;
+      while(used.has(id)){ id = `${base}-${n++}`; }
+      step.flowId = id;
+      changed = true;
+    }
+    used.add(step.flowId);
+  }
+  data.forEach(entry => {
+    if(entry.type === 'fork-pair') entry.branches.forEach(assign);
+    else assign(entry);
+  });
+  return changed;
+}
+
 let flowData = loadData();
+if(ensureFlowIds(flowData)) saveData();
 let editMode = false;
 
 // Registro plano de todas as etapas com modal, na ordem em que são renderizadas
 // (inclui as que ficam dentro de pares de bifurcação), usado pelos handlers de clique.
 const MODAL_STEPS = [];
 
-function buildDocsHTML(pills, color, idx){
+/* ── Perguntas (mesma base da página de Perguntas, via DataStore) ── */
+let PERGUNTAS = [];
+let DOCUMENTOS = [];
+
+function docFlowId(stepFlowId, pillLabel){
+  return `${stepFlowId}__${window.flowSlug ? window.flowSlug(pillLabel) : pillLabel}`;
+}
+/* Perguntas do bloco em si + de todos os seus documentos laterais (agregado). */
+function perguntasDoBloco(flowId){
+  if(!flowId) return [];
+  const prefix = flowId + '__';
+  return PERGUNTAS.filter(r => r.topico_fluxo === flowId || (r.topico_fluxo && r.topico_fluxo.startsWith(prefix)));
+}
+function perguntasDoDoc(flowId){
+  if(!flowId) return [];
+  return PERGUNTAS.filter(r => r.topico_fluxo === flowId);
+}
+function badgeHTML(flowId){
+  const list = perguntasDoBloco(flowId);
+  if(!list.length) return '';
+  const respondidas = list.filter(r => window.isAnswered(r)).length;
+  const pendentes = list.length - respondidas;
+  return `<span class="d-box-qbadge" title="${list.length} perguntas · ${respondidas} respondidas · ${pendentes} pendentes">
+    ${list.length}${pendentes ? `<i class="qb-dot qb-red"></i>` : `<i class="qb-dot qb-green"></i>`}
+  </span>`;
+}
+
+async function loadPerguntas(){
+  try{
+    const [regs, docs] = await Promise.all([
+      window.DataStore.list(),
+      window.DataStore.listDocumentos ? window.DataStore.listDocumentos() : Promise.resolve([]),
+    ]);
+    PERGUNTAS = regs || [];
+    DOCUMENTOS = docs || [];
+  }catch(e){
+    console.warn('Não foi possível carregar as perguntas:', e);
+  }
+  updateFlowBadges();
+  if(typeof refreshOpenDrawer === 'function') refreshOpenDrawer();
+}
+function updateFlowBadges(){
+  document.querySelectorAll('.d-box[data-flow-id]').forEach(box => {
+    const slot = box.querySelector('.d-box-qbadge-slot');
+    if(slot) slot.innerHTML = badgeHTML(box.dataset.flowId);
+  });
+}
+
+function buildDocsHTML(pills, color, idx, stepFlowId){
   if(!pills || !pills.length) return '';
-  const docs = pills.map(p=>`<div class="d-doc" data-color="${color}" data-step-index="${idx}">${p}</div>`).join('');
+  const docs = pills.map(p=>`<div class="d-doc" data-color="${color}" data-step-index="${idx}" data-flow-id="${escAttr(docFlowId(stepFlowId, p))}">${p}</div>`).join('');
   return `<div class="d-docs">${docs}</div>`;
 }
 
@@ -943,7 +1113,7 @@ function buildBoxHTML(step, idx, entryIndex, branch){
     : `<button class="eb-btn" data-act="up" title="Mover para cima">↑</button><button class="eb-btn" data-act="down" title="Mover para baixo">↓</button>`;
   btns += `<button class="eb-btn" data-act="del" title="Excluir">🗑</button>`;
   return `
-  <div class="d-box" data-color="${step.color}" data-step-index="${idx}" data-entry-index="${entryIndex}" data-branch="${branch||''}">
+  <div class="d-box" data-color="${step.color}" data-step-index="${idx}" data-entry-index="${entryIndex}" data-branch="${branch||''}" data-flow-id="${escAttr(step.flowId||'')}">
     <div class="edit-bar">${btns}</div>
     <div class="d-box-top">
       <div class="d-box-badge">${step.num}</div>
@@ -951,13 +1121,14 @@ function buildBoxHTML(step, idx, entryIndex, branch){
     </div>
     <div class="d-box-label">${step.label}</div>
     <div class="d-box-sub">${step.sub}</div>
+    <span class="d-box-qbadge-slot">${badgeHTML(step.flowId)}</span>
   </div>`;
 }
 
 function registerStep(step, entryIndex, branch){
   const idx = MODAL_STEPS.length;
   MODAL_STEPS.push(step);
-  return { idx, boxHTML: buildBoxHTML(step, idx, entryIndex, branch), docsHTML: buildDocsHTML(step.pills, step.color, idx) };
+  return { idx, boxHTML: buildBoxHTML(step, idx, entryIndex, branch), docsHTML: buildDocsHTML(step.pills, step.color, idx, step.flowId) };
 }
 
 function buildAddRow(insertIndex){
@@ -1044,6 +1215,106 @@ function closeModal(){
 
 closeBtn.addEventListener('click', closeModal);
 overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+
+// ── Drawer de perguntas (lado esquerdo) — mesma base de dados da página Perguntas ──
+const drawerOverlay = document.getElementById('drawer-overlay');
+const drawerPanel = document.getElementById('drawer-panel');
+const drawerTitle = document.getElementById('drawer-title');
+const drawerSub = document.getElementById('drawer-sub');
+const drawerBody = document.getElementById('drawer-body');
+const drawerClose = document.getElementById('drawer-close');
+let openDrawerFlowId = null;
+let openQuestionId = null;
+
+function nomeDocumento(documentoId){
+  if(!documentoId) return '';
+  const d = DOCUMENTOS.find(x => x.id === documentoId);
+  if(!d) return '';
+  return d.sigla ? `${d.nome} (${d.sigla})` : d.nome;
+}
+
+function renderDrawerList(flowId, label){
+  const list = perguntasDoBloco(flowId);
+  const respondidas = list.filter(r => window.isAnswered(r)).length;
+  const pendentes = list.length - respondidas;
+
+  drawerTitle.textContent = label;
+  drawerSub.textContent = list.length ? `${list.length} pergunta${list.length>1?'s':''} vinculada${list.length>1?'s':''} a esta etapa` : 'Nenhuma pergunta vinculada a esta etapa ainda';
+
+  if(!list.length){
+    drawerBody.innerHTML = `
+      <div class="drawer-summary">
+        <div class="ds-chip"><b>0</b><span>Perguntas</span></div>
+      </div>
+      <div class="drawer-empty">Cadastre uma pergunta na página de Perguntas e selecione esta etapa em "Etapa do Fluxograma" para que ela apareça aqui.</div>`;
+    return;
+  }
+
+  const items = list.map(r => {
+    const answered = window.isAnswered(r);
+    const isOpen = r.id === openQuestionId;
+    const docName = nomeDocumento(r.documento_id);
+    return `
+    <div class="q-item ${isOpen?'open':''}" data-q-id="${escAttr(r.id)}">
+      <div class="q-head">
+        <span class="q-dot ${answered?'q-green':'q-red'}"></span>
+        <div class="q-head-text">
+          <span class="q-orgao">${escHtml(r.orgao_responsavel || 'Sem órgão')}</span>
+          ${r.topico_fluxo && r.topico_fluxo.includes('__') ? `<span class="q-doctag">· ${escHtml(r.topico_fluxo.split('__')[1])}</span>` : ''}
+          <div class="q-title">${escHtml(r.pergunta || '(sem pergunta)')}</div>
+        </div>
+        <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+      <div class="q-detail">
+        <div class="q-detail-row">
+          <div class="q-detail-label">Resposta</div>
+          <div class="q-detail-text ${answered?'':'empty'}">${answered ? escHtml(r.resposta) : 'Ainda sem resposta'}</div>
+        </div>
+        <div class="q-detail-meta">
+          ${r.data_protocolo ? `<div><b>Data</b>${escHtml(r.data_protocolo)}</div>` : ''}
+          ${docName ? `<div><b>Documento</b>${escHtml(docName)}</div>` : ''}
+          ${r.numero_protocolo ? `<div><b>Protocolo</b>${escHtml(r.numero_protocolo)}</div>` : ''}
+          ${r.classificacao ? `<div><b>Tipo</b>${escHtml(r.classificacao)}</div>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  drawerBody.innerHTML = `
+    <div class="drawer-summary">
+      <div class="ds-chip"><b>${list.length}</b><span>Perguntas</span></div>
+      <div class="ds-chip ds-green"><b>${respondidas}</b><span>Respondidas</span></div>
+      <div class="ds-chip ds-red"><b>${pendentes}</b><span>Pendentes</span></div>
+    </div>
+    <div class="q-list">${items}</div>`;
+
+  drawerBody.querySelectorAll('.q-item').forEach(el => {
+    el.querySelector('.q-head').addEventListener('click', () => {
+      const id = el.dataset.qId;
+      openQuestionId = openQuestionId === id ? null : id;
+      renderDrawerList(flowId, label);
+    });
+  });
+}
+
+function openFlowDrawer(flowId, label){
+  if(!flowId) return;
+  openDrawerFlowId = flowId;
+  openQuestionId = null;
+  renderDrawerList(flowId, label);
+  drawerOverlay.classList.add('active');
+  drawerPanel.scrollTop = 0;
+}
+function closeFlowDrawer(){
+  drawerOverlay.classList.remove('active');
+  openDrawerFlowId = null;
+}
+function refreshOpenDrawer(){
+  if(openDrawerFlowId) renderDrawerList(openDrawerFlowId, drawerTitle.textContent);
+}
+
+drawerClose.addEventListener('click', closeFlowDrawer);
+drawerOverlay.addEventListener('click', (e) => { if(e.target === drawerOverlay) closeFlowDrawer(); });
 
 // ── Edição: estado e helpers do formulário ──
 let editingCtx = null;
@@ -1175,7 +1446,7 @@ function closeEditPanel(){
 
 document.getElementById('edit-close').addEventListener('click', closeEditPanel);
 editOverlay.addEventListener('click', (e) => { if(e.target === editOverlay) closeEditPanel(); });
-document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); closeEditPanel(); } });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); closeEditPanel(); closeFlowDrawer(); } });
 
 // ── Mutações na estrutura do fluxo ──
 function moveEntry(i, dir){
@@ -1254,6 +1525,10 @@ flow.addEventListener('click', (e) => {
     const idx = parseInt(card.dataset.stepIndex, 10);
     const step = MODAL_STEPS[idx];
     if(step && step.modal) openModal(step);
+    // Bloco principal: também abre o drawer de perguntas (lado esquerdo).
+    if(card.classList.contains('d-box') && card.dataset.flowId){
+      openFlowDrawer(card.dataset.flowId, step ? step.label : card.dataset.flowId);
+    }
   }
 });
 
@@ -1422,6 +1697,16 @@ renderFlow();
 redrawDiagram(700); // re-medir por alguns frames cobre o reflow do carregamento da fonte
 window.addEventListener('resize', () => drawDiagramConnectors());
 if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>drawDiagramConnectors()); }
+
+// Carrega as perguntas da mesma base usada pela página de Perguntas e atualiza
+// os badges/drawer automaticamente sempre que algo mudar (criação, resposta,
+// status, órgão etc.) — sem precisar recarregar a página.
+if(window.DataStore){
+  loadPerguntas();
+  window.DataStore.onChange(loadPerguntas);
+} else {
+  console.warn('DataStore não encontrado — verifique se js/config.js e js/data.js foram carregados.');
+}
 </script>
 </body>
 </html>
