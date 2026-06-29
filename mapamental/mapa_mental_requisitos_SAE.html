@@ -422,7 +422,177 @@ h1.mm-title{
 
 @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
 ::selection{ background:rgba(124,140,255,.35); }
+
+/* =========================================================
+   MAPA MENTAL — canvas interativo (D3)
+   ========================================================= */
+.mm-stage{ max-width:1280px; margin:0 auto; animation:fadeUp .4s ease both; }
+
+.mm-toolbar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 12px; }
+.mm-search{ position:relative; flex:1 1 280px; max-width:420px; }
+.mm-search > svg{ position:absolute; left:14px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--text-3); pointer-events:none; }
+.mm-search input{
+  width:100%; appearance:none; border:1px solid var(--border-strong); border-radius:999px;
+  background:var(--surface); color:var(--text-1); font-family:inherit; font-size:13.5px;
+  padding:11px 64px 11px 38px; outline:none;
+  transition:border-color .2s, background .2s, box-shadow .2s;
+}
+.mm-search input:focus{ border-color:rgba(124,140,255,.6); background:var(--surface-strong); box-shadow:0 0 0 3px rgba(124,140,255,.12); }
+.mm-search input::placeholder{ color:var(--text-3); }
+.mm-search-count{ position:absolute; right:42px; top:50%; transform:translateY(-50%); font-size:11px; color:var(--text-3); pointer-events:none; }
+.mm-search-clear{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%); width:26px; height:26px;
+  border-radius:50%; border:none; cursor:pointer; background:transparent; color:var(--text-3);
+  display:none; align-items:center; justify-content:center; font-size:15px; line-height:1;
+}
+.mm-search-clear:hover{ color:var(--text-1); background:var(--surface-strong); }
+.mm-search.has-value .mm-search-clear{ display:flex; }
+.mm-tool-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+/* breadcrumb */
+.mm-breadcrumb{
+  display:flex; align-items:center; gap:3px; flex-wrap:wrap; min-height:22px; margin:0 0 10px;
+  font-size:12.5px; color:var(--text-2);
+  opacity:0; transform:translateY(-4px); transition:opacity .25s, transform .25s; pointer-events:none;
+}
+.mm-breadcrumb.show{ opacity:1; transform:none; pointer-events:auto; }
+.mm-crumb{ cursor:pointer; padding:3px 9px; border-radius:8px; border:1px solid transparent; transition:background .15s, color .15s, border-color .15s; }
+.mm-crumb:hover{ background:var(--surface-strong); color:var(--text-1); border-color:var(--border-strong); }
+.mm-crumb.current{ color:var(--text-1); font-weight:700; background:var(--surface); border-color:var(--border-strong); }
+.mm-crumb-sep{ color:var(--text-3); opacity:.6; }
+
+/* canvas shell */
+.mm-canvas-shell{
+  position:relative; max-width:1280px; height:min(74vh,740px); margin:0 auto;
+  border-radius:24px; overflow:hidden; border:1px solid var(--border);
+  background:
+    radial-gradient(840px 440px at 50% 42%, rgba(124,140,255,.12), transparent 62%),
+    radial-gradient(var(--bg-grid) 1px, transparent 1px) 0 0/30px 30px,
+    rgba(8,12,22,.42);
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.03) inset;
+}
+#mm-svg{ width:100%; height:100%; display:block; cursor:grab; touch-action:none; }
+#mm-svg.grabbing{ cursor:grabbing; }
+.mm-link{ fill:none; stroke-linecap:round; transition:opacity .3s ease, stroke-width .3s ease; }
+.mm-link.dim, .mm-node.dim{ opacity:.18 !important; }
+.mm-node{ cursor:pointer; }
+.mm-node foreignObject{ overflow:visible; }
+
+/* node card */
+.mm-card{
+  height:100%; box-sizing:border-box; display:flex; align-items:center; gap:10px; user-select:none;
+  padding:8px 12px; border-radius:15px; position:relative;
+  background:linear-gradient(160deg, rgba(28,36,56,.95), rgba(16,22,37,.97));
+  border:1.5px solid var(--c-border, var(--border));
+  box-shadow:0 10px 26px -14px rgba(0,0,0,.75);
+  transition:transform .16s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.mm-node:hover .mm-card{ transform:translateY(-2px); box-shadow:0 16px 34px -14px rgba(0,0,0,.85), 0 0 0 1px var(--c-main); }
+.mm-node.selected .mm-card{ border-color:var(--c-main); box-shadow:0 0 0 2px var(--c-main), 0 0 24px -4px var(--c-glow); }
+.mm-card-icon{
+  width:26px; height:26px; flex-shrink:0; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:13px; background:var(--c-soft, rgba(255,255,255,.06)); box-shadow:0 0 0 1px var(--c-border) inset;
+}
+.mm-card-body{ flex:1 1 auto; min-width:0; }
+.mm-card-title{ font-size:11.5px; font-weight:700; letter-spacing:-.01em; color:var(--text-1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mm-card-sub{ font-size:9px; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+.mm-card-badge{
+  flex-shrink:0; font-size:8.5px; font-weight:800; padding:2px 6px; border-radius:999px;
+  background:var(--c-soft); color:var(--c-text, var(--text-2)); box-shadow:0 0 0 1px var(--c-border) inset;
+}
+.mm-card-toggle{
+  position:absolute; right:-10px; top:50%; transform:translateY(-50%);
+  width:21px; height:21px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:var(--c-main); color:#0b1220; font-size:11px; font-weight:900; line-height:1;
+  box-shadow:0 2px 8px rgba(0,0,0,.55); border:2px solid #0b1220; z-index:3;
+}
+.mm-node.side-left .mm-card-toggle{ right:auto; left:-10px; }
+.mm-state-dot{
+  position:absolute; left:-6px; top:-6px; width:15px; height:15px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:8.5px; font-weight:900; color:#0b1220;
+  box-shadow:0 0 0 2px #0b1220; z-index:3;
+}
+
+/* root */
+.mm-card.is-root{
+  background:linear-gradient(155deg, rgba(124,140,255,.45), rgba(124,140,255,.16));
+  border-color:rgba(124,140,255,.6) !important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06) inset, 0 0 36px -2px rgba(124,140,255,.6) !important;
+}
+.mm-card.is-root .mm-card-title{ font-size:15px; }
+.mm-card.is-root .mm-card-icon{ width:32px; height:32px; font-size:16px; }
+
+@keyframes mmPulse{ 0%,100%{ box-shadow:0 0 0 2px var(--c-main), 0 0 0 0 var(--c-glow);} 50%{ box-shadow:0 0 0 3px var(--c-main), 0 0 28px 7px var(--c-glow);} }
+.mm-node.pulse .mm-card{ animation:mmPulse 1s ease 3; }
+
+/* zoom controls + hint */
+.mm-zoom{ position:absolute; right:16px; bottom:16px; display:flex; flex-direction:column; gap:6px; z-index:6; }
+.mm-zoom button{
+  width:38px; height:38px; border-radius:11px; border:1px solid var(--border-strong);
+  background:rgba(15,22,38,.85); backdrop-filter:blur(6px); color:var(--text-1); cursor:pointer;
+  font-size:19px; line-height:1; display:flex; align-items:center; justify-content:center;
+  transition:background .15s, border-color .15s, transform .12s;
+}
+.mm-zoom button:hover{ background:var(--surface-strong); border-color:rgba(124,140,255,.5); }
+.mm-zoom button:active{ transform:scale(.94); }
+.mm-hint{
+  position:absolute; left:16px; bottom:14px; z-index:5; font-size:11px; color:var(--text-3);
+  pointer-events:none; opacity:.8; max-width:60%; line-height:1.5;
+}
+
+/* side panel */
+.mm-panel{
+  position:absolute; top:0; right:0; height:100%; width:min(384px,88%); z-index:9;
+  background:linear-gradient(180deg, rgba(20,27,44,.98), rgba(12,17,29,.99));
+  border-left:1px solid var(--border-strong); box-shadow:-30px 0 60px -30px rgba(0,0,0,.85);
+  transform:translateX(103%); transition:transform .34s cubic-bezier(.2,.8,.2,1);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.mm-panel.open{ transform:translateX(0); }
+.mm-panel-head{ padding:20px 22px 15px; border-bottom:1px solid var(--border); position:relative; }
+.mm-panel-close{
+  position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:9px;
+  background:var(--surface); border:1px solid var(--border-strong); color:var(--text-2); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:transform .15s, color .15s, background .15s;
+}
+.mm-panel-close:hover{ color:var(--text-1); background:var(--surface-strong); transform:rotate(90deg); }
+.mm-panel-close svg{ width:15px; height:15px; }
+.mm-panel-eyebrow{ font-size:10.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--c-main, var(--text-3)); margin-bottom:6px; }
+.mm-panel-title{ font-size:19px; font-weight:800; letter-spacing:-.01em; padding-right:34px; line-height:1.25; }
+.mm-panel-sub{ font-size:12.5px; color:var(--text-2); margin-top:4px; }
+.mm-panel-body{ flex:1; overflow-y:auto; padding:18px 22px 28px; }
+.mm-panel-body::-webkit-scrollbar{ width:8px; }
+.mm-panel-body::-webkit-scrollbar-thumb{ background:var(--border-strong); border-radius:8px; }
+.mm-status-row{ display:flex; flex-wrap:wrap; gap:6px; }
+.mm-status-chip{
+  font-size:11px; font-weight:700; padding:6px 11px; border-radius:999px; cursor:pointer;
+  background:var(--surface); border:1px solid var(--border-strong); color:var(--text-2); transition:all .15s ease;
+}
+.mm-status-chip:hover{ color:var(--text-1); }
+.mm-status-chip.active{ color:#0b1220; }
+.mm-sec{ margin-bottom:20px; }
+.mm-sec-title{ font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text-3); margin-bottom:9px; display:flex; align-items:center; gap:8px; }
+.mm-sec-title::after{ content:''; flex:1; height:1px; background:var(--border); }
+.mm-sec > p{ font-size:13px; line-height:1.6; color:var(--text-2); }
+.mm-doc{
+  display:flex; align-items:center; gap:9px; width:100%; text-align:left; cursor:pointer;
+  background:var(--surface); border:1px solid var(--border); border-radius:11px;
+  padding:10px 12px; margin-bottom:7px; color:var(--text-1); font-size:12.5px; line-height:1.4;
+  font-family:inherit; transition:background .15s, border-color .15s, transform .15s;
+}
+.mm-doc:hover{ background:var(--surface-strong); border-color:rgba(124,140,255,.5); transform:translateX(2px); }
+.mm-doc .mm-doc-ic{ flex-shrink:0; opacity:.8; }
+.mm-doc .mm-doc-badge{ margin-left:auto; flex-shrink:0; font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:999px; background:rgba(255,255,255,.07); color:var(--text-2); }
+.mm-empty{ font-size:12px; color:var(--text-3); font-style:italic; }
+.mm-panel .leaf-modal-detail{ margin-top:2px; }
+
+@media (max-width:760px){
+  .mm-canvas-shell{ height:min(70vh,560px); }
+  .mm-hint{ display:none; }
+  .mm-panel{ width:100%; }
+}
 </style>
+<script src="vendor/d3.v7.min.js"></script>
 </head>
 <body>
 
@@ -481,7 +651,49 @@ h1.mm-title{
 </div>
 
 <div class="view active" id="view-mindmap">
-  <div class="mm-tree" id="tree"></div>
+  <div class="mm-stage">
+    <div class="mm-toolbar">
+      <div class="mm-search" id="mm-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="mm-search-input" type="text" autocomplete="off" placeholder="Buscar nó ou documento (ex.: CNPJ, LP, Memorial)…">
+        <span class="mm-search-count" id="mm-search-count"></span>
+        <button class="mm-search-clear" id="mm-search-clear" aria-label="Limpar busca">&times;</button>
+      </div>
+      <div class="mm-tool-actions">
+        <button class="mm-btn" id="mm-btn-first">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M12 7v3M12 10l-6 5M12 10l6 5"/></svg>
+          1º nível
+        </button>
+        <button class="mm-btn primary" id="mm-btn-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+          Centralizar
+        </button>
+      </div>
+    </div>
+    <div class="mm-breadcrumb" id="mm-breadcrumb"></div>
+    <div class="mm-canvas-shell" id="mm-canvas-shell">
+      <svg id="mm-svg"></svg>
+      <div class="mm-hint">Arraste para mover &middot; scroll/pinça para zoom &middot; clique no nó para detalhes &middot; <b>+ / &minus;</b> expande o ramo &middot; duplo clique centraliza</div>
+      <div class="mm-zoom">
+        <button id="mm-zoom-in" aria-label="Aproximar">+</button>
+        <button id="mm-zoom-out" aria-label="Afastar">&minus;</button>
+        <button id="mm-zoom-fit" aria-label="Centralizar mapa" title="Centralizar mapa">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m11 0h3a2 2 0 0 0 2-2v-3"/></svg>
+        </button>
+      </div>
+      <aside class="mm-panel" id="mm-panel">
+        <div class="mm-panel-head">
+          <button class="mm-panel-close" id="mm-panel-close" aria-label="Fechar painel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+          <div class="mm-panel-eyebrow" id="mm-panel-eyebrow"></div>
+          <div class="mm-panel-title" id="mm-panel-title"></div>
+          <div class="mm-panel-sub" id="mm-panel-sub"></div>
+        </div>
+        <div class="mm-panel-body" id="mm-panel-body"></div>
+      </aside>
+    </div>
+  </div>
 </div>
 
 <div class="view" id="view-flow">
@@ -2198,15 +2410,7 @@ function renderFlow(type){
 function setAll(expand){
   const activeView = document.querySelector('.view.active');
   if(activeView.id === 'view-mindmap'){
-    activeView.querySelectorAll('.branch').forEach(b=>{
-      b.classList.toggle('expanded', expand);
-      b.querySelector('.branch-toggle').classList.toggle('open', expand);
-    });
-    activeView.querySelectorAll('.child-card').forEach(c=>{
-      c.classList.toggle('open', expand);
-      c.querySelector('.child-toggle').classList.toggle('open', expand);
-    });
-    animateRedraw(420);
+    if(expand) MM.expandAll(); else MM.collapseAll();
   } else {
     activeView.querySelectorAll('.flow-toggle').forEach(el=>{ el.classList.toggle('open', expand); });
     activeView.querySelectorAll('.flow-phase').forEach(el=>{ el.classList.toggle('collapsed', !expand); });
@@ -2227,7 +2431,7 @@ document.getElementById('view-switch').addEventListener('click', (e)=>{
   document.getElementById('legend-mindmap').style.display = view==='mindmap' ? 'flex' : 'none';
   document.getElementById('legend-flow').style.display = view==='flow' ? 'flex' : 'none';
   if(view==='flow' && !document.getElementById('flow-container').innerHTML){ renderFlow(currentFlowType); }
-  if(view==='mindmap'){ animateRedraw(120); }
+  if(view==='mindmap'){ MM.onShow(); }
 });
 
 document.getElementById('type-switch').addEventListener('click', (e)=>{
@@ -2238,7 +2442,373 @@ document.getElementById('type-switch').addEventListener('click', (e)=>{
   renderFlow(currentFlowType);
 });
 
-renderMindmap();
+/* =========================================================
+   MAPA MENTAL — engine interativo (D3 / d3-hierarchy + d3-zoom)
+   Estrutura, categorias e documentos preservados de DATA / LEAF_DETAILS.
+   Apenas nós visíveis (ramos expandidos) são renderizados no DOM
+   — recolher um ramo remove seus filhos (renderização sob demanda).
+   ========================================================= */
+const MM_PAL = {
+  orange:{main:'#ff8c42', text:'#ffd5b0'},
+  purple:{main:'#c792ff', text:'#e7d2ff'},
+  teal:{main:'#4ecdc4', text:'#b2f0ec'},
+  pink:{main:'#f78fb3', text:'#fdd5e4'},
+  blue:{main:'#4da3ff', text:'#bfe0ff'},
+  green:{main:'#5ed68f', text:'#c4f3da'},
+  amber:{main:'#ffb45e', text:'#ffdfb8'},
+  gray:{main:'#9aa6c2', text:'#dde2ee'},
+  root:{main:'#7c8cff', text:'#dfe3ff'}
+};
+const MM_ICONS = { prospeccao:'🔍', juridico:'⚖️', fundiario:'📍', ambiental:'🌿', aneel:'⚡', epe:'📊', conn:'🔌', prazos:'⏱️' };
+const MM_STATES = {
+  'nao-iniciado':{label:'Não iniciado', color:'#9aa6c2', glyph:'•'},
+  'andamento':   {label:'Em andamento', color:'#ffb45e', glyph:'▶'},
+  'analise':     {label:'Em análise',   color:'#4da3ff', glyph:'?'},
+  'aprovado':    {label:'Aprovado',     color:'#5ed68f', glyph:'✓'},
+  'reprovado':   {label:'Reprovado',    color:'#f87171', glyph:'✕'}
+};
+/* Status apenas ilustrativo — edite à vontade; não altera a estrutura. */
+const MM_STATUS_SEED = {
+  prospeccao:'andamento', juridico:'aprovado', fundiario:'analise', ambiental:'andamento',
+  aneel:'analise', epe:'andamento', conn:'nao-iniciado', prazos:'nao-iniciado',
+  'juridico/spe':'aprovado', 'ambiental/lp':'aprovado', 'ambiental/li':'andamento', 'ambiental/lo':'nao-iniciado'
+};
+const MM_NORMA = {
+  prospeccao:'LRCAP-2026 · Portaria MME do leilão',
+  juridico:'RN ANEEL nº 1.161/2026 (Anexo II — qualificação jurídica)',
+  fundiario:'Lei 10.267/2001 · normas INCRA/SIGEF · Anexo VI EPE',
+  ambiental:'Licenciamento CONAMA · IBAMA / órgão estadual',
+  aneel:'RN ANEEL nº 1.161/2026',
+  epe:'EPE-DEE-RE-079/2024-R2 · Manual do Empreendedor (AEGE)',
+  conn:'Procedimentos de Rede (ONS) · RN ANEEL 1.000/2021',
+  prazos:'RN ANEEL nº 1.161/2026 (disposições transitórias)'
+};
+const MM_LEVELNAME = ['Nó central','Categoria','Subgrupo','Documento'];
+
+function mmEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function mmRgba(hex,a){ const n=parseInt(hex.slice(1),16); return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`; }
+
+let MM_ROOT, MM_BY_ID = {}, MM_STATUS = {}, MM_EXPANDED = new Set(), MM_SELECTED = null;
+
+function buildModel(){
+  MM_BY_ID = {};
+  const root = { id:'SAE', label:DATA.label, sub:DATA.sub, tip:'Sistemas de Armazenamento de Energia — visão regulatória completa. Expanda cada ramo para navegar pelos requisitos.', level:0, color:'root', branchId:null, children:[] };
+  MM_BY_ID[root.id] = root;
+  (DATA.branches||[]).forEach(b=>{
+    const bn = { id:b.id, label:b.label, sub:(b.sub||'').replace(/\n/g,' · '), tip:b.tip, level:1, color:b.color, branchId:b.id, parent:root, children:[] };
+    MM_BY_ID[bn.id] = bn; root.children.push(bn);
+    (b.children||[]).forEach(c=>{
+      const cn = { id:b.id+'/'+c.id, label:c.label, sub:(c.sub||'').replace(/\n/g,' · '), tip:c.tip, level:2, color:b.color, branchId:b.id, parent:bn, children:[], orBefore:!!c.orBefore };
+      MM_BY_ID[cn.id] = cn; bn.children.push(cn);
+      (c.leaves||[]).forEach((leaf,i)=>{
+        const ln = { id:cn.id+'/d'+i, label:leaf, sub:'', tip:'', level:3, color:b.color, branchId:b.id, parent:cn, children:[], doc:true };
+        MM_BY_ID[ln.id] = ln; cn.children.push(ln);
+      });
+    });
+  });
+  (function count(n){ if(n.doc){ return 1; } let s=0; n.children.forEach(c=> s+=count(c)); n.docCount=s; return s; })(root);
+  MM_ROOT = root;
+  MM_ROOT.children.forEach((b,i)=>{ b.side = (i%2===0)?1:-1; });
+  MM_STATUS = Object.assign({}, MM_STATUS_SEED);
+}
+
+/* ---------- layout (d3.tree por lado, raiz central) ---------- */
+const MM_COL = 272, MM_ROW = 78;
+function mmExpandedChildren(n){ return (MM_EXPANDED.has(n.id) && n.children && n.children.length) ? n.children : null; }
+function layoutSide(branches, sign){
+  if(!branches.length) return;
+  const synth = { __synth:true, children:branches };
+  const h = d3.hierarchy(synth, n => n.__synth ? n.children : mmExpandedChildren(n));
+  d3.tree().nodeSize([MM_ROW, MM_COL])(h);
+  const rootX = h.x;
+  h.each(node=>{ if(node.data.__synth) return; node.data._x = sign*(node.depth*MM_COL); node.data._y = node.x - rootX; });
+}
+function mmLayout(){
+  MM_ROOT._x = 0; MM_ROOT._y = 0;
+  layoutSide(MM_ROOT.children.filter(b=>b.side===1), 1);
+  layoutSide(MM_ROOT.children.filter(b=>b.side===-1), -1);
+}
+function mmVisible(){
+  const out=[MM_ROOT];
+  (function rec(n){ if(MM_EXPANDED.has(n.id)){ n.children.forEach(c=>{ out.push(c); rec(c); }); } })(MM_ROOT);
+  return out;
+}
+function mmCardSize(n){
+  if(n.level===0) return [186,66];
+  if(n.level===1) return [206,60];
+  if(n.level===2) return [190,54];
+  return [180,46];
+}
+function mmColor(n){ return (MM_PAL[n.color]||MM_PAL.root).main; }
+function mmLinkW(n){ return n.level<=1?3:(n.level===2?2.2:1.5); }
+function mmLinkPath(s,t){
+  const [sw]=mmCardSize(s), [tw]=mmCardSize(t);
+  const right = t._x>=s._x;
+  const sx = s._x + (right? sw/2 : -sw/2), tx = t._x + (right? -tw/2 : tw/2);
+  const sy = s._y, ty = t._y, mx=(sx+tx)/2;
+  return `M${sx},${sy} C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
+}
+
+/* ---------- SVG / zoom ---------- */
+let svgSel, gZoom, gLinks, gNodes, mmZoom, MM_READY=false, MM_FIRST=true;
+function mmSetup(){
+  if(MM_READY) return; MM_READY=true;
+  svgSel = d3.select('#mm-svg');
+  gZoom  = svgSel.append('g').attr('class','mm-zoomlayer');
+  gLinks = gZoom.append('g').attr('class','mm-links');
+  gNodes = gZoom.append('g').attr('class','mm-nodes');
+  mmZoom = d3.zoom().scaleExtent([0.22,2.4])
+    .on('start', ()=>svgSel.classed('grabbing',true))
+    .on('zoom', e=> gZoom.attr('transform', e.transform))
+    .on('end', ()=>svgSel.classed('grabbing',false));
+  svgSel.call(mmZoom).on('dblclick.zoom', null);
+  svgSel.on('click', ()=> mmClosePanel());
+  mmWireUI();
+}
+function mmDims(){ const n=svgSel.node(); return [n.clientWidth||n.parentNode.clientWidth, n.clientHeight||540]; }
+
+function mmBuildCard(g,d){
+  const [w,h]=mmCardSize(d);
+  const fo=g.append('foreignObject').attr('width',w).attr('height',h).attr('x',-w/2).attr('y',-h/2);
+  const div=document.createElementNS('http://www.w3.org/1999/xhtml','div');
+  fo.node().appendChild(div); d._card=div; mmRefreshCard(d);
+}
+function mmRefreshCard(d){
+  const div=d._card; if(!div) return;
+  const pal=MM_PAL[d.color]||MM_PAL.root;
+  const st=MM_STATUS[d.id]||'nao-iniciado';
+  const hasKids=d.children && d.children.length>0;
+  const open=MM_EXPANDED.has(d.id);
+  div.style.setProperty('--c-main',pal.main);
+  div.style.setProperty('--c-text',pal.text);
+  div.style.setProperty('--c-soft',mmRgba(pal.main,.16));
+  let bC=mmRgba(pal.main,.55), gC=mmRgba(pal.main,.5);
+  if(st!=='nao-iniciado'){ bC=MM_STATES[st].color; gC=mmRgba(MM_STATES[st].color,.6); }
+  div.style.setProperty('--c-border',bC);
+  div.style.setProperty('--c-glow',gC);
+  div.className='mm-card lvl-'+d.level+(d.level===0?' is-root':'');
+  const icon=d.level===0?'⚡':(d.level===1?(MM_ICONS[d.branchId]||'•'):(d.doc?'📄':'◆'));
+  const badge=(hasKids && d.docCount)?`<div class="mm-card-badge">${d.docCount} doc${d.docCount>1?'s':''}</div>`:'';
+  const toggle=hasKids?`<div class="mm-card-toggle" data-toggle="1">${open?'▾':'▸'}</div>`:'';
+  const stDot=(st!=='nao-iniciado')?`<div class="mm-state-dot" title="${MM_STATES[st].label}" style="background:${MM_STATES[st].color}">${MM_STATES[st].glyph}</div>`:'';
+  div.innerHTML=`${stDot}<div class="mm-card-icon">${icon}</div><div class="mm-card-body"><div class="mm-card-title">${mmEsc(d.label)}</div>${d.sub?`<div class="mm-card-sub">${mmEsc(d.sub)}</div>`:''}</div>${badge}${toggle}`;
+}
+function mmNodeClass(d){ return 'mm-node lvl-'+d.level+(d._x<0?' side-left':'')+(d===MM_SELECTED?' selected':'')+(d.level===0?' is-root-node':''); }
+
+function mmUpdate(opts){
+  opts=opts||{};
+  mmLayout();
+  const nodes=mmVisible();
+  const links=nodes.filter(n=>n!==MM_ROOT).map(n=>({s:n.parent,t:n,id:n.id}));
+  const dur=MM_FIRST?0:380;
+
+  const lk=gLinks.selectAll('path.mm-link').data(links,d=>d.id);
+  lk.exit().transition().duration(240).style('opacity',0).remove();
+  const lkE=lk.enter().append('path').attr('class','mm-link')
+    .attr('stroke',d=>mmColor(d.t)).attr('stroke-width',d=>mmLinkW(d.t)).style('opacity',0)
+    .attr('d',d=>{ const x=d.s._x0??d.s._x, y=d.s._y0??d.s._y; return `M${x},${y} C${x},${y} ${x},${y} ${x},${y}`; });
+  lkE.merge(lk).transition().duration(dur)
+    .style('opacity',.55).attr('stroke',d=>mmColor(d.t)).attr('stroke-width',d=>mmLinkW(d.t))
+    .attr('d',d=>mmLinkPath(d.s,d.t));
+
+  const nd=gNodes.selectAll('g.mm-node').data(nodes,d=>d.id);
+  nd.exit().transition().duration(280).style('opacity',0)
+    .attr('transform',d=>`translate(${d.parent?d.parent._x:0},${d.parent?d.parent._y:0})`).remove();
+  const ndE=nd.enter().append('g')
+    .attr('transform',d=>{ const px=d.parent?(d.parent._x0??0):0, py=d.parent?(d.parent._y0??0):0; return `translate(${px},${py})`; })
+    .style('opacity',0)
+    .each(function(d){ mmBuildCard(d3.select(this),d); })
+    .on('click',(e,d)=>mmNodeClick(e,d))
+    .on('dblclick',(e,d)=>{ e.stopPropagation(); mmCenterOn(d); })
+    .on('mouseenter',(e,d)=>mmHighlightBranch(d.branchId))
+    .on('mouseleave',mmClearHighlight);
+  ndE.merge(nd)
+    .attr('class',d=>mmNodeClass(d))
+    .each(function(d){ mmRefreshCard(d); })
+    .transition().duration(dur).style('opacity',1)
+    .attr('transform',d=>`translate(${d._x},${d._y})`);
+
+  nodes.forEach(n=>{ n._x0=n._x; n._y0=n._y; });
+  MM_FIRST=false;
+  if(opts.fit) mmFit();
+}
+
+/* ---------- expand / collapse ---------- */
+function mmCollapseRec(d){ MM_EXPANDED.delete(d.id); d.children.forEach(mmCollapseRec); }
+function mmToggle(d){
+  if(!d.children || !d.children.length) return;
+  if(MM_EXPANDED.has(d.id)) mmCollapseRec(d); else MM_EXPANDED.add(d.id);
+  mmUpdate();
+}
+function mmExpandAncestors(d){ let a=d.parent; while(a){ MM_EXPANDED.add(a.id); a=a.parent; } }
+
+/* ---------- interaction ---------- */
+function mmNodeClick(e,d){
+  e.stopPropagation();
+  if(e.target.closest('[data-toggle]')){ mmToggle(d); return; }
+  mmSelect(d);
+}
+function mmSelect(d){
+  MM_SELECTED=d;
+  gNodes.selectAll('g.mm-node').classed('selected',n=>n===d);
+  mmBreadcrumb(d);
+  mmOpenPanel(d);
+}
+function mmHighlightBranch(bid){
+  if(bid==null) return;
+  gNodes.selectAll('g.mm-node').classed('dim',n=> n.level!==0 && n.branchId!==bid);
+  gLinks.selectAll('path.mm-link').classed('dim',d=> d.t.branchId!==bid);
+}
+function mmClearHighlight(){ gNodes.selectAll('.dim').classed('dim',false); gLinks.selectAll('.dim').classed('dim',false); }
+function mmHighlightPath(target){
+  const ids=new Set(); let n=target; while(n){ ids.add(n.id); n=n.parent; }
+  gNodes.selectAll('g.mm-node').classed('dim',n=>!ids.has(n.id));
+  gLinks.selectAll('path.mm-link').classed('dim',d=>!ids.has(d.t.id));
+  setTimeout(mmClearHighlight,2600);
+}
+function mmPulse(d){
+  const g=gNodes.selectAll('g.mm-node').filter(n=>n===d);
+  g.classed('pulse',true); setTimeout(()=>g.classed('pulse',false),3100);
+}
+
+/* ---------- view transforms ---------- */
+function mmCenterOn(d,scale){
+  const [W,H]=mmDims();
+  const k=scale||Math.max(0.6,Math.min(1.15,d3.zoomTransform(svgSel.node()).k));
+  const t=d3.zoomIdentity.translate(W/2-d._x*k,H/2-d._y*k).scale(k);
+  svgSel.transition().duration(560).call(mmZoom.transform,t);
+}
+function mmFit(){
+  const ns=mmVisible(); if(!ns.length) return;
+  let minX=1/0,maxX=-1/0,minY=1/0,maxY=-1/0;
+  ns.forEach(n=>{ const [w,h]=mmCardSize(n); minX=Math.min(minX,n._x-w/2); maxX=Math.max(maxX,n._x+w/2); minY=Math.min(minY,n._y-h/2); maxY=Math.max(maxY,n._y+h/2); });
+  const [W,H]=mmDims(); const bw=Math.max(1,maxX-minX), bh=Math.max(1,maxY-minY);
+  const k=Math.min(1.6,0.9*Math.min(W/bw,H/bh)); const cx=(minX+maxX)/2, cy=(minY+maxY)/2;
+  const t=d3.zoomIdentity.translate(W/2-cx*k,H/2-cy*k).scale(k);
+  svgSel.transition().duration(500).call(mmZoom.transform,t);
+}
+function mmZoomBy(f){ svgSel.transition().duration(220).call(mmZoom.scaleBy,f); }
+
+/* ---------- breadcrumb ---------- */
+function mmBreadcrumb(d){
+  const bc=document.getElementById('mm-breadcrumb');
+  const path=[]; let n=d; while(n){ path.unshift(n); n=n.parent; }
+  bc.innerHTML=path.map((p,i)=>`<span class="mm-crumb ${i===path.length-1?'current':''}" data-id="${mmEsc(p.id)}">${mmEsc(p.label)}</span>`+(i<path.length-1?'<span class="mm-crumb-sep">›</span>':'')).join('');
+  bc.classList.add('show');
+}
+
+/* ---------- side panel ---------- */
+function mmGoto(id){
+  const n=MM_BY_ID[id]; if(!n) return;
+  mmExpandAncestors(n); mmUpdate();
+  setTimeout(()=>{ mmSelect(n); mmCenterOn(n,1); mmPulse(n); },70);
+}
+function mmOpenPanel(d){
+  const pal=MM_PAL[d.color]||MM_PAL.root;
+  const panel=document.getElementById('mm-panel');
+  panel.style.setProperty('--c-main',pal.main);
+  const eb=document.getElementById('mm-panel-eyebrow');
+  eb.textContent = d.level===0 ? MM_LEVELNAME[0] : ((MM_BY_ID[d.branchId]?.label||'')+' · '+MM_LEVELNAME[d.level]);
+  eb.style.color=pal.main;
+  document.getElementById('mm-panel-title').textContent=d.label;
+  document.getElementById('mm-panel-sub').textContent=d.sub||'';
+
+  const st=MM_STATUS[d.id]||'nao-iniciado';
+  let html='<div class="mm-sec"><div class="mm-sec-title">Status</div><div class="mm-status-row">';
+  Object.entries(MM_STATES).forEach(([k,v])=>{ html+=`<button class="mm-status-chip ${k===st?'active':''}" data-status="${k}" style="${k===st?`background:${v.color};border-color:${v.color}`:''}">${v.label}</button>`; });
+  html+='</div></div>';
+
+  let desc=d.tip, detail=null;
+  if(d.doc){ detail=getLeafDetail(d.label); desc=detail.summary; }
+  if(desc) html+=`<div class="mm-sec"><div class="mm-sec-title">Descrição</div><p>${mmEsc(desc)}</p></div>`;
+
+  const subs=(d.children||[]).filter(c=>!c.doc);
+  if(subs.length){
+    html+=`<div class="mm-sec"><div class="mm-sec-title">Ramificações · ${subs.length}</div>`;
+    subs.forEach(s=>{ html+=`<button class="mm-doc" data-goto="${mmEsc(s.id)}"><span class="mm-doc-ic">◆</span><span>${mmEsc(s.label)}</span>${s.docCount?`<span class="mm-doc-badge">${s.docCount}</span>`:''}</button>`; });
+    html+='</div>';
+  }
+  const docs=(d.children||[]).filter(c=>c.doc);
+  if(docs.length){
+    html+=`<div class="mm-sec"><div class="mm-sec-title">Documentos · ${docs.length}</div>`;
+    docs.forEach(doc=>{ html+=`<button class="mm-doc" data-goto="${mmEsc(doc.id)}"><span class="mm-doc-ic">📄</span><span>${mmEsc(doc.label)}</span></button>`; });
+    html+='</div>';
+  }
+  if(detail && detail.detail && detail.detail.length){
+    html+=`<div class="mm-sec"><div class="mm-sec-title">Conforme o documento</div><div class="leaf-modal-detail">${detail.detail.map(x=>`<p>${x}</p>`).join('')}</div></div>`;
+  }
+  const norma = (d.doc && detail) ? detail.source : (MM_NORMA[d.branchId]||(d.level===0?'RN ANEEL 1.161/2026 · EPE-DEE-RE-079/2024':''));
+  if(norma) html+=`<div class="mm-sec"><div class="mm-sec-title">Norma de referência</div><p>${mmEsc(norma)}</p></div>`;
+
+  document.getElementById('mm-panel-body').innerHTML=html;
+  panel.classList.add('open');
+}
+function mmClosePanel(){
+  document.getElementById('mm-panel').classList.remove('open');
+  MM_SELECTED=null;
+  if(gNodes) gNodes.selectAll('g.mm-node').classed('selected',false);
+  document.getElementById('mm-breadcrumb').classList.remove('show');
+}
+
+/* ---------- busca ---------- */
+function mmSearch(q){
+  const search=document.getElementById('mm-search');
+  const countEl=document.getElementById('mm-search-count');
+  q=(q||'').trim().toLowerCase();
+  search.classList.toggle('has-value',!!q);
+  if(!q){ countEl.textContent=''; mmClearHighlight(); return; }
+  const matches=Object.values(MM_BY_ID).filter(n=>n.id!=='SAE' && n.label.toLowerCase().includes(q));
+  countEl.textContent = matches.length ? (matches.length+'×') : '0';
+  if(!matches.length){ return; }
+  const target = matches.sort((a,b)=>a.level-b.level || a.label.length-b.label.length)[0];
+  mmExpandAncestors(target); mmUpdate();
+  setTimeout(()=>{ mmSelect(target); mmCenterOn(target,1); mmPulse(target); mmHighlightPath(target); },80);
+}
+
+/* ---------- UI wiring ---------- */
+function mmWireUI(){
+  const input=document.getElementById('mm-search-input');
+  let deb=null;
+  input.addEventListener('input',()=>{ clearTimeout(deb); deb=setTimeout(()=>mmSearch(input.value),260); });
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ clearTimeout(deb); mmSearch(input.value); } });
+  document.getElementById('mm-search-clear').addEventListener('click',()=>{ input.value=''; mmSearch(''); input.focus(); });
+
+  document.getElementById('mm-btn-first').addEventListener('click',()=>MM.expandFirst());
+  document.getElementById('mm-btn-center').addEventListener('click',()=>mmFit());
+  document.getElementById('mm-zoom-in').addEventListener('click',()=>mmZoomBy(1.3));
+  document.getElementById('mm-zoom-out').addEventListener('click',()=>mmZoomBy(1/1.3));
+  document.getElementById('mm-zoom-fit').addEventListener('click',()=>mmFit());
+  document.getElementById('mm-panel-close').addEventListener('click',mmClosePanel);
+
+  document.getElementById('mm-panel-body').addEventListener('click',e=>{
+    const stc=e.target.closest('[data-status]');
+    if(stc && MM_SELECTED){ MM_STATUS[MM_SELECTED.id]=stc.dataset.status; mmRefreshCard(MM_SELECTED); mmOpenPanel(MM_SELECTED); return; }
+    const go=e.target.closest('[data-goto]');
+    if(go) mmGoto(go.dataset.goto);
+  });
+  document.getElementById('mm-breadcrumb').addEventListener('click',e=>{
+    const c=e.target.closest('[data-id]'); if(c) mmGoto(c.dataset.id);
+  });
+
+  let rz=null;
+  window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(document.getElementById('view-mindmap').classList.contains('active')) mmFit(); },180); });
+}
+
+const MM = {
+  init(){
+    buildModel();
+    MM_EXPANDED=new Set(['SAE']);          // começa mostrando apenas o 1º nível (ramos)
+    mmSetup();
+    mmUpdate();
+    requestAnimationFrame(()=>mmFit());
+  },
+  expandFirst(){ MM_EXPANDED=new Set(['SAE']); MM_ROOT.children.forEach(b=>MM_EXPANDED.add(b.id)); mmClosePanel(); mmUpdate({fit:true}); },
+  expandAll(){ MM_EXPANDED=new Set(); Object.values(MM_BY_ID).forEach(n=>{ if(n.children&&n.children.length) MM_EXPANDED.add(n.id); }); mmUpdate({fit:true}); },
+  collapseAll(){ MM_EXPANDED=new Set(['SAE']); mmClosePanel(); mmUpdate({fit:true}); },
+  onShow(){ requestAnimationFrame(()=>mmFit()); }
+};
+
+MM.init();
 </script>
 </body>
 </html>
