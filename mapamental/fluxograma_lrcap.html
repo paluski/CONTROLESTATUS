@@ -8,7 +8,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root{
-  --bg-1:#0b1220; --bg-2:#0f1b2e;
+  --bg-1:#0b1220; --bg-2:#0f1b2e; --bg-3:#0a0f1a;
   --bg-grid:rgba(255,255,255,.032);
   --surface:rgba(255,255,255,.055);
   --surface-hover:rgba(255,255,255,.09);
@@ -18,32 +18,79 @@
   --shadow-lg:0 24px 60px -20px rgba(0,0,0,.55),0 4px 18px rgba(0,0,0,.35);
   --shadow-sm:0 6px 18px -8px rgba(0,0,0,.45);
 
-  --c-orange:#ff8c42;  --c-orange-soft:rgba(255,140,66,.13);   --c-orange-border:rgba(255,140,66,.35);
-  --c-blue:#4da3ff;    --c-blue-soft:rgba(77,163,255,.13);     --c-blue-border:rgba(77,163,255,.35);
-  --c-green:#5ed68f;   --c-green-soft:rgba(94,214,143,.13);    --c-green-border:rgba(94,214,143,.35);
-  --c-amber:#ffb45e;   --c-amber-soft:rgba(255,180,94,.13);    --c-amber-border:rgba(255,180,94,.35);
-  --c-purple:#c792ff;  --c-purple-soft:rgba(199,146,255,.13);  --c-purple-border:rgba(199,146,255,.35);
-  --c-red:#ff6b6b;     --c-red-soft:rgba(255,107,107,.13);     --c-red-border:rgba(255,107,107,.35);
-  --c-teal:#4ecdc4;    --c-teal-soft:rgba(78,205,196,.13);     --c-teal-border:rgba(78,205,196,.35);
-  --c-pink:#f78fb3;    --c-pink-soft:rgba(247,143,179,.13);    --c-pink-border:rgba(247,143,179,.35);
+  /* tons neutros usados em botões/chips — invertem de polaridade no modo claro */
+  --tint-1:rgba(255,255,255,.05);
+  --tint-2:rgba(255,255,255,.08);
+  --tint-3:rgba(255,255,255,.12);
+  --tint-4:rgba(255,255,255,.25);
+
+  /* fundo dos painéis laterais (modal, drawer, balão, editor) */
+  --panel-a:rgba(18,26,46,.98); --panel-b:rgba(10,14,24,.99);
+  --panel-c:rgba(24,32,52,.98); --panel-d:rgba(13,18,30,.99);
+  --panel-fade-1:rgba(10,14,24,1); --panel-fade-2:rgba(10,14,24,.85);
+
+  --c-orange:#ff8c42;  --c-orange-soft:rgba(255,140,66,.13);   --c-orange-border:rgba(255,140,66,.35);  --c-orange-text:#ffd5b0;
+  --c-blue:#4da3ff;    --c-blue-soft:rgba(77,163,255,.13);     --c-blue-border:rgba(77,163,255,.35);    --c-blue-text:#bfe0ff;
+  --c-green:#5ed68f;   --c-green-soft:rgba(94,214,143,.13);    --c-green-border:rgba(94,214,143,.35);   --c-green-text:#c4f3da;
+  --c-amber:#ffb45e;   --c-amber-soft:rgba(255,180,94,.13);    --c-amber-border:rgba(255,180,94,.35);   --c-amber-text:#ffdfb8;
+  --c-purple:#c792ff;  --c-purple-soft:rgba(199,146,255,.13);  --c-purple-border:rgba(199,146,255,.35); --c-purple-text:#e7d2ff;
+  --c-red:#ff6b6b;     --c-red-soft:rgba(255,107,107,.13);     --c-red-border:rgba(255,107,107,.35);    --c-red-text:#ffd2d2;
+  --c-teal:#4ecdc4;    --c-teal-soft:rgba(78,205,196,.13);     --c-teal-border:rgba(78,205,196,.35);    --c-teal-text:#b2f0ec;
+  --c-pink:#f78fb3;    --c-pink-soft:rgba(247,143,179,.13);    --c-pink-border:rgba(247,143,179,.35);   --c-pink-text:#fdd5e4;
 }
+
+/* ── Modo claro ── */
+body.light{
+  --bg-1:#eef1f8; --bg-2:#e3e8f2; --bg-3:#f7f9fc;
+  --bg-grid:rgba(20,30,60,.045);
+  --surface:rgba(20,30,60,.045);
+  --surface-hover:rgba(20,30,60,.08);
+  --border:rgba(20,30,60,.10);
+  --border-strong:rgba(20,30,60,.20);
+  --text-1:#10172a; --text-2:#4b5468; --text-3:#7c8595;
+  --shadow-lg:0 24px 60px -20px rgba(20,30,60,.20),0 4px 18px rgba(20,30,60,.10);
+  --shadow-sm:0 6px 18px -8px rgba(20,30,60,.14);
+
+  --tint-1:rgba(15,23,42,.05);
+  --tint-2:rgba(15,23,42,.07);
+  --tint-3:rgba(15,23,42,.10);
+  --tint-4:rgba(15,23,42,.18);
+
+  --panel-a:rgba(255,255,255,.98); --panel-b:rgba(246,248,252,.99);
+  --panel-c:rgba(255,255,255,.98); --panel-d:rgba(246,248,252,.99);
+  --panel-fade-1:rgba(246,248,252,1); --panel-fade-2:rgba(246,248,252,.85);
+
+  --c-orange-text:#9a3412;  --c-blue-text:#1d4ed8;  --c-green-text:#15803d; --c-amber-text:#92400e;
+  --c-purple-text:#7e22ce; --c-red-text:#b91c1c; --c-teal-text:#0f766e; --c-pink-text:#be185d;
+}
+
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{
   min-height:100%;
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   color:var(--text-1);
-  background:#0b1220;
+  background:var(--bg-1);
+  transition:background-color .25s ease, color .25s ease;
 }
 body{
   background-image:
     radial-gradient(1100px 600px at 20% -10%,rgba(77,163,255,.12),transparent 60%),
     radial-gradient(800px 400px at 90% 10%,rgba(94,214,143,.08),transparent 55%),
     radial-gradient(900px 500px at 50% 100%,rgba(199,146,255,.07),transparent 55%),
-    linear-gradient(160deg,var(--bg-1),var(--bg-2) 60%,#0a0f1a),
+    linear-gradient(160deg,var(--bg-1),var(--bg-2) 60%,var(--bg-3)),
     linear-gradient(var(--bg-grid) 1px,transparent 1px),
     linear-gradient(90deg,var(--bg-grid) 1px,transparent 1px);
   background-size:auto,auto,auto,auto,44px 44px,44px 44px;
   padding:36px 20px 100px;
+}
+body.light{
+  background-image:
+    radial-gradient(1100px 600px at 20% -10%,rgba(77,163,255,.10),transparent 60%),
+    radial-gradient(800px 400px at 90% 10%,rgba(94,214,143,.07),transparent 55%),
+    radial-gradient(900px 500px at 50% 100%,rgba(199,146,255,.06),transparent 55%),
+    linear-gradient(160deg,var(--bg-1),var(--bg-2) 60%,var(--bg-3)),
+    linear-gradient(var(--bg-grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--bg-grid) 1px,transparent 1px);
 }
 
 /* ── Header ── */
@@ -52,6 +99,8 @@ body{
 .hdr h1{font-size:clamp(22px,3.2vw,36px);font-weight:800;letter-spacing:-.02em;
   background:linear-gradient(95deg,#fff 5%,#bfd6ff 55%,#a3f0d0 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.2;margin-bottom:10px;}
+body.light .hdr h1{background-image:linear-gradient(95deg,#0f1b2e 5%,#1d4ed8 55%,#0f766e 100%);}
+body.light .hdr-eyebrow{color:var(--c-blue-text);}
 .hdr p{font-size:14px;color:var(--text-2);max-width:640px;margin:0 auto;line-height:1.6;}
 
 /* ── Back button ── */
@@ -76,6 +125,12 @@ body{
 }
 .d-root b{font-size:16px;font-weight:800;letter-spacing:-.01em;color:#fff;}
 .d-root span{display:block;font-size:10.5px;color:var(--text-2);margin-top:5px;line-height:1.4;}
+/* No modo claro, o gradiente translúcido do .d-root fica muito pálido (mesmo
+ * problema do texto branco em "Análise Técnica..." — texto claro sobre fundo
+ * claro). Aqui a caixa raiz vira um roxo/índigo opaco, mantendo o texto branco
+ * legível, e o subtítulo passa a usar branco translúcido em vez do cinza escuro. */
+body.light .d-root{background:linear-gradient(155deg,#4f5fd8,#6c7ae8);border-color:#3d4ad0;}
+body.light .d-root span{color:rgba(255,255,255,.85);}
 
 .d-row{position:relative;z-index:1;display:flex;align-items:flex-start;gap:50px;margin:0 0 50px 405px;}
 .d-fork-row{position:relative;z-index:1;display:flex;align-items:flex-start;gap:70px;margin:0 0 50px;}
@@ -105,7 +160,7 @@ body{
 .d-box-qbadge-slot:empty{display:none;}
 .d-box-qbadge{
   display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:3px 9px 3px 10px;border-radius:999px;
-  background:rgba(255,255,255,.08);border:1px solid var(--border-strong);font-size:11px;font-weight:800;color:var(--text-1);
+  background:var(--tint-2);border:1px solid var(--border-strong);font-size:11px;font-weight:800;color:var(--text-1);
 }
 .qb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .qb-dot.qb-green{background:var(--c-green);box-shadow:0 0 6px 0 var(--c-green);}
@@ -113,67 +168,67 @@ body{
 
 .d-docs{width:190px;flex-shrink:0;display:flex;flex-direction:column;gap:9px;padding-top:1px;}
 .d-doc{
-  background:rgba(255,255,255,.05);border:1px solid var(--border);border-left:3px solid var(--border-strong);
+  background:var(--tint-1);border:1px solid var(--border);border-left:3px solid var(--border-strong);
   border-radius:7px;padding:7px 10px;font-size:11px;font-weight:500;color:var(--text-2);
   cursor:pointer;transition:all .15s ease;line-height:1.35;
 }
-.d-doc:hover{background:rgba(255,255,255,.12);color:var(--text-1);border-color:rgba(124,140,255,.45);transform:translateX(2px);}
+.d-doc:hover{background:var(--tint-3);color:var(--text-1);border-color:rgba(124,140,255,.45);transform:translateX(2px);}
 
 /* color variants — box + badge + tag + doc accent, per fase color */
 .d-box[data-color="orange"]{border-color:rgba(255,140,66,.25);}
 .d-box[data-color="orange"]:hover{border-color:var(--c-orange-border);background:var(--c-orange-soft);}
 .d-box[data-color="orange"] .d-box-badge{background:var(--c-orange-soft);border-color:var(--c-orange);color:var(--c-orange);}
-.d-box[data-color="orange"] .d-box-label{color:#ffd5b0;}
-.d-box[data-color="orange"] .d-box-tag{background:var(--c-orange-soft);border:1px solid var(--c-orange-border);color:#ffd5b0;}
+.d-box[data-color="orange"] .d-box-label{color:var(--c-orange-text);}
+.d-box[data-color="orange"] .d-box-tag{background:var(--c-orange-soft);border:1px solid var(--c-orange-border);color:var(--c-orange-text);}
 .d-doc[data-color="orange"]{border-left-color:var(--c-orange);}
 
 .d-box[data-color="blue"]{border-color:rgba(77,163,255,.25);}
 .d-box[data-color="blue"]:hover{border-color:var(--c-blue-border);background:var(--c-blue-soft);}
 .d-box[data-color="blue"] .d-box-badge{background:var(--c-blue-soft);border-color:var(--c-blue);color:var(--c-blue);}
-.d-box[data-color="blue"] .d-box-label{color:#bfe0ff;}
-.d-box[data-color="blue"] .d-box-tag{background:var(--c-blue-soft);border:1px solid var(--c-blue-border);color:#bfe0ff;}
+.d-box[data-color="blue"] .d-box-label{color:var(--c-blue-text);}
+.d-box[data-color="blue"] .d-box-tag{background:var(--c-blue-soft);border:1px solid var(--c-blue-border);color:var(--c-blue-text);}
 .d-doc[data-color="blue"]{border-left-color:var(--c-blue);}
 
 .d-box[data-color="green"]{border-color:rgba(94,214,143,.25);}
 .d-box[data-color="green"]:hover{border-color:var(--c-green-border);background:var(--c-green-soft);}
 .d-box[data-color="green"] .d-box-badge{background:var(--c-green-soft);border-color:var(--c-green);color:var(--c-green);}
-.d-box[data-color="green"] .d-box-label{color:#c4f3da;}
-.d-box[data-color="green"] .d-box-tag{background:var(--c-green-soft);border:1px solid var(--c-green-border);color:#c4f3da;}
+.d-box[data-color="green"] .d-box-label{color:var(--c-green-text);}
+.d-box[data-color="green"] .d-box-tag{background:var(--c-green-soft);border:1px solid var(--c-green-border);color:var(--c-green-text);}
 .d-doc[data-color="green"]{border-left-color:var(--c-green);}
 
 .d-box[data-color="amber"]{border-color:rgba(255,180,94,.25);}
 .d-box[data-color="amber"]:hover{border-color:var(--c-amber-border);background:var(--c-amber-soft);}
 .d-box[data-color="amber"] .d-box-badge{background:var(--c-amber-soft);border-color:var(--c-amber);color:var(--c-amber);}
-.d-box[data-color="amber"] .d-box-label{color:#ffdfb8;}
-.d-box[data-color="amber"] .d-box-tag{background:var(--c-amber-soft);border:1px solid var(--c-amber-border);color:#ffdfb8;}
+.d-box[data-color="amber"] .d-box-label{color:var(--c-amber-text);}
+.d-box[data-color="amber"] .d-box-tag{background:var(--c-amber-soft);border:1px solid var(--c-amber-border);color:var(--c-amber-text);}
 .d-doc[data-color="amber"]{border-left-color:var(--c-amber);}
 
 .d-box[data-color="purple"]{border-color:rgba(199,146,255,.25);}
 .d-box[data-color="purple"]:hover{border-color:var(--c-purple-border);background:var(--c-purple-soft);}
 .d-box[data-color="purple"] .d-box-badge{background:var(--c-purple-soft);border-color:var(--c-purple);color:var(--c-purple);}
-.d-box[data-color="purple"] .d-box-label{color:#e7d2ff;}
-.d-box[data-color="purple"] .d-box-tag{background:var(--c-purple-soft);border:1px solid var(--c-purple-border);color:#e7d2ff;}
+.d-box[data-color="purple"] .d-box-label{color:var(--c-purple-text);}
+.d-box[data-color="purple"] .d-box-tag{background:var(--c-purple-soft);border:1px solid var(--c-purple-border);color:var(--c-purple-text);}
 .d-doc[data-color="purple"]{border-left-color:var(--c-purple);}
 
 .d-box[data-color="teal"]{border-color:rgba(78,205,196,.25);}
 .d-box[data-color="teal"]:hover{border-color:var(--c-teal-border);background:var(--c-teal-soft);}
 .d-box[data-color="teal"] .d-box-badge{background:var(--c-teal-soft);border-color:var(--c-teal);color:var(--c-teal);}
-.d-box[data-color="teal"] .d-box-label{color:#b2f0ec;}
-.d-box[data-color="teal"] .d-box-tag{background:var(--c-teal-soft);border:1px solid var(--c-teal-border);color:#b2f0ec;}
+.d-box[data-color="teal"] .d-box-label{color:var(--c-teal-text);}
+.d-box[data-color="teal"] .d-box-tag{background:var(--c-teal-soft);border:1px solid var(--c-teal-border);color:var(--c-teal-text);}
 .d-doc[data-color="teal"]{border-left-color:var(--c-teal);}
 
 .d-box[data-color="red"]{border-color:rgba(255,107,107,.25);}
 .d-box[data-color="red"]:hover{border-color:var(--c-red-border);background:var(--c-red-soft);}
 .d-box[data-color="red"] .d-box-badge{background:var(--c-red-soft);border-color:var(--c-red);color:var(--c-red);}
-.d-box[data-color="red"] .d-box-label{color:#ffd2d2;}
-.d-box[data-color="red"] .d-box-tag{background:var(--c-red-soft);border:1px solid var(--c-red-border);color:#ffd2d2;}
+.d-box[data-color="red"] .d-box-label{color:var(--c-red-text);}
+.d-box[data-color="red"] .d-box-tag{background:var(--c-red-soft);border:1px solid var(--c-red-border);color:var(--c-red-text);}
 .d-doc[data-color="red"]{border-left-color:var(--c-red);}
 
 .d-box[data-color="pink"]{border-color:rgba(247,143,179,.25);}
 .d-box[data-color="pink"]:hover{border-color:var(--c-pink-border);background:var(--c-pink-soft);}
 .d-box[data-color="pink"] .d-box-badge{background:var(--c-pink-soft);border-color:var(--c-pink);color:var(--c-pink);}
-.d-box[data-color="pink"] .d-box-label{color:#fdd5e4;}
-.d-box[data-color="pink"] .d-box-tag{background:var(--c-pink-soft);border:1px solid var(--c-pink-border);color:#fdd5e4;}
+.d-box[data-color="pink"] .d-box-label{color:var(--c-pink-text);}
+.d-box[data-color="pink"] .d-box-tag{background:var(--c-pink-soft);border:1px solid var(--c-pink-border);color:var(--c-pink-text);}
 .d-doc[data-color="pink"]{border-left-color:var(--c-pink);}
 
 /* ── Section divider ── */
@@ -206,7 +261,7 @@ body{
 
 .modal-panel{
   width:min(580px,96vw);height:100vh;overflow-y:auto;
-  background:linear-gradient(175deg,rgba(18,26,46,.98),rgba(10,14,24,.99));
+  background:linear-gradient(175deg,var(--panel-a),var(--panel-b));
   border-left:1px solid var(--border-strong);
   padding:28px 28px 48px;
   animation:slideIn .25s cubic-bezier(.2,.8,.2,1) both;
@@ -253,13 +308,18 @@ body{
 .doc-text{font-size:12.5px;color:var(--text-1);line-height:1.5;}
 .doc-text em{color:var(--text-2);font-style:normal;font-size:11.5px;}
 .doc-text strong{color:#fff;font-weight:700;}
+body.light .doc-text strong{color:var(--text-1);}
 .doc-ref{font-size:10.5px;color:var(--text-3);margin-top:2px;}
 
 .modal-note{
   background:rgba(255,180,94,.09);border:1px solid rgba(255,180,94,.2);border-radius:12px;
   padding:12px 14px;font-size:12.5px;color:var(--c-amber);line-height:1.55;margin-top:6px;
 }
+body.light .modal-note{color:var(--c-amber-text);}
+body.light .q-orgao{color:var(--c-blue-text);}
+body.light .ef-add-pill{color:var(--c-blue-text);border-color:var(--c-blue-text);}
 .modal-note strong{color:#ffd5a0;}
+body.light .modal-note strong{color:var(--c-amber-text);}
 
 /* ── Drawer de perguntas (lado esquerdo) ── */
 #drawer-overlay{
@@ -270,7 +330,7 @@ body{
 #drawer-overlay.active{display:flex;}
 .drawer-panel{
   width:min(480px,96vw);height:100vh;overflow-y:auto;
-  background:linear-gradient(175deg,rgba(18,26,46,.98),rgba(10,14,24,.99));
+  background:linear-gradient(175deg,var(--panel-a),var(--panel-b));
   border-right:1px solid var(--border-strong);
   padding:24px 22px 40px;
   animation:slideInLeft .25s cubic-bezier(.2,.8,.2,1) both;
@@ -330,7 +390,7 @@ body{
 /* ── Balão de escolha (Perguntas × Detalhamento) ── */
 .card-choice{
   position:fixed;z-index:230;display:none;flex-direction:column;gap:6px;
-  background:linear-gradient(165deg,rgba(24,32,52,.98),rgba(13,18,30,.99));
+  background:linear-gradient(165deg,var(--panel-c),var(--panel-d));
   border:1px solid var(--border-strong);border-radius:12px;padding:7px;
   box-shadow:var(--shadow-lg);min-width:180px;
   animation:ccPop .15s cubic-bezier(.2,.8,.2,1) both;
@@ -339,14 +399,14 @@ body{
 @keyframes ccPop{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
 .cc-btn{
   display:flex;align-items:center;gap:8px;width:100%;text-align:left;
-  background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;
+  background:var(--tint-1);border:1px solid var(--border);border-radius:9px;
   padding:9px 11px;font-size:12.5px;font-weight:700;color:var(--text-1);cursor:pointer;
   transition:all .15s ease;font-family:inherit;
 }
 .cc-btn:hover{background:var(--surface-hover);border-color:var(--c-blue-border);transform:translateX(2px);}
 .cc-btn svg{width:15px;height:15px;color:var(--text-2);flex-shrink:0;}
 .cc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.cc-count{margin-left:auto;font-size:10.5px;font-weight:800;color:var(--text-2);background:rgba(255,255,255,.08);border-radius:999px;padding:1px 7px;}
+.cc-count{margin-left:auto;font-size:10.5px;font-weight:800;color:var(--text-2);background:var(--tint-2);border-radius:999px;padding:1px 7px;}
 
 /* ── Legend ── */
 .legend{
@@ -378,21 +438,21 @@ body{
   transition:all .15s ease;white-space:nowrap;
 }
 .tb-btn:hover{background:var(--surface-hover);color:var(--text-1);transform:translateY(-1px);}
-.tb-btn.active{background:rgba(94,214,143,.18);border-color:var(--c-green-border);color:#c4f3da;}
-.tb-btn.danger:hover{background:rgba(255,107,107,.15);border-color:var(--c-red-border);color:#ffd2d2;}
+.tb-btn.active{background:rgba(94,214,143,.18);border-color:var(--c-green-border);color:var(--c-green-text);}
+.tb-btn.danger:hover{background:rgba(255,107,107,.15);border-color:var(--c-red-border);color:var(--c-red-text);}
 
 /* ── Edit mode: per-box action bar ── */
 .edit-bar{display:none;gap:4px;justify-content:flex-end;margin-bottom:6px;}
 body.edit-mode .edit-bar{display:flex;}
 .eb-btn{
   width:22px;height:22px;border-radius:6px;border:1px solid var(--border-strong);
-  background:rgba(255,255,255,.07);color:var(--text-2);font-size:11px;line-height:1;
+  background:var(--tint-2);color:var(--text-2);font-size:11px;line-height:1;
   display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s ease;
 }
 .eb-btn:hover{background:var(--surface-hover);color:var(--text-1);}
-.eb-btn[data-act="del"]:hover{background:rgba(255,107,107,.2);color:#ffd2d2;border-color:var(--c-red-border);}
+.eb-btn[data-act="del"]:hover{background:rgba(255,107,107,.2);color:var(--c-red-text);border-color:var(--c-red-border);}
 body.edit-mode .d-box{outline:1px dashed transparent;}
-body.edit-mode .d-box:hover{outline-color:rgba(255,255,255,.25);}
+body.edit-mode .d-box:hover{outline-color:var(--tint-4);}
 
 /* ── Edit mode: insert-row controls ── */
 .add-row{display:none;align-items:center;gap:10px;margin:0 0 18px 405px;position:relative;z-index:1;}
@@ -400,7 +460,7 @@ body.edit-mode .add-row{display:flex;}
 .add-row::before,.add-row::after{content:'';flex:0 0 14px;height:1px;background:var(--border);}
 .ar-btn{
   display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
-  border:1px dashed var(--border-strong);border-radius:999px;background:rgba(255,255,255,.04);
+  border:1px dashed var(--border-strong);border-radius:999px;background:var(--tint-1);
   color:var(--text-3);padding:5px 12px;cursor:pointer;transition:all .15s ease;white-space:nowrap;
 }
 .ar-btn:hover{color:var(--text-1);background:var(--surface-hover);border-color:var(--c-blue-border);}
@@ -409,29 +469,29 @@ body.edit-mode .add-row{display:flex;}
 .ef-field{margin-bottom:16px;}
 .ef-label{font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;display:block;}
 .ef-input,.ef-textarea,.ef-select{
-  width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border-strong);border-radius:9px;
+  width:100%;background:var(--tint-1);border:1px solid var(--border-strong);border-radius:9px;
   padding:9px 11px;font-size:13px;color:var(--text-1);font-family:inherit;resize:vertical;
 }
-.ef-input:focus,.ef-textarea:focus,.ef-select:focus{outline:none;border-color:var(--c-blue-border);background:rgba(255,255,255,.09);}
+.ef-input:focus,.ef-textarea:focus,.ef-select:focus{outline:none;border-color:var(--c-blue-border);background:var(--tint-2);}
 .ef-textarea{min-height:64px;line-height:1.5;}
 .ef-help{font-size:10.5px;color:var(--text-3);margin-top:6px;line-height:1.5;}
 .ef-pill-row{display:flex;gap:6px;margin-bottom:6px;}
 .ef-pill-row .ef-input{flex:1;}
 .ef-pill-del{
   width:32px;flex-shrink:0;border-radius:9px;border:1px solid var(--border-strong);
-  background:rgba(255,107,107,.1);color:#ffb0b0;cursor:pointer;font-size:14px;
+  background:rgba(255,107,107,.1);color:var(--c-red-text);cursor:pointer;font-size:14px;
 }
 .ef-add-pill{
   font-size:11.5px;font-weight:700;color:var(--c-blue);background:none;border:1px dashed var(--c-blue-border);
   border-radius:8px;padding:6px 12px;cursor:pointer;margin-top:2px;
 }
 .ef-add-pill:hover{background:var(--c-blue-soft);}
-.ef-actions{display:flex;gap:10px;margin-top:6px;position:sticky;bottom:-48px;padding:14px 0 4px;background:linear-gradient(to top,rgba(10,14,24,1),rgba(10,14,24,.85) 70%,transparent);}
+.ef-actions{display:flex;gap:10px;margin-top:6px;position:sticky;bottom:-48px;padding:14px 0 4px;background:linear-gradient(to top,var(--panel-fade-1),var(--panel-fade-2) 70%,transparent);}
 .ef-save{flex:1;background:linear-gradient(135deg,#4da3ff,#3b82f6);color:#fff;border:none;border-radius:10px;padding:11px;font-size:13.5px;font-weight:800;cursor:pointer;}
 .ef-save:hover{filter:brightness(1.1);}
 .ef-cancel{background:var(--surface);border:1px solid var(--border-strong);color:var(--text-2);border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
 .ef-cancel:hover{background:var(--surface-hover);}
-.ef-delete{background:rgba(255,107,107,.12);border:1px solid var(--c-red-border);color:#ffb0b0;border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
+.ef-delete{background:rgba(255,107,107,.12);border:1px solid var(--c-red-border);color:var(--c-red-text);border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
 .ef-delete:hover{background:rgba(255,107,107,.22);}
 
 @media(max-width:600px){
@@ -440,6 +500,10 @@ body.edit-mode .add-row{display:flex;}
 </style>
 </head>
 <body>
+<script>
+// Aplica o tema salvo antes do resto da página renderizar, pra não "piscar" o tema errado.
+try{ if(localStorage.getItem('lrcap_flow_theme_v1') === 'light') document.body.classList.add('light'); }catch(e){}
+</script>
 
 <div class="hdr">
   <div class="hdr-eyebrow">LRCAP 2026 — Sistema de Armazenamento de Energia (SAE)</div>
@@ -501,6 +565,7 @@ body.edit-mode .add-row{display:flex;}
 
 <!-- Toolbar de edição -->
 <div class="toolbar-fixed">
+  <button class="tb-btn" id="tb-theme-toggle">🌙 Modo Escuro</button>
   <button class="tb-btn" id="tb-edit-toggle">✎ Modo Edição</button>
   <button class="tb-btn" id="tb-export">⬇ Exportar JSON</button>
   <button class="tb-btn" id="tb-import">⬆ Importar JSON</button>
@@ -1469,13 +1534,6 @@ const editOverlay = document.getElementById('edit-overlay');
 const editPanel = document.getElementById('edit-panel');
 const editContent = document.getElementById('edit-content');
 
-function getCardData(entryIndex, branch){
-  const entry = flowData[entryIndex];
-  if(branch === 'left') return entry.branches[0];
-  if(branch === 'right') return entry.branches[1];
-  return entry;
-}
-
 function serializeSections(sections){
   return (sections||[]).map(sec => {
     const head = `## ${sec.title || ''}`;
@@ -1512,13 +1570,14 @@ function addPillInput(value){
   list.appendChild(row);
 }
 
-function openEditPanel(entryIndex, branch){
-  editingCtx = { entryIndex, branch };
-  const d = getCardData(entryIndex, branch);
+function openEditPanel(listPath, index){
+  editingCtx = { listPath, index };
+  const d = resolveListByPath(listPath)[index];
   const m = d.modal || { tag:'', title:'', subtitle:'', sections:[], note:null };
+  const isBranchItem = listPath.length > 0 && listPath[listPath.length - 1].side;
 
   editContent.innerHTML = `
-    <div class="modal-title" style="margin-bottom:18px;">${branch ? 'Editar ramo da bifurcação' : 'Editar etapa'}</div>
+    <div class="modal-title" style="margin-bottom:18px;">${isBranchItem ? 'Editar etapa do ramo' : 'Editar etapa'}</div>
 
     <div class="ef-field"><label class="ef-label">Cor</label>
       <select class="ef-select" id="ef-color">${COLOR_OPTIONS.map(c=>`<option value="${c}" ${c===d.color?'selected':''}>${COLOR_LABELS[c]}</option>`).join('')}</select>
@@ -1562,7 +1621,7 @@ function openEditPanel(entryIndex, branch){
 }
 
 function saveEditPanel(){
-  const d = getCardData(editingCtx.entryIndex, editingCtx.branch);
+  const d = resolveListByPath(editingCtx.listPath)[editingCtx.index];
   d.color = document.getElementById('ef-color').value;
   d.num = document.getElementById('ef-num').value;
   d.tag = document.getElementById('ef-tag').value;
@@ -1595,35 +1654,56 @@ document.getElementById('edit-close').addEventListener('click', closeEditPanel);
 editOverlay.addEventListener('click', (e) => { if(e.target === editOverlay) closeEditPanel(); });
 document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); closeEditPanel(); closeFlowDrawer(); closeCardChoice(); } });
 
-// ── Mutações na estrutura do fluxo ──
-function moveEntry(i, dir){
-  const j = i + dir;
-  if(j < 0 || j >= flowData.length) return;
-  [flowData[i], flowData[j]] = [flowData[j], flowData[i]];
+// ── Mutações na estrutura do fluxo (todas endereçadas por listPath + index,
+//    o que funciona em qualquer profundidade — tronco principal ou dentro de
+//    qualquer ramo, inclusive ramos aninhados) ──
+function moveEntry(listPath, index, dir){
+  const list = resolveListByPath(listPath);
+  const j = index + dir;
+  if(j < 0 || j >= list.length) return;
+  [list[index], list[j]] = [list[j], list[index]];
   saveData(); renderFlow();
 }
 
-function swapBranches(i){
-  const entry = flowData[i];
+/* Troca os dois ramos de UMA bifurcação. listPath/index aqui apontam para a
+ * própria etapa que foi clicada; subimos um nível para achar a bifurcação-mãe. */
+function swapBranches(listPath, index){
+  const list = resolveListByPath(listPath);
+  const entry = list[index];
   if(entry.type !== 'fork-pair') return;
   entry.branches.reverse();
   saveData(); renderFlow();
 }
 
-function deleteCard(i, branch){
-  const entry = flowData[i];
-  if(branch === 'left' || branch === 'right'){
-    if(!confirm('Excluir este ramo da bifurcação? O outro ramo passa a ser uma etapa única.')) return;
-    flowData[i] = entry.branches[branch === 'left' ? 1 : 0];
-  } else {
-    if(!confirm('Excluir esta etapa do fluxo?')) return;
-    flowData.splice(i, 1);
-  }
+function deleteCard(listPath, index){
+  const list = resolveListByPath(listPath);
+  if(!confirm('Excluir esta etapa do fluxo?')) return;
+  list.splice(index, 1);
   saveData(); renderFlow();
 }
 
-function addStepAt(insertIndex){
-  flowData.splice(insertIndex, 0, {
+/* Transforma uma etapa existente em uma bifurcação: ela mesma vira o ramo A,
+ * e um novo "Ramo B" em branco é criado ao lado — permite criar bifurcações
+ * dentro de bifurcações, montando uma árvore com a profundidade que precisar. */
+function convertToFork(listPath, index){
+  const list = resolveListByPath(listPath);
+  const original = list[index];
+  list[index] = {
+    type:'fork-pair',
+    branches:[
+      [ original ],
+      [ { num:'B', color: original.color || 'amber', tag:'Novo Ramo', label:'Novo Ramo',
+          sub:'Clique em editar (✎) para preencher a descrição.', pills:[],
+          modal:{ tag:'Detalhe', title:'Novo Ramo', subtitle:'', sections:[], note:null } } ],
+    ]
+  };
+  ensureFlowIds(flowData);
+  saveData(); renderFlow();
+}
+
+function addStepAt(listPath, insertIndex){
+  const list = resolveListByPath(listPath);
+  list.splice(insertIndex, 0, {
     num:'', color:'blue', tag:'Nova Tag', label:'Nova Etapa',
     sub:'Clique em editar (✎) para preencher a descrição.',
     pills:[], modal:{ tag:'Detalhe', title:'Nova Etapa', subtitle:'', sections:[], note:null }
@@ -1632,11 +1712,12 @@ function addStepAt(insertIndex){
   saveData(); renderFlow();
 }
 
-function addForkAt(insertIndex){
-  flowData.splice(insertIndex, 0, {
+function addForkAt(listPath, insertIndex){
+  const list = resolveListByPath(listPath);
+  list.splice(insertIndex, 0, {
     type:'fork-pair', branches:[
-      { num:'A', color:'amber', tag:'Ramo A', label:'Novo Ramo A', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo A', subtitle:'', sections:[], note:null } },
-      { num:'B', color:'amber', tag:'Ramo B', label:'Novo Ramo B', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo B', subtitle:'', sections:[], note:null } },
+      [ { num:'A', color:'amber', tag:'Ramo A', label:'Novo Ramo A', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo A', subtitle:'', sections:[], note:null } } ],
+      [ { num:'B', color:'amber', tag:'Ramo B', label:'Novo Ramo B', sub:'', pills:[], modal:{ tag:'Detalhe', title:'Novo Ramo B', subtitle:'', sections:[], note:null } } ],
     ]
   });
   ensureFlowIds(flowData);
@@ -1649,23 +1730,32 @@ flow.addEventListener('click', (e) => {
   if(ebBtn){
     e.stopPropagation();
     const box = ebBtn.closest('.d-box');
-    const entryIndex = parseInt(box.dataset.entryIndex, 10);
-    const branch = box.dataset.branch || '';
+    const listPath = parsePathAttr(box.dataset.listPath);
+    const index = parseInt(box.dataset.index, 10);
     const act = ebBtn.dataset.act;
-    if(act === 'edit') openEditPanel(entryIndex, branch);
-    else if(act === 'swap') swapBranches(entryIndex);
-    else if(act === 'up') moveEntry(entryIndex, -1);
-    else if(act === 'down') moveEntry(entryIndex, 1);
-    else if(act === 'del') deleteCard(entryIndex, branch);
+    if(act === 'edit') openEditPanel(listPath, index);
+    else if(act === 'up') moveEntry(listPath, index, -1);
+    else if(act === 'down') moveEntry(listPath, index, 1);
+    else if(act === 'fork') convertToFork(listPath, index);
+    else if(act === 'swap'){
+      // "swap" troca os dois ramos da bifurcação que CONTÉM esta etapa,
+      // não a etapa em si — por isso resolve um nível acima no caminho.
+      const forkListPath = listPath.slice(0, -1);
+      const forkIndex = listPath[listPath.length - 1].index;
+      swapBranches(forkListPath, forkIndex);
+    }
+    else if(act === 'del') deleteCard(listPath, index);
     return;
   }
 
   const arBtn = e.target.closest('.ar-btn');
   if(arBtn){
     e.stopPropagation();
+    const row = arBtn.closest('.add-row');
+    const listPath = parsePathAttr(row.dataset.listPath);
     const insertIndex = parseInt(arBtn.dataset.insert, 10);
-    if(arBtn.dataset.add === 'step') addStepAt(insertIndex);
-    else addForkAt(insertIndex);
+    if(arBtn.dataset.add === 'step') addStepAt(listPath, insertIndex);
+    else addForkAt(listPath, insertIndex);
     return;
   }
 
@@ -1685,6 +1775,22 @@ flow.addEventListener('click', (e) => {
     const step = MODAL_STEPS[idx];
     openCardChoice(box, step, box.dataset.flowId);
   }
+});
+
+// ── Toolbar: modo claro/escuro ──
+const THEME_KEY = 'lrcap_flow_theme_v1';
+const themeToggleBtn = document.getElementById('tb-theme-toggle');
+function applyThemeButtonLabel(){
+  const isLight = document.body.classList.contains('light');
+  themeToggleBtn.textContent = isLight ? '☀️ Modo Claro' : '🌙 Modo Escuro';
+  themeToggleBtn.classList.toggle('active', isLight);
+}
+applyThemeButtonLabel();
+themeToggleBtn.addEventListener('click', () => {
+  const isLight = document.body.classList.toggle('light');
+  try{ localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark'); }catch(e){}
+  applyThemeButtonLabel();
+  redrawDiagram(300);
 });
 
 // ── Toolbar: modo de edição, exportar/importar/restaurar ──
@@ -1717,6 +1823,8 @@ importInput.addEventListener('change', (e) => {
       const parsed = JSON.parse(reader.result);
       if(!Array.isArray(parsed)) throw new Error('o arquivo não contém uma lista de etapas');
       flowData = parsed;
+      migrateBranchesToLists(flowData);
+      ensureFlowIds(flowData);
       saveData();
       renderFlow();
     }catch(err){
@@ -1730,6 +1838,8 @@ importInput.addEventListener('change', (e) => {
 document.getElementById('tb-reset').addEventListener('click', () => {
   if(!confirm('Restaurar o fluxograma para o conteúdo original? As edições salvas neste navegador serão perdidas.')) return;
   flowData = deepClone(DEFAULT_DATA);
+  migrateBranchesToLists(flowData);
+  ensureFlowIds(flowData);
   saveData();
   renderFlow();
 });
@@ -1750,7 +1860,7 @@ function drawDiagramConnectors(){
   });
 
   let svgHTML = '';
-  const TRUNK_COLOR = 'rgba(255,255,255,.32)';
+  const TRUNK_COLOR = document.body.classList.contains('light') ? 'rgba(15,23,42,.35)' : 'rgba(255,255,255,.32)';
   function line(x1, y1, x2, y2, color){
     svgHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="2" stroke-linecap="round" opacity="0.65"/>`;
   }
@@ -1777,60 +1887,99 @@ function drawDiagramConnectors(){
     });
   }
 
+  // Conector em ângulo reto entre dois pontos quaisquer — se X coincide, é só
+  // uma linha vertical; se não, desce/sobe e faz um trecho horizontal no meio.
+  // É o que permite bifurcações aninhadas (larguras diferentes em cada nível)
+  // sem nunca desenhar uma linha diagonal.
+  function elbow(x1, y1, x2, y2, color){
+    if(Math.abs(x1 - x2) < 0.5){ line(x1, y1, x2, y2, color); return; }
+    const midY = y1 + (y2 - y1) * 0.5;
+    line(x1, y1, x1, midY, color);
+    line(x1, midY, x2, midY, color);
+    line(x2, midY, x2, y2, color);
+  }
+
+  // Cor do "primeiro elemento visual" de um ramo — usada só para colorir o
+  // pequeno trecho de entrada do ramo; se o ramo começa com outra bifurcação
+  // (aninhada), usa a cor neutra do tronco.
+  function firstColor(branchEl){
+    const first = Array.from(branchEl.children).find(el => el.classList.contains('d-row') || el.classList.contains('d-fork-row'));
+    if(!first) return '#7c8cff';
+    return first.classList.contains('d-row') ? colorOf(first.querySelector('.d-box')) : '#9aa6c2';
+  }
+
+  /* Percorre uma sequência de etapas (tronco principal OU o conteúdo de um
+   * ramo, que pode ter várias etapas e bifurcações aninhadas), desenhando os
+   * leques de documentos e a linha que conecta cada item ao anterior dentro
+   * da própria sequência. "incoming" é o ponto de onde a sequência É
+   * alimentada por fora (null quando essa conexão é responsabilidade do
+   * pai — ex.: os dois ramos de uma bifurcação, ligados pela barra de split).
+   * Retorna {entryX, entryY, exitX, exitY}: o topo do primeiro item e o
+   * fundo do último, para quem desenhou esta sequência continuar a partir daí. */
+  function drawSequence(containerEl, fanSide, incoming){
+    const children = Array.from(containerEl.children).filter(el =>
+      el.classList.contains('d-row') || el.classList.contains('d-fork-row'));
+
+    let entryX = null, entryY = null;
+    let exitX = incoming ? incoming.x : null, exitY = incoming ? incoming.y : null;
+
+    children.forEach((el, i) => {
+      if(el.classList.contains('d-row')){
+        const box = el.querySelector('.d-box');
+        const docs = Array.from(el.querySelectorAll('.d-doc'));
+        const color = colorOf(box);
+        docFan(box, docs, color, fanSide);
+
+        const c = rel(box.getBoundingClientRect());
+        if(i === 0) { entryX = c.midX; entryY = c.top; }
+        if(exitX !== null){ elbow(exitX, exitY, c.midX, c.top, i === 0 ? color : TRUNK_COLOR); dot(c.midX, c.top, color); }
+        exitX = c.midX; exitY = c.bottom;
+
+      } else { // bifurcação aninhada
+        const sub = drawForkRow(el, exitX !== null ? { x: exitX, y: exitY } : null);
+        if(i === 0){ entryX = sub.entryX; entryY = sub.entryY; }
+        exitX = sub.exitX; exitY = sub.exitY;
+      }
+    });
+
+    return { entryX, entryY, exitX, exitY };
+  }
+
+  /* Desenha UMA bifurcação (split → os dois ramos, cada um podendo ter sua
+   * própria sequência recursiva → merge), e devolve seu próprio ponto de
+   * entrada/saída para quem a chamou (tronco principal ou outro ramo). */
+  function drawForkRow(forkRowEl, incoming){
+    const branchL = forkRowEl.querySelector('.d-branch[data-side="left"]');
+    const branchR = forkRowEl.querySelector('.d-branch[data-side="right"]');
+    const subL = drawSequence(branchL, 'left', null);
+    const subR = drawSequence(branchR, 'right', null);
+
+    const splitY = Math.min(subL.entryY, subR.entryY) - 24;
+    const splitMidX = (subL.entryX + subR.entryX) / 2;
+
+    if(incoming) elbow(incoming.x, incoming.y, splitMidX, splitY, TRUNK_COLOR);
+    line(subL.entryX, splitY, subR.entryX, splitY, TRUNK_COLOR);
+    line(subL.entryX, splitY, subL.entryX, subL.entryY, firstColor(branchL));
+    line(subR.entryX, splitY, subR.entryX, subR.entryY, firstColor(branchR));
+    dot(splitMidX, splitY, '#9aa6c2');
+    dot(subL.entryX, subL.entryY, firstColor(branchL));
+    dot(subR.entryX, subR.entryY, firstColor(branchR));
+
+    const mergeY = Math.max(subL.exitY, subR.exitY) + 24;
+    const mergeMidX = splitMidX;
+    line(subL.exitX, subL.exitY, subL.exitX, mergeY, firstColor(branchL));
+    line(subR.exitX, subR.exitY, subR.exitX, mergeY, firstColor(branchR));
+    line(subL.exitX, mergeY, subR.exitX, mergeY, TRUNK_COLOR);
+    dot(mergeMidX, mergeY, '#9aa6c2');
+
+    return { entryX: splitMidX, entryY: splitY, exitX: mergeMidX, exitY: mergeY };
+  }
+
   const root = document.getElementById('d-root');
-  let prevRect = root.getBoundingClientRect();
-  dot(rel(prevRect).midX, rel(prevRect).bottom, '#7c8cff');
+  const rootRect = rel(root.getBoundingClientRect());
+  dot(rootRect.midX, rootRect.bottom, '#7c8cff');
 
-  Array.from(flow.children).forEach(rowEl => {
-    if(rowEl.id === 'd-root') return;
-
-    if(rowEl.classList.contains('d-row')){
-      const box = rowEl.querySelector('.d-box');
-      const docs = Array.from(rowEl.querySelectorAll('.d-doc'));
-      const color = colorOf(box);
-      docFan(box, docs, color, 'right');
-
-      const p = rel(prevRect), c = rel(box.getBoundingClientRect());
-      line(c.midX, p.bottom, c.midX, c.top, TRUNK_COLOR);
-      dot(c.midX, c.top, color);
-      prevRect = box.getBoundingClientRect();
-
-    } else if(rowEl.classList.contains('d-fork-row')){
-      const branchL = rowEl.querySelector('.d-branch[data-side="left"]');
-      const branchR = rowEl.querySelector('.d-branch[data-side="right"]');
-      const boxL = branchL.querySelector('.d-box'), boxR = branchR.querySelector('.d-box');
-      const docsL = Array.from(branchL.querySelectorAll('.d-doc'));
-      const docsR = Array.from(branchR.querySelectorAll('.d-doc'));
-      docFan(boxL, docsL, colorOf(boxL), 'left');
-      docFan(boxR, docsR, colorOf(boxR), 'right');
-
-      const rL = rel(boxL.getBoundingClientRect()), rR = rel(boxR.getBoundingClientRect());
-      const splitY = Math.min(rL.top, rR.top) - 24;
-      const splitMidX = (rL.midX + rR.midX) / 2;
-
-      const p = rel(prevRect);
-      line(splitMidX, p.bottom, splitMidX, splitY, TRUNK_COLOR);
-      line(rL.midX, splitY, rR.midX, splitY, TRUNK_COLOR);
-      line(rL.midX, splitY, rL.midX, rL.top, colorOf(boxL));
-      line(rR.midX, splitY, rR.midX, rR.top, colorOf(boxR));
-      dot(splitMidX, splitY, '#9aa6c2');
-      dot(rL.midX, rL.top, colorOf(boxL));
-      dot(rR.midX, rR.top, colorOf(boxR));
-
-      const lastL = docsL.length ? docsL[docsL.length - 1] : boxL;
-      const lastR = docsR.length ? docsR[docsR.length - 1] : boxR;
-      const bL = rel(lastL.getBoundingClientRect()), bR = rel(lastR.getBoundingClientRect());
-      const mergeY = Math.max(rL.bottom, bL.bottom, rR.bottom, bR.bottom) + 24;
-      const mergeMidX = splitMidX;
-
-      line(rL.midX, rL.bottom, rL.midX, mergeY, colorOf(boxL));
-      line(rR.midX, rR.bottom, rR.midX, mergeY, colorOf(boxR));
-      line(rL.midX, mergeY, rR.midX, mergeY, TRUNK_COLOR);
-      dot(mergeMidX, mergeY, '#9aa6c2');
-
-      prevRect = { left: mergeMidX + wrapRect.left - 1, right: mergeMidX + wrapRect.left + 1, top: mergeY + wrapRect.top, bottom: mergeY + wrapRect.top };
-    }
-  });
+  drawSequence(flow, 'right', { x: rootRect.midX, y: rootRect.bottom });
 
   svg.innerHTML = svgHTML;
 }
