@@ -114,7 +114,7 @@ body.light .hdr-eyebrow{color:var(--c-blue-text);}
 .back-btn svg{width:14px;height:14px;}
 
 /* ── Hierarchical diagram (org-chart style: vertical trunk, right-angle connectors) ── */
-.diagram{max-width:1110px;margin:0 auto;padding:0 20px;position:relative;}
+.diagram{max-width:1110px;margin:0 auto;padding:0 20px;position:relative;overflow-x:auto;}
 #diagram-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible;}
 
 .d-root{
@@ -455,9 +455,9 @@ body.edit-mode .d-box{outline:1px dashed transparent;}
 body.edit-mode .d-box:hover{outline-color:var(--tint-4);}
 
 /* ── Edit mode: insert-row controls ── */
-.add-row{display:none;align-items:center;gap:10px;margin:0 0 18px 405px;position:relative;z-index:1;}
+.add-row{display:none;align-items:center;gap:0;margin:0 0 18px 405px;width:260px;justify-content:space-between;position:relative;z-index:1;}
 body.edit-mode .add-row{display:flex;}
-.add-row::before,.add-row::after{content:'';flex:0 0 14px;height:1px;background:var(--border);}
+.d-branch[data-side="left"] .add-row{margin-left:240px;}
 .ar-btn{
   display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
   border:1px dashed var(--border-strong);border-radius:999px;background:var(--tint-1);
@@ -1848,9 +1848,16 @@ document.getElementById('tb-reset').addEventListener('click', () => {
 function drawDiagramConnectors(){
   const svg = document.getElementById('diagram-svg');
   const wrap = document.getElementById('diagram');
-  if(!svg || !wrap) return;
+  const inner = document.getElementById('flow');
+  if(!svg || !wrap || !inner) return;
   const wrapRect = wrap.getBoundingClientRect();
-  svg.setAttribute('viewBox', `0 0 ${wrapRect.width} ${wrapRect.height}`);
+  const innerRect = inner.getBoundingClientRect();
+  // Size the SVG to the actual content area so no lines fall outside the viewBox
+  const svgW = Math.max(wrapRect.width, innerRect.right - wrapRect.left + 20);
+  const svgH = Math.max(wrapRect.height, innerRect.bottom - wrapRect.top + 20);
+  svg.style.width = svgW + 'px';
+  svg.style.height = svgH + 'px';
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
 
   const rel = rect => ({
     left: rect.left - wrapRect.left, right: rect.right - wrapRect.left,
