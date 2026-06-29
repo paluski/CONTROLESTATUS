@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checklist LRCAP 2026 — Cadastramento SAE em Baterias</title>
+  <style>
+    :root {
+      --green:  #16a34a;
+      --green-l:#dcfce7;
+      --blue:   #1d4ed8;
+      --blue-l: #dbeafe;
+      --amber:  #d97706;
+      --amber-l:#fef3c7;
+      --red:    #dc2626;
+      --red-l:  #fee2e2;
+      --gray:   #6b7280;
+      --gray-l: #f3f4f6;
+      --border: #e5e7eb;
+      --shadow: 0 1px 3px rgba(0,0,0,.10);
+      --purple: #7c3aed;
+      --purple-l: #ede9fe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%);
+      color: #fff;
+      padding: 2rem 1.5rem 1.5rem;
+      text-align: center;
+    }
+    header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: .35rem; }
+    header p  { font-size: .95rem; opacity: .85; }
+    .badge-wrap { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1rem; }
+    .badge {
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      padding: .2rem .75rem;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+
+    /* ── Progress geral ── */
+    .progress-wrap {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: .85rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .35rem; }
+    .progress-label { font-size: .82rem; font-weight: 600; color: #374151; }
+    .progress-pct   { font-size: .82rem; font-weight: 700; color: var(--blue); }
+    .progress-bar   { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--blue); border-radius: 99px; transition: width .3s; }
+    .progress-sub {
+      display: flex;
+      gap: 1.2rem;
+      font-size: .74rem;
+      color: #64748b;
+      margin-top: .35rem;
+      flex-wrap: wrap;
+    }
+    .progress-sub-item { display: flex; align-items: center; gap: .3rem; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-blue   { background: var(--blue); }
+    .dot-purple { background: var(--purple); }
+
+    /* ── Layout ── */
+    main { max-width: 920px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+    /* ── Alert boxes ── */
+    .alert {
+      border-radius: 8px;
+      padding: .85rem 1rem;
+      font-size: .875rem;
+      margin-bottom: 1.1rem;
+      display: flex;
+      gap: .65rem;
+      align-items: flex-start;
+    }
+    .alert-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .alert-amber { background: var(--amber-l); border: 1px solid #fcd34d; color: #92400e; }
+    .alert-blue  { background: var(--blue-l);  border: 1px solid #93c5fd; color: #1e40af; }
+    .alert-red   { background: var(--red-l);   border: 1px solid #fca5a5; color: #991b1b; }
+
+    /* ── MAIN SECTION BANNERS ── */
+    .main-section { margin-bottom: .5rem; }
+
+    .main-section-banner {
+      border-radius: 12px;
+      padding: 1rem 1.4rem 1.1rem;
+      margin-bottom: 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .msb-pre  { background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%); color: #fff; }
+    .msb-pos  { background: linear-gradient(135deg, #3b0764 0%, #7c3aed 100%); color: #fff; }
+
+    .msb-top {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      flex-wrap: wrap;
+      margin-bottom: .3rem;
+    }
+    .msb-pill {
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.22);
+      border: 1px solid rgba(255,255,255,.4);
+      border-radius: 999px;
+      padding: .2rem .75rem;
+      white-space: nowrap;
+    }
+    .msb-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      flex: 1;
+    }
+    .msb-count {
+      font-size: .78rem;
+      font-weight: 600;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 999px;
+      padding: .2rem .75rem;
+      white-space: nowrap;
+    }
+    .msb-desc {
+      font-size: .83rem;
+      opacity: .88;
+      padding-left: 0;
+    }
+    .msb-bar-wrap { margin-top: .6rem; }
+    .msb-bar { height: 5px; background: rgba(255,255,255,.25); border-radius: 99px; overflow: hidden; }
+    .msb-fill { height: 100%; background: rgba(255,255,255,.85); border-radius: 99px; transition: width .3s; }
+    .msb-bar-label { font-size: .72rem; opacity: .8; margin-top: .25rem; }
+
+    /* ── Phase blocks ── */
+    .phase { margin-bottom: 1.75rem; }
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px 10px 0 0;
+      padding: .9rem 1.1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .phase-header.pre-phase  { border-bottom: 3px solid var(--blue); }
+    .phase-header.pos-phase  { border-bottom: 3px solid var(--purple); }
+    .phase-header:hover { background: #f8f9ff; }
+
+    .phase-num {
+      width: 2rem; height: 2rem;
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .85rem;
+      flex-shrink: 0;
+    }
+    .phase-num.num-blue   { background: var(--blue); }
+    .phase-num.num-purple { background: var(--purple); }
+
+    .phase-title  { font-size: 1rem; font-weight: 700; flex: 1; }
+    .phase-portal {
+      font-size: .75rem;
+      font-weight: 600;
+      padding: .2rem .6rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .portal-epe   { background: var(--green-l);  color: #15803d; }
+    .portal-aneel { background: var(--blue-l);   color: #1e40af; }
+    .portal-bndes { background: var(--amber-l);  color: #92400e; }
+    .portal-ons   { background: #f3e8ff;          color: #6b21a8; }
+    .portal-multi { background: var(--gray-l);    color: #374151; }
+    .portal-ccee  { background: #ffe4e6;          color: #9f1239; }
+    .phase-toggle { font-size: .8rem; color: var(--gray); flex-shrink: 0; }
+
+    .phase-body {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      padding: 1rem 1.1rem 1.2rem;
+    }
+
+    /* ── Section within phase ── */
+    .section { margin-bottom: 1.4rem; }
+    .section-title {
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--gray);
+      margin-bottom: .7rem;
+      padding-bottom: .3rem;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    /* ── Items ── */
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: .65rem;
+      padding: .6rem .4rem;
+      border-radius: 6px;
+      transition: background .15s;
+      margin-bottom: .2rem;
+    }
+    .item:hover { background: var(--gray-l); }
+    .item input[type="checkbox"] {
+      width: 1.1rem; height: 1.1rem;
+      flex-shrink: 0;
+      margin-top: .25rem;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+    .item-body  { flex: 1; }
+    .item-label {
+      font-size: .9rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .item-sub {
+      font-size: .82rem;
+      color: #475569;
+      margin-top: .2rem;
+    }
+    .item-sub ul { padding-left: 1.1rem; }
+    .item-sub li { margin-top: .15rem; }
+
+    /* fonte reference */
+    .fonte {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      margin-top: .35rem;
+      font-size: .74rem;
+      font-weight: 600;
+      color: #1e40af;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 5px;
+      padding: .15rem .5rem;
+    }
+    .fonte-doc { color: #1e3a8a; font-weight: 700; }
+
+    .item.done .item-label { text-decoration: line-through; color: var(--gray); }
+    .item.done { opacity: .65; }
+
+    /* tags */
+    .tag {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: 700;
+      padding: .05rem .4rem;
+      border-radius: 999px;
+      margin-left: .4rem;
+      vertical-align: middle;
+    }
+    .tag-req  { background: #fee2e2; color: #991b1b; }
+    .tag-cond { background: #fef3c7; color: #92400e; }
+    .tag-opt  { background: var(--gray-l); color: #374151; }
+    .tag-pos  { background: var(--purple-l); color: #5b21b6; }
+
+    /* deadline */
+    .deadline {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      font-weight: 600;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      border-radius: 999px;
+      padding: .12rem .55rem;
+      margin-left: .4rem;
+    }
+
+    /* infobox */
+    .infobox {
+      background: var(--blue-l);
+      border: 1px solid #93c5fd;
+      border-radius: 8px;
+      padding: .75rem .9rem;
+      font-size: .82rem;
+      color: #1e40af;
+      margin-bottom: 1rem;
+    }
+    .infobox.infobox-purple {
+      background: var(--purple-l);
+      border-color: #c4b5fd;
+      color: #5b21b6;
+    }
+    .infobox strong { display: block; margin-bottom: .2rem; }
+
+    /* section separator */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin: 2rem 0 1.5rem;
+      color: var(--gray);
+      font-size: .78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* summary table */
+    .sum-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+    .sum-table th, .sum-table td { padding: .5rem .7rem; border: 1px solid var(--border); text-align: left; }
+    .sum-table thead tr { background: var(--gray-l); }
+    .sum-table tbody tr:nth-child(even) { background: #fafafa; }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .78rem;
+      color: var(--gray);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 620px) {
+      header h1 { font-size: 1.25rem; }
+      .phase-title { font-size: .88rem; }
+      .phase-portal { display: none; }
+      .msb-title { font-size: .95rem; }
+    }
+    @media print {
+      .progress-wrap { position: static; }
+      .phase-body { display: block !important; }
+    }
+
+    /* ── Sidebar de referências ── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.3);
+      z-index: 190;
+    }
+    .sidebar-overlay.open { display: block; }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -500px;
+      width: 460px;
+      max-width: 96vw;
+      height: 100%;
+      background: #fff;
+      z-index: 200;
+      box-shadow: -4px 0 28px rgba(0,0,0,.2);
+      transition: right .32s cubic-bezier(.4,0,.2,1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sidebar.open { right: 0; }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .6rem;
+      padding: .9rem 1.1rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg,#1e3a5f 0%,#1d4ed8 100%);
+      flex-shrink: 0;
+    }
+    .sidebar-header-ren {
+      background: linear-gradient(135deg,#3b0764 0%,#7c3aed 100%);
+    }
+    .sidebar-title {
+      font-size: .88rem;
+      font-weight: 700;
+      color: #fff;
+      flex: 1;
+    }
+    .sidebar-close {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      cursor: pointer;
+      font-size: 1rem;
+      color: #fff;
+      padding: .25rem .6rem;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .sidebar-close:hover { background: rgba(255,255,255,.28); }
+    .sidebar-body {
+      overflow-y: auto;
+      flex: 1;
+      padding: 1.1rem 1.1rem 2rem;
+    }
+    .sidebar-empty {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--gray);
+      font-size: .85rem;
+    }
+    .sidebar-ref-block {
+      margin-bottom: 1.2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .sidebar-ref-head {
+      display: flex;
+      align-items: flex-start;
+      gap: .5rem;
+      padding: .65rem .9rem;
+      background: #eff6ff;
+      border-bottom: 1px solid #bfdbfe;
+    }
+    .sidebar-ref-head.ren { background: #f5f3ff; border-color: #c4b5fd; }
+    .sidebar-ref-art {
+      font-size: .88rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .sidebar-ref-titulo {
+      font-size: .75rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: .1rem;
+    }
+    .sidebar-ref-texto {
+      font-size: .84rem;
+      color: #374151;
+      line-height: 1.65;
+      padding: .75rem .9rem;
+      background: #fff;
+    }
+    .sidebar-ref-doc-label {
+      font-size: .65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: .12rem .45rem;
+      border-radius: 999px;
+      flex-shrink: 0;
+      margin-top: .15rem;
+    }
+    .sidebar-ref-doc-label.port { background: #dbeafe; color: #1e40af; }
+    .sidebar-ref-doc-label.ren  { background: #ede9fe; color: #5b21b6; }
+    .fonte { cursor: pointer; transition: background .15s; }
+    .fonte:hover { background: #bfdbfe; border-color: #93c5fd; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <h1>📋 Checklist LRCAP 2026 — Baterias</h1>
+  <p>Cadastramento e Habilitação Técnica para participação no Leilão de Reserva de Capacidade</p>
+  <div class="badge-wrap">
+    <span class="badge">⚡ SAE em Baterias</span>
+    <span class="badge">📅 Prazo EPE: 31/07/2026 às 12h</span>
+    <span class="badge">🔋 LRCAP Nacional (2028-A) &amp; Armazenamento (2028-B)</span>
+  </div>
+</header>
+
+<!-- ═══ PROGRESSO GERAL ═══ -->
+<div class="progress-wrap">
+  <div class="progress-header">
+    <span class="progress-label">Progresso geral</span>
+    <span class="progress-pct" id="pct">0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="fill" style="width:0%"></div></div>
+  <div class="progress-sub">
+    <span class="progress-sub-item">
+      <span class="dot dot-blue"></span>
+      <span>Pré-Cadastramento: <strong id="done-pre">0</strong>/<span id="total-pre">0</span></span>
+    </span>
+    <span class="progress-sub-item">
+      <span class="dot dot-purple"></span>
+      <span>Cadastramento Completo: <strong id="done-pos">0</strong>/<span id="total-pos">0</span></span>
+    </span>
+    <span style="margin-left:auto;"><span id="done-count">0</span> de <span id="total-count">0</span> itens no total</span>
+  </div>
+</div>
+
+<main>
+
+<!-- ALERTAS GLOBAIS -->
+<div class="alert alert-red">
+  <span class="alert-icon">⏰</span>
+  <div><strong>Prazo crítico:</strong> O Cadastramento na EPE encerra em <strong>31 de julho de 2026 às 12h</strong>.
+  Após esse prazo não há admissão de novos projetos.
+  <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, §1º (Capítulo II — Do Cadastramento e da Habilitação Técnica)</span></div>
+</div>
+
+<div class="alert alert-amber">
+  <span class="alert-icon">⚠️</span>
+  <div><strong>Potência mínima exigida:</strong> SAEs com disponibilidade de potência máxima inferior a <strong>30 MW</strong> não serão habilitados tecnicamente.
+  <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso III (Capítulo II — Do Cadastramento e da Habilitação Técnica)</span></div>
+</div>
+
+<div class="alert alert-blue">
+  <span class="alert-icon">ℹ️</span>
+  <div><strong>Licença Ambiental dispensada na fase EPE:</strong> Não é requisito para Habilitação Técnica a apresentação de LP, LI ou LO do SAE. O prazo será definido no Edital da ANEEL.
+  <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, §2º e §3º (Capítulo II — Do Cadastramento e da Habilitação Técnica)</span></div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║   SEÇÃO 1 — PRÉ-CADASTRAMENTO                      ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="main-section" id="msec-pre">
+
+  <div class="main-section-banner msb-pre">
+    <div class="msb-top">
+      <span class="msb-pill">Seção 1</span>
+      <span class="msb-title">Pré-Cadastramento e Participação no Leilão</span>
+      <span class="msb-count" id="label-pre">0 / 0 itens</span>
+    </div>
+    <div class="msb-desc">Etapas necessárias para registrar o empreendimento na EPE e participar do leilão em dezembro/2026.</div>
+    <div class="msb-bar-wrap">
+      <div class="msb-bar"><div class="msb-fill" id="fill-pre" style="width:0%"></div></div>
+      <div class="msb-bar-label" id="pct-pre">0% concluído</div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       FASE 1 — EPE / AEGE
+  ════════════════════════════════════════════ -->
+  <div class="phase" id="phase1">
+    <div class="phase-header pre-phase" onclick="togglePhase('phase1')">
+      <div class="phase-num num-blue">1</div>
+      <div class="phase-title">
+        Cadastramento &amp; Habilitação Técnica — EPE
+        <span class="deadline">⏳ 15/06 a 31/07/2026 (12h)</span>
+      </div>
+      <span class="phase-portal portal-epe">🌐 epe.gov.br / AEGE</span>
+      <span class="phase-toggle" id="toggle-phase1">▼</span>
+    </div>
+    <div class="phase-body" id="body-phase1">
+
+      <div class="infobox">
+        <strong>🔗 Portal: Sistema AEGE — www.epe.gov.br</strong>
+        Preencha a Ficha de Dados no Sistema de Acompanhamento de Empreendimentos de Geração de Energia (AEGE)
+        e siga as instruções publicadas no sítio da EPE.
+        <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput (Capítulo II)</span>
+      </div>
+
+      <!-- 1.1 -->
+      <div class="section">
+        <div class="section-title">1.1 Ficha de Dados — Informações Técnicas do SAE (preencher no AEGE)</div>
+
+        <div class="item" id="i1" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i1',this)">
+          <div class="item-body">
+            <label class="item-label">Ficha de Dados preenchida no sistema AEGE <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Inclui: potência instalada (MW), potência de descarga, capacidade de armazenamento (MWh), tecnologia de bateria,
+              ponto de conexão (barramento candidato), município/UF, coordenadas geográficas.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
+          </div>
+        </div>
+
+        <div class="item" id="i2" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i2',this)">
+          <div class="item-body">
+            <label class="item-label">Disponibilidade de potência máxima ≥ 30 MW declarada <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Projetos abaixo de 30 MW são desclassificados automaticamente pela EPE.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso III · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
+          </div>
+        </div>
+
+        <div class="item" id="i3" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i3',this)">
+          <div class="item-body">
+            <label class="item-label">Capacidade de operação contínua ≥ 4 horas declarada <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Ciclo completo = potência contratada × 4h. SAEs com menos de 4h são desabilitados.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 4º, §3º (compromisso de entrega) · Art. 7º, inciso IV (causa de não habilitação) · Capítulo I e II</span>
+          </div>
+        </div>
+
+        <div class="item" id="i4" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i4',this)">
+          <div class="item-body">
+            <label class="item-label">Eficiência total (Roundtrip Efficiency — RTE) ≥ 85% declarada <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Referenciada ao Ponto de Medição Individual (PMI), ao longo de todo o horizonte contratual de 15 anos.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso VI · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
+          </div>
+        </div>
+
+        <div class="item" id="i5" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i5',this)">
+          <div class="item-body">
+            <label class="item-label">Tempo máximo de recarga completa ≤ 6 horas declarado <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Recarga de 0% a 100%, incluindo tempo de repouso inerente ao ciclo. Recargas parciais são permitidas proporcionalmente.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 4º, §10 (requisito operacional) · Art. 4º, §11 (recargas parciais) · Art. 7º, inciso VII (causa de não habilitação) · Capítulo I e II</span>
+          </div>
+        </div>
+
+        <div class="item" id="i6" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i6',this)">
+          <div class="item-body">
+            <label class="item-label">Custo Variável Unitário (CVU) = zero declarado <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">SAEs com CVU &gt; 0 não são habilitados tecnicamente. A remuneração é integral via Receita Fixa.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso II · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
+          </div>
+        </div>
+
+        <div class="item" id="i7" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i7',this)">
+          <div class="item-body">
+            <label class="item-label">Fator de Capacidade Máxima (Fcmax) declarado <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Informado pelo empreendedor para cálculo da Disponibilidade de Potência: <em>Disp = b × (Pot × Fcmax − DP)</em>.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 2º, §12 (fórmula Pdisp) · Art. 4º, §3º (fórmula de comprometimento) · Capítulo II — Das Características do Leilão</span>
+          </div>
+        </div>
+
+        <div class="item" id="i8" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i8',this)">
+          <div class="item-body">
+            <label class="item-label">Consumo interno e perdas (DP) até a subestação de conexão declarados <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Montante de potência que não pode ser comercializado no Leilão. Definido pelo empreendedor por sua conta e risco.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 1º, inciso XXXVI (definição de DP — Montante de Consumo Interno e Perdas de Potência) · Capítulo I — Das Definições e Abreviações</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.2 -->
+      <div class="section">
+        <div class="section-title">1.2 Conformidade com Requisitos Técnicos de Conexão (Nota Técnica ONS/EPE)</div>
+
+        <div class="item" id="i9" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i9',this)">
+          <div class="item-body">
+            <label class="item-label">Atendimento aos Requisitos Técnicos Mínimos para Conexão de SAE via Baterias <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Inclui obrigatoriamente requisitos de <strong>grid-forming</strong> (operação em modo formador de rede).
+              O SAE deve manter disponíveis e de forma contínua os recursos da Nota Técnica ONS/EPE, mesmo quando não estiver em processo de carga ou descarga.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 4º, §13 (obrigação operacional contínua) · Art. 7º, inciso VIII (causa de não habilitação) · Art. 13 (requisitos técnicos no Edital) · Capítulo I e II
+            <br>📄 <span class="fonte-doc">EPEDE-ERE079/2024</span> — Nota Técnica EPE/ONS: Requisitos Técnicos Mínimos para Conexão de SAE via Baterias (documento de referência citado na Portaria)
+            <br>📄 <span class="fonte-doc">EPEDE-ENT095/2025</span> — Requisitos de Conexão SAE, Rev. 4 (versão mais recente da Nota Técnica)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i10" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i10',this)">
+          <div class="item-body">
+            <label class="item-label">Conformidade com requisitos de segurança operacional comprovada <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Normas aplicáveis e instruções de Cadastramento publicadas pela EPE. SAEs não conformes são desabilitados.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso IX · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
+          </div>
+        </div>
+
+        <div class="item" id="i11" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i11',this)">
+          <div class="item-body">
+            <label class="item-label">Baterias novas (não reutilizadas) confirmadas <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">O empreendedor deverá empregar baterias novas. O Edital da ANEEL poderá disciplinar a matéria com maiores detalhes.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, §2º · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
+          </div>
+        </div>
+
+        <div class="item" id="i12" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i12',this)">
+          <div class="item-body">
+            <label class="item-label">Barramento Candidato com Capacidade Remanescente suficiente verificada <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              A capacidade remanescente do barramento candidato deve ser ≥ potência injetada + potência necessária para recarga.
+              O ponto de conexão <strong>não pode ser alterado</strong> após o cadastramento.
+              A Nota Técnica de Quantitativos do ONS será publicada até 30/09/2026.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso V (causa de não habilitação) · Art. 11, §2º (vedação de alteração do ponto de conexão) · Art. 11, §4º (prazo da Nota Técnica) · Capítulo II e V — Da Capacidade Remanescente do SIN</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.3 -->
+      <div class="section">
+        <div class="section-title">1.3 Documentos Técnicos a Anexar no AEGE</div>
+
+        <div class="item" id="i13" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i13',this)">
+          <div class="item-body">
+            <label class="item-label">Estudo técnico de estimativa de injeção anual de energia <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Deve conter: perfil de operação previsto, eficiência global do sistema (RTE), potência de descarga,
+              capacidade de armazenamento (MWh), descrição da tecnologia e equipamentos adotados.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 7 · Seção "Qualificação Técnica de SAE por meio de Baterias"
+            <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput (documentação referida na Portaria GM/MME nº 102/2016)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i14" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i14',this)">
+          <div class="item-body">
+            <label class="item-label">Arranjo Geral do empreendimento (planta georreferenciada) <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Delimitação da poligonal do SAE e da rede de interesse restrito, da subestação coletora até o ponto de conexão.
+              Formato conforme instruções publicadas no sítio da ANEEL. Assinado por engenheiro com CREA regular.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 6 · Seção "Qualificação Técnica de SAE por meio de Baterias"
+            <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 19 (responsabilidade do engenheiro com CREA regular)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i15" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i15',this)">
+          <div class="item-body">
+            <label class="item-label">Demais documentos exigidos pela Portaria GM/MME nº 102/2016 <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Os requisitos gerais de habilitação técnica desta Portaria se aplicam, com exceção dos itens de licença ambiental (LP/LI/LO), que são dispensados nesta fase do LRCAP 2026.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput (remissão à Portaria GM/MME nº 102/2016) · Art. 6º, §2º (exceção: LP/LI/LO dispensados) · Art. 18 (aplicação geral da Portaria 102/2016)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i16" data-section="pre">
+          <input type="checkbox" onchange="updateItem('i16',this)">
+          <div class="item-body">
+            <label class="item-label">Contrato de Uso e Conexão já assinado (CUST+CCT ou CUSD+CCD/CCT) — se disponível <span class="tag tag-opt">OPCIONAL — mas estratégico</span></label>
+            <div class="item-sub">
+              Empreendimentos <em>com</em> contratos de uso e conexão vigentes são classificados na Etapa Inicial
+              <strong>independentemente da Capacidade Remanescente do SIN</strong>, garantindo acesso ao leilão.
+              <br>• Rede Básica (ONS): CUST + CCT
+              <br>• Distribuição: CUSD + CCD, ou CCT
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 4º, §10 · Art. 1º, inciso XIX ("Empreendimento com Contrato de Uso e Conexão") e inciso XX ("Empreendimento Sem Contrato de Uso e Conexão") · Capítulo I — Das Definições</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /phase1 -->
+
+
+  <!-- ═══════════════════════════════════════════
+       FASE 2 — PRÉ-LEILÃO (Participação)
+  ════════════════════════════════════════════ -->
+  <div class="phase" id="phase2">
+    <div class="phase-header pre-phase" onclick="togglePhase('phase2')">
+      <div class="phase-num num-blue">2</div>
+      <div class="phase-title">
+        Preparação para Participação no Leilão
+        <span class="deadline">📅 Nacional: 02/12 · Armazenamento: 04/12/2026</span>
+      </div>
+      <span class="phase-portal portal-aneel">🏛️ ANEEL / Sistema do Leilão</span>
+      <span class="phase-toggle" id="toggle-phase2">▼</span>
+    </div>
+    <div class="phase-body" id="body-phase2">
+
+      <div class="infobox">
+        <strong>📅 Datas dos Leilões</strong>
+        LRCAP 2026 — Armazenamento Nacional (Produto 2028-A): <strong>02 de dezembro de 2026</strong><br>
+        LRCAP 2026 — Armazenamento (Produto 2028-B): <strong>04 de dezembro de 2026</strong><br>
+        Início de suprimento dos CRCAPs: <strong>1º de agosto de 2028</strong>. Prazo contratual: <strong>15 anos</strong>.
+        <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 3º, parágrafo único (datas dos leilões) · Art. 9º, §§2º e 3º (prazo de 15 anos e início de suprimento em 01/08/2028)</span>
+      </div>
+
+      <div class="item" id="i40" data-section="pre">
+        <input type="checkbox" onchange="updateItem('i40',this)">
+        <div class="item-body">
+          <label class="item-label">Aporte de Garantia de Proposta junto ao Agente Custodiante <span class="tag tag-req">OBRIGATÓRIO</span></label>
+          <div class="item-sub">Valor e instituição custodiante definidos no Edital da ANEEL. Habilita o Proponente Vendedor a participar do Leilão.</div>
+          <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 3º, §2º (validação das Garantias de Proposta antes do início) · Art. 1º, inciso XXIX (definição de Garantias de Proposta) · Art. 1º, inciso III (definição do Agente Custodiante) · Capítulo III — Da Configuração do Sistema</span>
+        </div>
+      </div>
+
+      <div class="item" id="i41" data-section="pre">
+        <input type="checkbox" onchange="updateItem('i41',this)">
+        <div class="item-body">
+          <label class="item-label">Calcular e declarar a Receita Fixa pretendida (R$/ano) — responsabilidade exclusiva do vendedor <span class="tag tag-req">OBRIGATÓRIO</span></label>
+          <div class="item-sub">
+            Deve cobrir integralmente, ao longo dos 15 anos do contrato:
+            <ul>
+              <li>CAPEX e remuneração de investimento (TIR)</li>
+              <li>Custos de conexão ao Sistema de Transmissão e Distribuição</li>
+              <li>CUST/CUSD (uso do sistema)</li>
+              <li>Operação e Manutenção (O&amp;M)</li>
+              <li>Reinvestimentos: troca de módulos de baterias, novos inversores</li>
+              <li>Seguros e garantias do empreendimento</li>
+              <li>Tributos e encargos diretos e indiretos</li>
+              <li>Encargos setoriais pela energia consumida e injetada</li>
+              <li>Custos de descomissionamento e descarte ambiental</li>
+            </ul>
+          </div>
+          <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 9º, §4º, inciso II, alíneas a-k (composição da Receita Fixa) · Anexo I (Sistemática), Art. 1º, inciso LXI (definição de Receita Fixa do Produto) · Art. 2º, §13 (responsabilidade exclusiva do vendedor) · Capítulo III — Do Edital e dos Contratos</span>
+        </div>
+      </div>
+
+      <div class="item" id="i42" data-section="pre">
+        <input type="checkbox" onchange="updateItem('i42',this)">
+        <div class="item-body">
+          <label class="item-label">Verificar se o ponto de conexão é elegível à Bonificação de Localização (fator ß = 0,9) <span class="tag tag-opt">RECOMENDADO</span></label>
+          <div class="item-sub">
+            SAEs conectados nos barramentos do Anexo II recebem fator ß = 0,9 (redução de 10% no Preço da Disponibilidade de Potência),
+            aumentando competitividade no leilão. Barramentos bonificados incluem subestações em AL, BA, CE, MG, PB, PE, PI e RN.
+            Fator ß = 1 para demais pontos de conexão.
+          </div>
+          <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 17, §§2º e 3º (bonificação de localização) · Anexo I (Sistemática), Art. 2º, §12 (fórmula: Pdisp = RFdisp/Disp × ß) · Anexo II (lista dos barramentos bonificados, Tabela 1) · Capítulo II da Sistemática e das Disposições Finais</span>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /phase2 -->
+
+</div><!-- /msec-pre -->
+
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║   SEÇÃO 2 — CADASTRAMENTO COMPLETO (PÓS-LEILÃO)   ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="section-divider">Após vitória no leilão</div>
+
+<div class="main-section" id="msec-pos">
+
+  <div class="main-section-banner msb-pos">
+    <div class="msb-top">
+      <span class="msb-pill">Seção 2</span>
+      <span class="msb-title">Cadastramento Completo — Pós-Leilão</span>
+      <span class="msb-count" id="label-pos">0 / 0 itens</span>
+    </div>
+    <div class="msb-desc">Etapas obrigatórias após a vitória no leilão para formalizar contratos, obter outorga e implantar o SAE até 54 meses.</div>
+    <div class="msb-bar-wrap">
+      <div class="msb-bar"><div class="msb-fill" id="fill-pos" style="width:0%"></div></div>
+      <div class="msb-bar-label" id="pct-pos">0% concluído</div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       FASE 3 — BNDES / CFI
+  ════════════════════════════════════════════ -->
+  <div class="phase" id="phase3">
+    <div class="phase-header pos-phase" onclick="togglePhase('phase3')">
+      <div class="phase-num num-purple">3</div>
+      <div class="phase-title">
+        Credenciamento de Nacionalização — BNDES
+        <span class="tag tag-cond" style="font-size:.75rem;vertical-align:middle;">Somente Produto 2028-A (LRCAP Nacional)</span>
+      </div>
+      <span class="phase-portal portal-bndes">🏦 bndes.gov.br / CFI</span>
+      <span class="phase-toggle" id="toggle-phase3">▼</span>
+    </div>
+    <div class="phase-body" id="body-phase3">
+
+      <div class="alert alert-amber" style="margin-bottom:.8rem;">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          Esta fase é <strong>obrigatória apenas para o Produto Potência Armazenamento 2028-A</strong> (LRCAP Nacional — leilão de 02/12/2026).
+          Para o Produto 2028-B (LRCAP Armazenamento — leilão de 04/12/2026), esta etapa é dispensada.
+          <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 1º, §§2º e 3º · Art. 10, caput · Capítulo IV — Do Requisito Mínimo de Nacionalização</span>
+        </div>
+      </div>
+
+      <div class="infobox infobox-purple">
+        <strong>🔗 Portal: Sistema CFI do BNDES — www.bndes.gov.br</strong>
+        Regulamento de Credenciamento de Sistemas Estacionários de Armazenamento de Energia em Baterias.
+        O credenciamento CFI <strong>não obriga</strong> uso de financiamento do BNDES.
+        <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §5º · Capítulo IV</span>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3.1 Credenciamento CFI — Etapa 1 (4 rotas disponíveis)</div>
+
+        <div class="item" id="i17" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i17',this)">
+          <div class="item-body">
+            <label class="item-label">Identificar qual das 4 rotas de credenciamento da Etapa 1 se aplica ao projeto <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">As rotas estão descritas no Regulamento de Credenciamento de Sistemas Estacionários de Armazenamento de Energia em Baterias, publicado no sítio do BNDES.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §2º ("possível optar por uma das quatro rotas de credenciamento previstas nesta Etapa") · Capítulo IV — Do Requisito Mínimo de Nacionalização</span>
+          </div>
+        </div>
+
+        <div class="item" id="i18" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i18',this)">
+          <div class="item-body">
+            <label class="item-label">Solicitar e obter credenciamento no Sistema CFI do BNDES (Etapa 1) <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">O credenciamento deve ser obtido <em>antes da assinatura do CRCAP</em> com a CCEE. A assinatura do contrato fica condicionada à apresentação da documentação comprobatória emitida pelo BNDES à ANEEL.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §1º (condicionamento da assinatura do CRCAP) · Art. 10, caput (obrigação de comprovação dos requisitos mínimos de nacionalização) · Capítulo IV</span>
+          </div>
+        </div>
+
+        <div class="item" id="i19" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i19',this)">
+          <div class="item-body">
+            <label class="item-label">Guardar Certidão de Credenciamento emitida pelo BNDES <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Apresentar à ANEEL antes da assinatura do CRCAP. Na fase de implantação, a comprovação de utilização
+              do SAE credenciado deve ser renovada junto ao BNDES nas datas estabelecidas pela ANEEL.
+              A não comprovação implica extinção do CRCAP.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §1º (certidão à ANEEL para assinatura do CRCAP) · Art. 10, §3º (comprovação na fase de implantação) · Art. 10, §4º (penalidade: extinção do CRCAP) · Capítulo IV</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /phase3 -->
+
+
+  <!-- ═══════════════════════════════════════════
+       FASE 4 — ANEEL (Outorga)
+  ════════════════════════════════════════════ -->
+  <div class="phase" id="phase4">
+    <div class="phase-header pos-phase" onclick="togglePhase('phase4')">
+      <div class="phase-num num-purple">4</div>
+      <div class="phase-title">Outorga de Autorização SAE — ANEEL</div>
+      <span class="phase-portal portal-aneel">🔌 aneel.gov.br</span>
+      <span class="phase-toggle" id="toggle-phase4">▼</span>
+    </div>
+    <div class="phase-body" id="body-phase4">
+
+      <div class="infobox infobox-purple">
+        <strong>🔗 Portal: Sistema informatizado da ANEEL — www.aneel.gov.br</strong>
+        Pedido de outorga protocolado via sistema ou conforme instruções publicadas no sítio da ANEEL.
+        Vigência da outorga: 35 anos. Prazo para entrada em operação comercial: 54 meses após publicação do ato de outorga.
+        <br><span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 8º (pedido de outorga) · Art. 8º, §2º (vigência de 35 anos) · Art. 11 (prazo de implantação de 54 meses) · Capítulo III — Da Outorga de Autorização</span>
+      </div>
+
+      <!-- 4.1 Jurídica -->
+      <div class="section">
+        <div class="section-title">4.1 Qualificação Jurídica</div>
+
+        <div class="item" id="i20" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i20',this)">
+          <div class="item-body">
+            <label class="item-label">Certidões de regularidade fiscal — FGTS, Fazendas Municipal, Estadual e Federal <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Do domicílio ou sede do interessado. Devem estar válidas durante toda a instrução e vigência da outorga.</div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 1 · Seção "Qualificação Jurídica" — Documentos Necessários à Obtenção de Outorga de Autorização
+            <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 4º, §2º (obrigação de manutenção da regularidade fiscal durante a vigência)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i21" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i21',this)">
+          <div class="item-body">
+            <label class="item-label">Organograma completo do grupo societário <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              <ul>
+                <li>Participações diretas e indiretas até o nível final (subitem 2.1)</li>
+                <li>Todo tipo de participação &gt; 5%, inclusive minoritária (subitem 2.2)</li>
+                <li>Participações &lt; 5% quando o acionista integra Grupo de Controle por Acordo de Acionistas (subitem 2.3)</li>
+                <li>Sinalizar controladores societários diretos conforme REN 948/2021, Anexo III, Art. 3º, III (subitem 2.4)</li>
+                <li>Nome/razão social e CNPJ de cada participante</li>
+              </ul>
+              <em>Dispensado se requerente tiver cadastro atualizado na ANEEL conforme REN 948/2021, Anexo II, Módulo II, Art. 4º (subitem 2.5).</em>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 2 e subitens 2.1 a 2.5 · Seção "Qualificação Jurídica"</span>
+          </div>
+        </div>
+
+        <div class="item" id="i22" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i22',this)">
+          <div class="item-body">
+            <label class="item-label">Ato constitutivo / Estatuto / Contrato Social em vigor com registro no órgão competente <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Acompanhado do ato que instituiu a atual administração. O objeto social deve contemplar atividades vinculadas à autorização
+              (Lei 6.404/1976, Art. 2º, §2º — subitem 3.1).
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 3 e subitem 3.1 · Seção "Qualificação Jurídica"</span>
+          </div>
+        </div>
+
+        <div class="item" id="i23" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i23',this)">
+          <div class="item-body">
+            <label class="item-label">Comprovação de representação legal do signatário dos requerimentos <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Documento que comprova que a pessoa física signatária está autorizada a representar legalmente a empresa requerente.</div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 4 · Seção "Qualificação Jurídica"</span>
+          </div>
+        </div>
+
+        <div class="item" id="i24" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i24',this)">
+          <div class="item-body">
+            <label class="item-label">Contrato de Constituição de Consórcio <span class="tag tag-cond">SE APLICÁVEL</span></label>
+            <div class="item-sub">
+              Firmado por instrumento público ou particular (Lei 6.404/1976, Art. 279; Lei 8.666/1993, Art. 33).
+              Deve conter: percentual de participação de cada empresa (subitem 5.1) e designação da empresa líder
+              responsável perante a ANEEL (subitem 5.2).
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 5 e subitens 5.1 e 5.2 · Seção "Qualificação Jurídica"
+            <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 2º, parágrafo único (responsabilidade solidária nos consórcios)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.2 Técnica -->
+      <div class="section">
+        <div class="section-title">4.2 Qualificação Técnica — SAE por Baterias</div>
+
+        <div class="item" id="i25" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i25',this)">
+          <div class="item-body">
+            <label class="item-label">Arranjo Geral do empreendimento (georreferenciado) <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Contendo a delimitação da poligonal do SAE e da rede de interesse restrito do armazenador,
+              partindo da subestação coletora até o ponto de conexão. Formato conforme instruções publicadas no sítio da ANEEL.
+              Responsabilidade de engenheiro com CREA regular.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 6 · Seção "Qualificação Técnica de SAE por meio de Baterias"
+            <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 19 (responsabilidade do engenheiro com inscrição CREA regular)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i26" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i26',this)">
+          <div class="item-body">
+            <label class="item-label">Estudo técnico de estimativa de injeção anual de energia elétrica <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Deve incluir: perfil de operação previsto, eficiência global (RTE), potência de descarga,
+              capacidade de armazenamento (MWh), descrição da tecnologia e equipamentos adotados.
+              Assinado por responsável técnico com CREA regular.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 7 · Seção "Qualificação Técnica de SAE por meio de Baterias"
+            <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 19 (responsabilidade do engenheiro) · Art. 20 (ANEEL pode solicitar complementações)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.3 Docs adicionais -->
+      <div class="section">
+        <div class="section-title">4.3 Documentos Adicionais para Outorga e Comprovação</div>
+
+        <div class="item" id="i27" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i27',this)">
+          <div class="item-body">
+            <label class="item-label">Licença Ambiental (LP, LI ou LO) <span class="tag tag-req">OBRIGATÓRIO para Outorga ANEEL</span></label>
+            <div class="item-sub">
+              Dispensada na fase de Habilitação Técnica EPE, mas <strong>obrigatória para a emissão da outorga pela ANEEL</strong>.
+              O Edital definirá o prazo máximo para obtenção pelos vencedores do leilão.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 11 · Seção "Documentos Adicionais para Autorização"
+            <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, §2º (dispensa da LP/LI/LO para Habilitação Técnica EPE) · Art. 6º, §3º (prazo para licenciamento a ser definido no Edital)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i28" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i28',this)">
+          <div class="item-body">
+            <label class="item-label">CUST — Contrato de Uso do Sistema de Transmissão (celebrado com o ONS) <span class="tag tag-req">OBRIGATÓRIO para Outorga ANEEL</span></label>
+            <div class="item-sub">Para acesso à Rede Básica. Deve ser encaminhado junto com o correspondente Parecer de Acesso ou documento equivalente.</div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 12 e subitem 12.1 · Seção "Documentos Adicionais para Autorização"
+            <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 9º, §13 (exigência de contratação de montantes de uso para descarga e recarga total)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i29" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i29',this)">
+          <div class="item-body">
+            <label class="item-label">CUSD — Contrato de Uso do Sistema de Distribuição (celebrado com concessionária/permissionária) <span class="tag tag-cond">SE APLICÁVEL</span></label>
+            <div class="item-sub">
+              Para acesso às DIT ou instalações de distribuição. Deve ser encaminhado junto com o Parecer de Acesso.
+              Para SAEs vencedores do LRCAP: aceito também documento de acesso emitido pelo ONS ou CUSD para fins de alteração de característica técnica.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 12 e subitem 12.2 · Seção "Documentos Adicionais para Autorização"</span>
+          </div>
+        </div>
+
+        <div class="item" id="i30" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i30',this)">
+          <div class="item-body">
+            <label class="item-label">Sumário Executivo para emissão de outorga <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Documento resumindo as características técnicas e empresariais do empreendimento para análise da ANEEL.</div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 13 · Seção "Documentos Adicionais para Autorização"</span>
+          </div>
+        </div>
+
+        <div class="item" id="i31" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i31',this)">
+          <div class="item-body">
+            <label class="item-label">Declaração de Atendimento — conforme modelo do Anexo III da REN 1.161/2026 <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Assinada pelo representante legal, declarando:
+              <ul>
+                <li>Propriedade, posse direta ou usufruto da área de implantação da usina (item 1 do Anexo III)</li>
+                <li>Responsável técnico com CREA em situação regular (item 2 do Anexo III)</li>
+                <li>Ciência dos critérios de individualização de empreendimentos adjacentes — Art. 13, REN 1.071/2023 (item 3a)</li>
+                <li>Ciência da proibição de implantação na Área de Desenvolvimento da Subestação — ADS, REN 1.055/2022 (item 3b)</li>
+                <li>Ciência das regras de alteração de características técnicas — Art. 15, REN 1.071/2023 (item 3c)</li>
+                <li>Ciência de que os documentos estão sujeitos à fiscalização da ANEEL inclusive após a outorga (item 3d)</li>
+              </ul>
+              Responsabilidade civil, penal (Art. 299 do Código Penal) e administrativa pela veracidade das informações.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 14 (referência ao Anexo III) · Anexo III completo (modelo da Declaração de Atendimento) · Capítulo IV — Disposições Finais</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.4 DRO-SAE -->
+      <div class="section">
+        <div class="section-title">4.4 DRO-SAE — Despacho de Registro do Requerimento (etapa pré-outorga — facultativa)</div>
+
+        <div class="item" id="i32" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i32',this)">
+          <div class="item-body">
+            <label class="item-label">Formulário de Requerimento de Outorga (para solicitar o DRO-SAE) <span class="tag tag-opt">OPCIONAL</span></label>
+            <div class="item-sub">
+              O DRO-SAE facilita: obtenção de licenças ambientais; atendimento a exigências de órgãos públicos ou agentes financiadores;
+              apresentação de documentos na fase de outorga. Validade: 4 anos, sem prorrogação. Não garante direito de preferência.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo I, item 1 · Art. 4º (solicitação do DRO-SAE) · Art. 5º, §§1º a 6º (características, validade e restrições do DRO-SAE) · Art. 5º, §3º (facultatividade) · Capítulo II</span>
+          </div>
+        </div>
+
+        <div class="item" id="i33" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i33',this)">
+          <div class="item-body">
+            <label class="item-label">Declaração de Atendimento (Anexo III) junto ao pedido de DRO-SAE <span class="tag tag-opt">OPCIONAL</span></label>
+            <div class="item-sub">Caso opte pelo DRO-SAE, a Declaração de Atendimento deve ser apresentada junto ao Formulário de Requerimento.</div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo I, item 2 · Capítulo II — Do Requerimento de Outorga de Autorização</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /phase4 -->
+
+
+  <!-- ═══════════════════════════════════════════
+       FASE 5 — CONEXÃO ONS / DISTRIBUIDORA
+  ════════════════════════════════════════════ -->
+  <div class="phase" id="phase5">
+    <div class="phase-header pos-phase" onclick="togglePhase('phase5')">
+      <div class="phase-num num-purple">5</div>
+      <div class="phase-title">Acesso ao Sistema Elétrico — ONS / Distribuidora</div>
+      <span class="phase-portal portal-ons">⚡ ONS / Distribuidora</span>
+      <span class="phase-toggle" id="toggle-phase5">▼</span>
+    </div>
+    <div class="phase-body" id="body-phase5">
+
+      <div class="infobox infobox-purple">
+        <strong>🔗 Portal: ONS (ons.org.br) e/ou Concessionária/Permissionária de Distribuição</strong>
+        O SAE somente poderá ser conectado ao sistema elétrico após a celebração dos contratos de conexão e uso
+        <strong>e</strong> a emissão da outorga pela ANEEL. A conexão não implica liberação para operação em teste ou comercial.
+        <br><span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 7º (conexão somente após contratos e outorga) · Art. 7º, parágrafo único (necessidade de atender à REN 1.029/2022 para operação)</span>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5.1 Acesso à Rede Básica (ONS)</div>
+
+        <div class="item" id="i34" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i34',this)">
+          <div class="item-body">
+            <label class="item-label">Parecer de Acesso emitido pelo ONS <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">
+              Deve acompanhar o CUST quando da apresentação à ANEEL.
+              Para conexão em Rede Básica/DIT/ICG, o Parecer de Acesso é dispensado na fase de Habilitação Técnica na EPE.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, subitem 12.1 (parecer de acesso deve acompanhar o contrato)
+            <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 11, §1º (dispensa do Parecer de Acesso para habilitação técnica EPE quando conexão em RB/DIT/ICG)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i35" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i35',this)">
+          <div class="item-body">
+            <label class="item-label">CUST — Contrato de Uso do Sistema de Transmissão (ONS) <span class="tag tag-req">OBRIGATÓRIO para Outorga</span></label>
+            <div class="item-sub">Para acesso à Rede Básica. Deve cobrir os montantes de uso necessários para a descarga e a recarga total do SAE.</div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 12 · Seção "Documentos Adicionais para Autorização"
+            <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 9º, §13 (exigência de contratação de montantes de uso para descarga e recarga) · Anexo I, Art. 1º, inciso XIX (definição de "Empreendimento com Contrato de Uso e Conexão")</span>
+          </div>
+        </div>
+
+        <div class="item" id="i36" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i36',this)">
+          <div class="item-body">
+            <label class="item-label">CCT — Contrato de Conexão às Instalações de Transmissão (ONS) <span class="tag tag-req">OBRIGATÓRIO para Outorga</span></label>
+            <div class="item-sub">Celebrado com o ONS para formalizar a conexão física à Rede Básica. Apresentado em conjunto com o CUST.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 1º, inciso XIX, alínea "a" (definição: CUST + CCT para Rede Básica) · Capítulo I — Das Definições</span>
+          </div>
+        </div>
+
+        <div class="item" id="i37" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i37',this)">
+          <div class="item-body">
+            <label class="item-label">Cadastramento em Temporada de Acesso após vitória no leilão (para obter Diagnóstico Prévio de Acesso — DPA) <span class="tag tag-pos">PÓS-LEILÃO</span></label>
+            <div class="item-sub">
+              A Etapa Inicial do Leilão equivale a uma Temporada de Acesso. Os vencedores devem se cadastrar
+              em Temporada de Acesso subsequente para obter o DPA, que viabilizará a assinatura do CUST definitivo.
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 4º, §14 (Etapa Inicial equiparada à Temporada de Acesso) · Art. 4º, §15 (cadastramento em Temporada de Acesso pelos vencedores para emissão do DPA) · Art. 1º, inciso XIII (definição de DPA)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5.2 Acesso ao Sistema de Distribuição (se aplicável)</div>
+
+        <div class="item" id="i38" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i38',this)">
+          <div class="item-body">
+            <label class="item-label">CUSD — Contrato de Uso do Sistema de Distribuição <span class="tag tag-cond">SE APLICÁVEL</span></label>
+            <div class="item-sub">Para acesso às DIT ou instalações de distribuição. Celebrado com a concessionária/permissionária.</div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 12 · Seção "Documentos Adicionais para Autorização"
+            <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I, Art. 1º, inciso XIX, alínea "b" (definição: CUSD + CCD ou CCT para Distribuição)</span>
+          </div>
+        </div>
+
+        <div class="item" id="i39" data-section="pos">
+          <input type="checkbox" onchange="updateItem('i39',this)">
+          <div class="item-body">
+            <label class="item-label">CCD — Contrato de Conexão ao Sistema de Distribuição <span class="tag tag-cond">SE APLICÁVEL</span></label>
+            <div class="item-sub">Celebrado com a concessionária/permissionária de distribuição, formalizando a conexão física.</div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 1º, inciso XIX, alínea "b" (definição: CUSD + CCD ou CCT para acesso ao Sistema de Distribuição) · Capítulo I — Das Definições</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /phase5 -->
+
+
+  <!-- ═══════════════════════════════════════════
+       FASE 6 — FORMALIZAÇÃO PÓS-VITÓRIA
+  ════════════════════════════════════════════ -->
+  <div class="phase" id="phase6">
+    <div class="phase-header pos-phase" onclick="togglePhase('phase6')">
+      <div class="phase-num num-purple">6</div>
+      <div class="phase-title">
+        Formalização Contratual e Implantação — ANEEL / CCEE
+      </div>
+      <span class="phase-portal portal-ccee">🏛️ CCEE / ANEEL</span>
+      <span class="phase-toggle" id="toggle-phase6">▼</span>
+    </div>
+    <div class="phase-body" id="body-phase6">
+
+      <div class="infobox infobox-purple">
+        <strong>Após divulgação do resultado do leilão</strong>
+        Os vencedores têm prazo definido no Edital para aportar garantias e assinar o CRCAP. O empreendimento deve entrar em operação comercial dentro de 54 meses a partir da publicação do ato de outorga da ANEEL.
+        <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Capítulo V — Da Divulgação dos Resultados e Celebração dos CRCAPs</span>
+      </div>
+
+      <div class="item" id="i43" data-section="pos">
+        <input type="checkbox" onchange="updateItem('i43',this)">
+        <div class="item-body">
+          <label class="item-label">Aporte de Garantia de Fiel Cumprimento junto ao Agente Custodiante <span class="tag tag-req">OBRIGATÓRIO</span></label>
+          <div class="item-sub">Valor e prazo definidos no Edital da ANEEL. Aportado pelos vencedores após o resultado do leilão.</div>
+          <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 1º, inciso XXVIII (definição: Garantias de Fiel Cumprimento) · Art. 9º, §14 (ANEEL poderá estabelecer regras diferenciadas de garantias nos Editais) · Capítulo V — Da Divulgação dos Resultados</span>
+        </div>
+      </div>
+
+      <div class="item" id="i44" data-section="pos">
+        <input type="checkbox" onchange="updateItem('i44',this)">
+        <div class="item-body">
+          <label class="item-label">Assinatura do CRCAP (Contrato de Potência de Reserva de Capacidade) com a CCEE <span class="tag tag-req">OBRIGATÓRIO</span></label>
+          <div class="item-sub">
+            Prazo de suprimento: 15 anos. Início: 1º/08/2028. Para o Produto 2028-A:
+            apresentar Certidão de Credenciamento BNDES à ANEEL antes da assinatura.
+            O empreendimento vencedor do Produto 2028-A <strong>não pode participar</strong> do leilão do Produto 2028-B.
+          </div>
+          <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 9º, §3º (obrigação incondicional de celebração do CRCAP) · Art. 9º, §§1º e 2º (resultado e oferta atendida) · Art. 2º, §15 (vedação de participar do 2028-B quem ganhou o 2028-A) · Capítulo V — Da Divulgação dos Resultados e Celebração dos CRCAPs
+          <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §1º (condição: Certidão BNDES para produto 2028-A) · Art. 9º, §§2º e 3º</span>
+        </div>
+      </div>
+
+      <div class="item" id="i45" data-section="pos">
+        <input type="checkbox" onchange="updateItem('i45',this)">
+        <div class="item-body">
+          <label class="item-label">Implantar o SAE dentro do prazo de 54 meses após a publicação da outorga ANEEL <span class="tag tag-req">OBRIGATÓRIO</span></label>
+          <div class="item-sub">
+            Para SAEs &gt; 5.000 kW: marcos intermediários devem ser informados ao sistema de acompanhamento de obras da ANEEL.
+            Prorrogação de prazo somente com início de obras comprovado pela fiscalização — exceto para SAEs comercializados em leilão do ACR.
+          </div>
+          <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 11, caput (prazo de 54 meses) · Art. 11, §1º (marcos intermediários para &gt; 5.000 kW) · Art. 13, §3º (dispensa da condição de início de obras para SAEs do ACR) · Capítulo III — Da Outorga de Autorização</span>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /phase6 -->
+
+</div><!-- /msec-pos -->
+
+
+<!-- TABELA RESUMO -->
+<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.3rem;margin-top:1.5rem;">
+  <div style="font-weight:700;font-size:1rem;margin-bottom:.9rem;">🗺️ Resumo por Portal de Submissão</div>
+  <table class="sum-table">
+    <thead>
+      <tr>
+        <th>Seção</th>
+        <th>Portal / Órgão</th>
+        <th>O que enviar</th>
+        <th>Prazo</th>
+        <th>Base Legal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:#eff6ff;">
+        <td rowspan="2"><strong style="color:#1d4ed8;">Seção 1<br>Pré-Cadastramento</strong></td>
+        <td><strong style="color:#15803d;">🌐 EPE — AEGE</strong><br><small>epe.gov.br</small></td>
+        <td>Ficha de Dados + documentação técnica + dados do SAE</td>
+        <td style="color:#dc2626;font-weight:600;">15/06 a 31/07/2026 (12h)</td>
+        <td>Portaria MME 136/2026 — Art. 6º, caput e §1º</td>
+      </tr>
+      <tr style="background:#eff6ff;">
+        <td><strong style="color:#1e40af;">🏛️ ANEEL</strong><br><small>Sistema do Leilão</small></td>
+        <td>Garantia de Proposta + declaração de Receita Fixa</td>
+        <td>Antes do leilão (conforme Edital)</td>
+        <td>Portaria MME 136/2026 — Anexo I, Art. 3º, §2º · Art. 9º, §4º</td>
+      </tr>
+      <tr style="background:#f5f3ff;">
+        <td rowspan="4"><strong style="color:#7c3aed;">Seção 2<br>Cadastramento Completo</strong></td>
+        <td><strong style="color:#92400e;">🏦 BNDES — CFI</strong><br><small>bndes.gov.br (só 2028-A)</small></td>
+        <td>Credenciamento de nacionalização — Etapa 1 (4 rotas)</td>
+        <td>Antes da assinatura do CRCAP</td>
+        <td>Portaria MME 136/2026 — Art. 10, §§1º e 2º (Cap. IV)</td>
+      </tr>
+      <tr style="background:#f5f3ff;">
+        <td><strong style="color:#1e40af;">🔌 ANEEL</strong><br><small>aneel.gov.br</small></td>
+        <td>Pedido de outorga + docs jurídicos + docs técnicos + licença ambiental + contratos de acesso + Declaração de Atendimento</td>
+        <td>Após o leilão (conforme Edital)</td>
+        <td>REN ANEEL 1.161/2026 — Art. 8º e Anexos I, II e III</td>
+      </tr>
+      <tr style="background:#f5f3ff;">
+        <td><strong style="color:#6b21a8;">⚡ ONS</strong><br><small>ons.org.br</small></td>
+        <td>Parecer de Acesso, CUST + CCT, Temporada de Acesso (DPA)</td>
+        <td>Conforme cronograma do leilão</td>
+        <td>Portaria MME 136/2026 — Anexo I, Art. 4º, §§14-15; Art. 1º incisos XIII e XIX</td>
+      </tr>
+      <tr style="background:#f5f3ff;">
+        <td><strong style="color:#9f1239;">🏛️ CCEE</strong><br><small>ccee.org.br</small></td>
+        <td>Garantia de Fiel Cumprimento + assinatura CRCAP</td>
+        <td>Após divulgação do resultado (Edital)</td>
+        <td>Portaria MME 136/2026 — Anexo I, Art. 9º, §3º · Art. 1º, inciso XXVIII</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Referências -->
+<div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:1rem 1.1rem;margin-top:1rem;font-size:.79rem;color:#64748b;line-height:1.7;">
+  <strong style="color:#374151;font-size:.83rem;">📄 Documentos de referência deste checklist:</strong><br>
+  <strong>Portaria Normativa MME nº 136, de 1º/06/2026</strong> — DOU 03/06/2026, Ed. 103, Seção 1, p. 98 — Diretrizes e Sistemática para os Leilões LRCAP 2026 (Armazenamento Nacional e Armazenamento)<br>
+  <strong>Resolução Normativa ANEEL nº 1.161, de 2/06/2026</strong> — DOU 24/06/2026, Seção 1 — Requisitos e procedimentos para outorga de autorização de SAE<br>
+  <strong>EPEDE-ERE079/2024</strong> — Nota Técnica EPE/ONS: Requisitos Técnicos Mínimos para Conexão de SAE via Baterias<br>
+  <strong>EPEDE-ENT095/2025, Rev. 4</strong> — Requisitos de Conexão SAE — versão mais recente da Nota Técnica<br>
+  <strong>Portaria GM/MME nº 102, de 22/03/2016</strong> — Habilitação Técnica geral (aplicada por remissão)<br>
+  <strong>Regulamento CFI/BNDES</strong> — Credenciamento de Sistemas Estacionários de Armazenamento de Energia em Baterias<br>
+  <br>
+  <em>Este checklist é de caráter orientativo. Consulte sempre os editais e instruções oficiais publicadas pela ANEEL e EPE.</em>
+  &nbsp;·&nbsp; Atualizado em: <strong>junho/2026</strong>
+</div>
+
+</main>
+
+<footer>
+  Checklist LRCAP 2026 — Baterias &nbsp;|&nbsp; Base: Portaria MME nº 136/2026 · REN ANEEL nº 1.161/2026
+</footer>
+
+<!-- ═══ SIDEBAR DE REFERÊNCIAS ═══ -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header" id="sidebar-header">
+    <span class="sidebar-title" id="sidebar-title">Texto Regulatório</span>
+    <button class="sidebar-close" onclick="closeSidebar()">✕ Fechar</button>
+  </div>
+  <div class="sidebar-body" id="sidebar-body"></div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'lrcap2026_v3';
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+
+  (function init() {
+    const state = loadState();
+    document.querySelectorAll('.item').forEach(item => {
+      const cb = item.querySelector('input[type="checkbox"]');
+      if (!cb) return;
+      if (state[item.id]) { cb.checked = true; item.classList.add('done'); }
+    });
+    updateProgress();
+  })();
+
+  function updateItem(id, cb) {
+    const item = document.getElementById(id);
+    const state = loadState();
+    if (cb.checked) { item.classList.add('done'); state[id] = true; }
+    else { item.classList.remove('done'); delete state[id]; }
+    saveState(state);
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const allItems  = document.querySelectorAll('.item input[type="checkbox"]');
+    const doneItems = document.querySelectorAll('.item input[type="checkbox"]:checked');
+
+    const preItems  = document.querySelectorAll('.item[data-section="pre"] input[type="checkbox"]');
+    const preDone   = document.querySelectorAll('.item[data-section="pre"] input[type="checkbox"]:checked');
+    const posItems  = document.querySelectorAll('.item[data-section="pos"] input[type="checkbox"]');
+    const posDone   = document.querySelectorAll('.item[data-section="pos"] input[type="checkbox"]:checked');
+
+    const total = allItems.length;
+    const done  = doneItems.length;
+    const pct   = total ? Math.round(done / total * 100) : 0;
+
+    const prePct = preItems.length ? Math.round(preDone.length / preItems.length * 100) : 0;
+    const posPct = posItems.length ? Math.round(posDone.length / posItems.length * 100) : 0;
+
+    // geral
+    document.getElementById('fill').style.width  = pct + '%';
+    document.getElementById('pct').textContent   = pct + '%';
+    document.getElementById('done-count').textContent  = done;
+    document.getElementById('total-count').textContent = total;
+
+    // section counters in sticky bar
+    document.getElementById('done-pre').textContent  = preDone.length;
+    document.getElementById('total-pre').textContent = preItems.length;
+    document.getElementById('done-pos').textContent  = posDone.length;
+    document.getElementById('total-pos').textContent = posItems.length;
+
+    // section banners
+    document.getElementById('fill-pre').style.width  = prePct + '%';
+    document.getElementById('pct-pre').textContent   = prePct + '% concluído';
+    document.getElementById('label-pre').textContent = preDone.length + ' / ' + preItems.length + ' itens';
+
+    document.getElementById('fill-pos').style.width  = posPct + '%';
+    document.getElementById('pct-pos').textContent   = posPct + '% concluído';
+    document.getElementById('label-pos').textContent = posDone.length + ' / ' + posItems.length + ' itens';
+  }
+
+  function togglePhase(id) {
+    const body   = document.getElementById('body-' + id);
+    const toggle = document.getElementById('toggle-' + id);
+    const open   = body.style.display !== 'none';
+    body.style.display = open ? 'none' : 'block';
+    toggle.textContent = open ? '▶' : '▼';
+  }
+
+  /* ════════════════════════════════════════════════════
+     REFS — textos dos artigos das normas regulatórias
+  ════════════════════════════════════════════════════ */
+  const REFS = {
+    /* ── Portaria MME nº 136/2026 ─────────────────── */
+    'p136-art3-pu': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 3º, parágrafo único',
+      titulo: 'Datas dos leilões',
+      texto: 'Os leilões LRCAP de 2026 ocorrerão nas seguintes datas: I – LRCAP de 2026 – Armazenamento Nacional (Produto Potência Armazenamento 2028 A): 02 de dezembro de 2026; II – LRCAP de 2026 – Armazenamento (Produto Potência Armazenamento 2028 B): 04 de dezembro de 2026.'
+    },
+    'p136-art4-s3': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 4º, §3º',
+      titulo: 'Compromisso de entrega — 4 horas por ciclo',
+      texto: 'O compromisso de entrega da disponibilidade de potência máxima é de quatro horas por ciclo completo, com até dois ciclos completos diários, limitado a 366 ciclos completos anuais, sendo que cada ciclo completo consiste na descarga integral da disponibilidade de potência comprometida, por quatro horas consecutivas, com recarga subsequente.'
+    },
+    'p136-art4-s10': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 4º, §10',
+      titulo: 'Tempo máximo de recarga completa — 6 horas',
+      texto: 'Os SAEs deverão possuir capacidade para realizar recarga completa, de 0% a 100% da disponibilidade contratada, em um intervalo máximo de seis horas, incluindo-se nesse intervalo eventuais tempos de repouso inerentes ao ciclo de operação das baterias.'
+    },
+    'p136-art4-s11': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 4º, §11',
+      titulo: 'Recargas parciais',
+      texto: 'Serão permitidas recargas parciais e o tempo máximo admissível de recarga deverá ser proporcional à fração da disponibilidade contratada a ser recomposta, observado o limite máximo de seis horas para a recarga completa previsto no §10.'
+    },
+    'p136-art4-s13': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 4º, §13',
+      titulo: 'Requisitos técnicos mínimos e grid-forming',
+      texto: 'Os SAEs deverão manter disponíveis e de forma contínua os recursos estabelecidos na Nota Técnica do ONS e da EPE referente aos Requisitos Técnicos Mínimos para a Conexão de Sistemas de Armazenamento de Energia via Baterias e suas revisões, inclusive quanto às funcionalidades de grid-forming, mesmo quando não estiverem em processo de carga ou descarga.'
+    },
+    'p136-art6-caput': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 6º, caput',
+      titulo: 'Cadastramento e Habilitação Técnica na EPE',
+      texto: 'Os empreendedores que pretenderem propor a inclusão de projetos de SAEs no LRCAP de 2026 deverão requerer o Cadastramento e a Habilitação Técnica dos respectivos projetos à EPE, encaminhando a Ficha de Dados constante do Sistema de Acompanhamento de Empreendimentos de Geração de Energia — AEGE e demais documentos, conforme instruções disponíveis na internet, no sítio www.epe.gov.br.'
+    },
+    'p136-art6-s1': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 6º, §1º',
+      titulo: 'Prazo para Cadastramento na EPE',
+      texto: 'O prazo para Cadastramento e entrega de documentos se iniciará às doze horas de 15 de junho de 2026 até às doze horas de 31 de julho de 2026.'
+    },
+    'p136-art6-s2': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 6º, §2º',
+      titulo: 'Dispensa de Licença Ambiental na fase EPE',
+      texto: 'Excepcionalmente, no âmbito do LRCAP de 2026, fica dispensada a apresentação de documentação relativa ao licenciamento ambiental junto à EPE durante o período de Cadastramento, não sendo considerado requisito para a Habilitação Técnica a apresentação de Licença Prévia – LP, Licença de Instalação – LI ou Licença de Operação – LO do SAE.'
+    },
+    'p136-art6-s3': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 6º, §3º',
+      titulo: 'Prazo para licenciamento ambiental — Edital',
+      texto: 'O Edital definirá o prazo para obtenção do licenciamento ambiental dos SAEs que se sagrarem vencedores no certame.'
+    },
+    'p136-art7-ii': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, inciso II',
+      titulo: 'Causa de não habilitação — CVU > 0',
+      texto: 'Não serão habilitados tecnicamente: II – SAEs cujo Custo Variável Unitário – CVU seja superior a zero.'
+    },
+    'p136-art7-iii': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, inciso III',
+      titulo: 'Causa de não habilitação — potência < 30 MW',
+      texto: 'Não serão habilitados tecnicamente: III – SAEs com disponibilidade de potência máxima inferior a 30 MW.'
+    },
+    'p136-art7-iv': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, inciso IV',
+      titulo: 'Causa de não habilitação — operação contínua < 4 horas',
+      texto: 'Não serão habilitados tecnicamente: IV – SAEs com capacidade de operação contínua com disponibilidade de potência máxima inferior a 4 (quatro) horas consecutivas.'
+    },
+    'p136-art7-v': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, inciso V',
+      titulo: 'Causa de não habilitação — capacidade remanescente insuficiente',
+      texto: 'Não serão habilitados tecnicamente: V – empreendimentos cujo Barramento Candidato, conforme definido no ANEXO I desta Portaria, tenha capacidade remanescente para escoamento inferior à respectiva potência injetada e à necessária para a recarga.'
+    },
+    'p136-art7-vi': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, inciso VI',
+      titulo: 'Causa de não habilitação — RTE < 85%',
+      texto: 'Não serão habilitados tecnicamente: VI – SAEs cuja eficiência total (Roundtrip Efficiency – RTE) seja inferior a 85% referenciada ao Ponto de Medição Individual – PMI, ao longo do horizonte contratual.'
+    },
+    'p136-art7-vii': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, inciso VII',
+      titulo: 'Causa de não habilitação — recarga > 6 horas',
+      texto: 'Não serão habilitados tecnicamente: VII – SAEs com tempo máximo de recarga completa superior a seis horas consecutivas.'
+    },
+    'p136-art7-viii': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, inciso VIII',
+      titulo: 'Causa de não habilitação — requisitos técnicos mínimos',
+      texto: 'Não serão habilitados tecnicamente: VIII – SAEs que não atendam aos requisitos mínimos para a conexão definidos na Nota Técnica do ONS e da EPE de Requisitos Técnicos Mínimos para a Conexão de Sistemas de Armazenamento de Energia via Baterias e suas revisões, incluindo os requisitos de grid-forming.'
+    },
+    'p136-art7-ix': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, inciso IX',
+      titulo: 'Causa de não habilitação — segurança operacional',
+      texto: 'Não serão habilitados tecnicamente: IX – SAEs que não atestem conformidade com os requisitos de segurança operacional exigidos pelas normas aplicáveis, bem como nas instruções de Cadastramento da EPE.'
+    },
+    'p136-art7-s2': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 7º, §2º',
+      titulo: 'Exigência de baterias novas',
+      texto: 'O empreendedor deverá empregar baterias novas, cabendo ao Edital disciplinar a matéria ou estabelecer disposições a respeito.'
+    },
+    'p136-art9-s2': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 9º, §2º',
+      titulo: 'Prazo do CRCAP — 15 anos',
+      texto: 'Serão negociados CRCAPs com prazo de suprimento de: I – quinze anos para o Produto Potência Armazenamento 2028 A (LRCAP de 2026 – Armazenamento Nacional); II – quinze anos para o Produto Potência Armazenamento 2028 B (LRCAP de 2026 – Armazenamento).'
+    },
+    'p136-art9-s3': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 9º, §3º',
+      titulo: 'Início de suprimento — 1º de agosto de 2028',
+      texto: 'O início de suprimento dos CRCAPs ocorrerá: I – em 1º de agosto de 2028, para o Produto Potência Armazenamento 2028 A (LRCAP de 2026 – Armazenamento Nacional); II – em 1º de agosto de 2028, para o Produto Potência Armazenamento 2028 B (LRCAP de 2026 – Armazenamento).'
+    },
+    'p136-art9-s4-ii': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 9º, §4º, inciso II',
+      titulo: 'Composição da Receita Fixa',
+      texto: 'A Receita Fixa deverá cobrir: a) custo e remuneração de investimento; b) custos de conexão ao Sistema de Transmissão e de Distribuição; c) CUST/CUSD (custo do uso do sistema); d) custos de operação e manutenção (O&M); e) reinvestimentos no empreendimento, em especial a troca de módulos de baterias e novos inversores; f) seguros e garantias; g) tributos e encargos diretos e indiretos; h) encargos setoriais pela energia consumida e injetada no sistema; i) custos de descomissionamento e descarte ambiental das baterias.'
+    },
+    'p136-art9-s13': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 9º, §13',
+      titulo: 'Contratação de MUST/MUSD para descarga e recarga',
+      texto: 'É exigida a contratação de Montantes de Uso do Sistema de Transmissão ou de Distribuição para permitir a descarga e a recarga total do SAE, conforme regulamentação da ANEEL.'
+    },
+    'p136-art9-s14': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 9º, §14',
+      titulo: 'Garantias — regras diferenciadas por Edital',
+      texto: 'A ANEEL poderá disciplinar em Edital regras diferenciadas para o aporte de garantias entre os Leilões, incluindo a possibilidade de aplicação de regimes distintos para o Produto Potência Armazenamento 2028 A e para o Produto Potência Armazenamento 2028 B.'
+    },
+    'p136-art10-caput': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 10, caput',
+      titulo: 'Requisito mínimo de nacionalização (Produto 2028-A)',
+      texto: 'Para os empreendimentos participantes do Produto Potência Armazenamento 2028 A do LRCAP de 2026 – Armazenamento Nacional, deverão ser comprovados os requisitos mínimos de nacionalização do SAE, conforme regulamento de credenciamento de Sistemas Estacionários de Armazenamento de Energia em Baterias publicado pelo BNDES no Sistema CFI.'
+    },
+    'p136-art10-s1': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 10, §1º',
+      titulo: 'Certidão BNDES condiciona assinatura do CRCAP',
+      texto: 'A assinatura do CRCAP ficará condicionada à apresentação, perante a ANEEL, de documentação comprobatória, emitida pelo BNDES, do credenciamento do SAE em baterias no CFI do BNDES, referente à Etapa 1 do credenciamento.'
+    },
+    'p136-art10-s2': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 10, §2º',
+      titulo: 'Quatro rotas de credenciamento — Etapa 1',
+      texto: 'Os requisitos mínimos de nacionalização referem-se à Etapa 1, sendo possível optar por uma das quatro rotas de credenciamento previstas nesta Etapa, conforme o Regulamento de Credenciamento publicado pelo BNDES.'
+    },
+    'p136-art10-s3': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 10, §3º',
+      titulo: 'Comprovação de uso do SAE credenciado na fase de implantação',
+      texto: 'Durante a fase de implantação, o empreendedor deverá comprovar, no BNDES, a utilização do SAE em baterias devidamente credenciado no Sistema CFI do BNDES, nas datas estabelecidas pela ANEEL.'
+    },
+    'p136-art10-s4': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 10, §4º',
+      titulo: 'Penalidade por não comprovação — extinção do CRCAP',
+      texto: 'A não comprovação do disposto no §3º ensejará penalidades editalícias, implicando a extinção do CRCAP celebrado com a CCEE.'
+    },
+    'p136-art10-s5': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 10, §5º',
+      titulo: 'Credenciamento CFI não obriga financiamento do BNDES',
+      texto: 'O credenciamento CFI não obriga a utilização de recursos de financiamento do BNDES para os empreendimentos participantes do certame. O empreendedor poderá buscar outras fontes de financiamento, desde que o SAE esteja devidamente credenciado no Sistema CFI.'
+    },
+    'p136-art11-s1': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 11, §1º',
+      titulo: 'Dispensa do Parecer de Acesso para Habilitação Técnica EPE',
+      texto: 'Fica dispensada a apresentação do Parecer de Acesso ou documento equivalente junto à EPE para fins de Habilitação Técnica, para os empreendimentos cuja potência elétrica será objeto de CRCAP, quando o Ponto de Conexão do Empreendimento ao SIN se enquadrar como Instalação de Rede Básica, Demais Instalações de Transmissão – DIT ou Instalação de Transmissão de Interesse Exclusivo de Centrais de Geração para Conexão Compartilhada – ICG.'
+    },
+    'p136-art11-s2': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 11, §2º',
+      titulo: 'Vedação de alteração do ponto de conexão após Cadastramento',
+      texto: 'Não serão permitidas, para fins de Habilitação Técnica, alterações do Ponto de Conexão do empreendimento ao SIN indicado no ato do Cadastramento.'
+    },
+    'p136-art11-s4': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 11, §4º',
+      titulo: 'Nota Técnica de Quantitativos do ONS — publicação até 30/09/2026',
+      texto: 'A Nota Técnica de Quantitativos da Capacidade Remanescente do SIN para Escoamento deverá ser publicada pelo ONS até 30 de setembro de 2026.'
+    },
+    'p136-art17-s2': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 17, §2º',
+      titulo: 'Barramentos bonificados — Anexo II',
+      texto: 'Os pontos de conexão ao SIN cujas implantações de novos SAEs proporcionam benefícios sistêmicos adicionais, com redução do preço de disponibilidade de potência, estão referidos no ANEXO II desta Portaria (subestações localizadas em AL, BA, CE, MG, PB, PE, PI e RN).'
+    },
+    'p136-art17-s3': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Art. 17, §3º',
+      titulo: 'Bonificação de localização — fator ß = 0,9',
+      texto: 'Os SAEs, quando conectados aos pontos de conexão descritos no ANEXO II, farão jus, em relação aos demais empreendimentos, à redução do preço de disponibilidade de potência, mediante a aplicação de uma constante de bonificação de localização (ß) de 0,9 (nove décimos).'
+    },
+    'p136-anx-art1-xiii': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 1º, inciso XIII',
+      titulo: 'Definição de Diagnóstico Prévio de Acesso (DPA)',
+      texto: 'DIAGNÓSTICO PRÉVIO DE ACESSO (DPA): documento a ser emitido pelo ONS aos agentes que obtiverem sucesso na TEMPORADA DE ACESSO, que viabilizará a assinatura do Contrato de Uso do Sistema de Transmissão – CUST.'
+    },
+    'p136-anx-art1-xix': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 1º, inciso XIX',
+      titulo: 'Definição de Empreendimento com Contrato de Uso e Conexão',
+      texto: 'EMPREENDIMENTO COM CONTRATO DE USO E CONEXÃO: empreendimento que tenha celebrado e apresentado, quando da Habilitação Técnica junto à EPE, os seguintes Contratos: a) CUST e CCT, para o acesso à Rede Básica; ou b) CUSD e CCD ou CCT, para o acesso aos Sistemas de Distribuição.'
+    },
+    'p136-anx-art1-xxviii': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 1º, inciso XXVIII',
+      titulo: 'Definição de Garantias de Fiel Cumprimento',
+      texto: 'GARANTIAS DE FIEL CUMPRIMENTO: garantias prestadas pelos VENCEDORES do LEILÃO, em favor da CCEE, na forma e nos valores estabelecidos no EDITAL, para assegurar o cumprimento das obrigações assumidas no âmbito do CRCAP.'
+    },
+    'p136-anx-art1-xxxvi': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 1º, inciso XXXVI',
+      titulo: 'Definição de Montante de Consumo Interno e Perdas de Potência (DP)',
+      texto: 'MONTANTE DE CONSUMO INTERNO E PERDAS DE POTÊNCIA (DP): quantidade de potência que não poderá ser comercializada no LEILÃO, definida pelo PROPONENTE VENDEDOR para o próprio empreendimento, desde a unidade geradora até a subestação de conexão com a rede, incluindo as perdas internas do SAE durante a descarga.'
+    },
+    'p136-anx-art2-s12': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 2º, §12',
+      titulo: 'Fórmula Pdisp — Preço de Disponibilidade de Potência',
+      texto: 'O Preço de Disponibilidade de Potência (Pdisp) é calculado por: Pdisp = (RFdisp / Disp) × ß, onde RFdisp é a Receita Fixa de Disponibilidade, Disp é a Disponibilidade de Potência Ofertada e ß é a constante de bonificação de localização (ß = 0,9 para subestações do Anexo II; ß = 1 para as demais).'
+    },
+    'p136-anx-art2-s13': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 2º, §13',
+      titulo: 'Receita Fixa — responsabilidade exclusiva do vendedor',
+      texto: 'A RECEITA FIXA, independentemente da quantidade da DISPONIBILIDADE DE POTÊNCIA OFERTADA, é de responsabilidade exclusiva do PROPONENTE VENDEDOR, que assume todos os riscos associados à sua estimativa e à sua suficiência para cobrir os custos do empreendimento ao longo dos 15 anos do contrato.'
+    },
+    'p136-anx-art2-s15': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 2º, §15',
+      titulo: 'Vedação de participação no 2028-B para vencedores do 2028-A',
+      texto: 'O EMPREENDIMENTO que, ao final do LEILÃO denominado LRCAP de 2026 – Armazenamento Nacional, tiver OFERTA ATENDIDA não poderá participar com submissão de LANCE no LEILÃO denominado LRCAP de 2026 – Armazenamento.'
+    },
+    'p136-anx-art3-s2': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 3º, §2º',
+      titulo: 'Validação das Garantias de Proposta antes do leilão',
+      texto: 'A ENTIDADE ORGANIZADORA validará no SISTEMA, antes do início do LEILÃO, as GARANTIAS DE PROPOSTA aportadas pelos PROPONENTES VENDEDORES. Apenas os PROPONENTES VENDEDORES com Garantias de Proposta validadas estarão aptos a participar do LEILÃO.'
+    },
+    'p136-anx-art4-s10': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 4º, §10',
+      titulo: 'Classificação independente da Capacidade Remanescente',
+      texto: 'Serão classificados, independentemente da CAPACIDADE REMANESCENTE DO SIN PARA ESCOAMENTO, os LANCES associados aos EMPREENDIMENTOS COM CONTRATO DE USO E CONEXÃO, que apresentaram CUST + CCT (Rede Básica) ou CUSD + CCD/CCT (Distribuição) devidamente celebrados.'
+    },
+    'p136-anx-art4-s14': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 4º, §14',
+      titulo: 'Etapa Inicial equiparada à Temporada de Acesso',
+      texto: 'A ETAPA INICIAL de que trata o caput será equiparada à TEMPORADA DE ACESSO nos termos do art. 22 da Portaria Normativa MME nº 129, de 24 de abril de 2026.'
+    },
+    'p136-anx-art4-s15': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 4º, §15',
+      titulo: 'Cadastramento em Temporada de Acesso pelos vencedores',
+      texto: 'A equiparação de que trata o §14 somente produzirá efeitos para os vencedores do leilão, os quais deverão realizar cadastramento em TEMPORADA DE ACESSO posterior ao LEILÃO para obtenção do DIAGNÓSTICO PRÉVIO DE ACESSO – DPA, necessário à assinatura do CUST definitivo.'
+    },
+    'p136-anx-art9-s3': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Anexo I — Art. 9º, §3º',
+      titulo: 'Obrigação incondicional de celebração do CRCAP',
+      texto: 'Ao término do LEILÃO, observadas as condições de habilitação estabelecidas pela ANEEL, o PREÇO DE VENDA FINAL obtido pelo VENCEDOR implicará obrigação incondicional de celebração dos respectivos CRCAP, entre cada um dos VENCEDORES e a CCEE, no prazo estabelecido no EDITAL.'
+    },
+    'p136-capv': {
+      doc: 'Portaria MME nº 136/2026', tipo: 'port',
+      art: 'Capítulo V',
+      titulo: 'Da Divulgação dos Resultados e Celebração dos CRCAPs',
+      texto: 'Após a divulgação dos resultados do leilão, os vencedores terão prazo definido no Edital para aportar as Garantias de Fiel Cumprimento e assinar o CRCAP com a CCEE. Para o Produto 2028-A, a assinatura do CRCAP está condicionada à apresentação da certidão de credenciamento CFI do BNDES junto à ANEEL.'
+    },
+
+    /* ── REN ANEEL nº 1.161/2026 ──────────────────── */
+    'ren-art4-caput': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 4º, caput',
+      titulo: 'Solicitação de DRO-SAE ou outorga',
+      texto: 'Empresas que pretendam explorar SAE podem solicitar à ANEEL o registro do requerimento de outorga (DRO-SAE), por meio do representante legal, mediante apresentação dos documentos do Anexo I desta Resolução Normativa.'
+    },
+    'ren-art4-s2': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 4º, §2º',
+      titulo: 'Regularidade fiscal durante a vigência da outorga',
+      texto: 'O interessado deve manter regularidade fiscal perante contribuições previdenciárias, FGTS e Fazendas Municipal, Estadual e Federal durante a instrução e a vigência da outorga.'
+    },
+    'ren-art5-ss': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 5º, §§1º a 4º',
+      titulo: 'DRO-SAE — características e facultatividade',
+      texto: '§1º O DRO-SAE tem como objetivo facilitar: I – a obtenção de licenças ambientais; II – o atendimento a exigências de órgãos públicos ou agentes financiadores; III – a apresentação de documentos necessários à fase de outorga.\n§2º O DRO-SAE não garante direito de preferência, exclusividade ou obtenção da outorga.\n§3º A solicitação do DRO-SAE é facultativa, podendo o interessado requerer diretamente a outorga conforme o Capítulo III.\n§4º O DRO-SAE terá validade de 4 (quatro) anos, sem prorrogação, e perderá vigência automaticamente independentemente de manifestação da ANEEL.'
+    },
+    'ren-art7-caput': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 7º',
+      titulo: 'Conexão ao sistema elétrico — requisitos',
+      texto: 'O SAE somente poderá ser conectado ao sistema elétrico após a celebração dos contratos de conexão e uso da rede elétrica, conforme regulamentação da ANEEL, quando couber, e a emissão da outorga.'
+    },
+    'ren-art7-pu': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 7º, parágrafo único',
+      titulo: 'Operação em teste ou comercial — REN 1.029/2022',
+      texto: 'A conexão a que se refere o caput não implica liberação para operação em teste ou comercial, sendo necessário atender aos requisitos previstos na Resolução Normativa ANEEL nº 1.029, de 25 de julho de 2022.'
+    },
+    'ren-art8-caput': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 8º',
+      titulo: 'Pedido de outorga de autorização',
+      texto: 'A outorga de autorização para exploração de SAE deverá ser requerida à ANEEL pelo representante legal da empresa, mediante apresentação dos documentos listados nos Anexos I e II desta Resolução Normativa, por meio do sistema informatizado disponível no sítio da ANEEL na internet.'
+    },
+    'ren-art8-s2': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 8º, §2º',
+      titulo: 'Vigência da outorga — 35 anos',
+      texto: 'As outorgas de autorização terão vigência de 35 (trinta e cinco) anos, contados da data de suas publicações no Diário Oficial da União.'
+    },
+    'ren-art11-caput': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 11, caput',
+      titulo: 'Prazo de implantação — 54 meses',
+      texto: 'Os atos autorizativos fixarão prazo limite de 54 (cinquenta e quatro) meses para entrada em operação comercial de todas as unidades armazenadoras de energia, contado da data de publicação do ato de outorga.'
+    },
+    'ren-art11-s1': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 11, §1º',
+      titulo: 'Marcos intermediários de implantação (SAEs > 5.000 kW)',
+      texto: 'Para empreendimentos cuja potência instalada for superior a 5.000 kW, os marcos intermediários de implantação serão acompanhados pela área de fiscalização e deverão ser informados pelo interessado por meio do sistema de acompanhamento de obras da fiscalização da ANEEL.'
+    },
+    'ren-art13-s3': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 13, §3º',
+      titulo: 'Dispensa da condição de início de obras — SAEs do ACR',
+      texto: 'Estão dispensados de atender as condições previstas no caput (comprovação de início de obras para prorrogação de prazo) pedidos referentes a SAE que comercializaram energia em leilões do ambiente de contratação regulado.'
+    },
+    'ren-art19': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Art. 19',
+      titulo: 'Responsabilidade técnica — engenheiro com CREA regular',
+      texto: 'As informações técnicas referidas na documentação encaminhada, em todas as suas partes, são de responsabilidade do engenheiro cuja inscrição no Conselho Regional de Engenharia e Agronomia (Crea) deve se manter regular durante toda a vigência da outorga.'
+    },
+    'ren-anx1-1': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo I — item 1',
+      titulo: 'Documento necessário ao DRO-SAE: Formulário de Requerimento de Outorga',
+      texto: 'Formulário de Requerimento de Outorga: documento padrão disponibilizado pela ANEEL no seu sítio na internet, a ser preenchido e assinado pelo representante legal da empresa interessada na obtenção do DRO-SAE.'
+    },
+    'ren-anx1-2': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo I — item 2',
+      titulo: 'Documento necessário ao DRO-SAE: Declaração de Atendimento',
+      texto: 'Declaração de Atendimento, nos termos do Anexo III desta Resolução Normativa, assinada pelo representante legal, declarando o cumprimento dos requisitos legais e regulatórios aplicáveis ao empreendimento.'
+    },
+    'ren-anx2-1': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 1',
+      titulo: 'Qualificação Jurídica: certidões de regularidade fiscal',
+      texto: 'Comprovação de regularidade fiscal para com o FGTS e para com as Fazendas Municipal, Estadual e Federal do domicílio ou sede do interessado. As certidões devem estar válidas na data de protocolo do requerimento e mantidas durante toda a instrução e vigência da outorga (cf. Art. 4º, §2º).'
+    },
+    'ren-anx2-2': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 2',
+      titulo: 'Qualificação Jurídica: organograma do grupo societário',
+      texto: 'Organograma contendo: 2.1 – participações diretas e indiretas até o nível final; 2.2 – todo tipo de participação superior a 5%, inclusive minoritária; 2.3 – participações inferiores a 5% quando o acionista integra Grupo de Controle por Acordo de Acionistas; 2.4 – sinalização dos controladores societários diretos conforme REN 948/2021, Anexo III, Art. 3º, III; nome/razão social e CNPJ de cada participante. Dispensado se requerente tiver cadastro atualizado na ANEEL conforme REN 948/2021, Anexo II, Módulo II, Art. 4º (subitem 2.5).'
+    },
+    'ren-anx2-3': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 3',
+      titulo: 'Qualificação Jurídica: ato constitutivo / estatuto / contrato social',
+      texto: 'Ato constitutivo, estatuto ou contrato social em vigor, devidamente registrado no órgão competente, acompanhado do ato que instituiu a atual administração. O objeto social deve contemplar atividades vinculadas à autorização, nos termos do Art. 2º, §2º da Lei 6.404/1976 (subitem 3.1).'
+    },
+    'ren-anx2-4': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 4',
+      titulo: 'Qualificação Jurídica: comprovação de representação legal',
+      texto: 'Comprovação de representação legal da pessoa que assina os requerimentos, demonstrando que o signatário está devidamente autorizado a representar a empresa requerente perante a ANEEL.'
+    },
+    'ren-anx2-5': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 5',
+      titulo: 'Qualificação Jurídica: contrato de constituição de consórcio',
+      texto: 'Contrato de Constituição de Consórcio, se for o caso, firmado por instrumento público ou particular (Lei 6.404/1976, Art. 279; Lei 8.666/1993, Art. 33). Deve conter: 5.1 – participação percentual de cada empresa consorciada; 5.2 – designação da empresa líder responsável perante a ANEEL.'
+    },
+    'ren-anx2-6': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 6',
+      titulo: 'Qualificação Técnica: Arranjo Geral georreferenciado',
+      texto: 'Arranjo Geral do empreendimento contendo a delimitação da poligonal do sistema de armazenamento de energia, e rede de interesse restrito do armazenador, partindo da subestação coletora da central até o ponto de conexão, no formato estabelecido no sítio da ANEEL, na internet. Assinado pelo engenheiro responsável com inscrição CREA regular (Art. 19).'
+    },
+    'ren-anx2-7': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 7',
+      titulo: 'Qualificação Técnica: estudo técnico de estimativa de injeção anual',
+      texto: 'Estudo técnico contendo a estimativa de injeção anual de energia elétrica associada ao empreendimento, com base nos critérios de projeto do sistema de armazenamento de energia, incluindo: o perfil de operação previsto; a eficiência global do sistema (RTE); a potência de descarga; a capacidade de armazenamento (MWh); bem como a descrição da tecnologia e dos equipamentos adotados.'
+    },
+    'ren-anx2-11': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 11',
+      titulo: 'Documentos para Outorga: licença ambiental',
+      texto: 'Licença ambiental (LP, LI ou LO, conforme a fase de desenvolvimento do empreendimento) expedida pelo órgão ambiental competente. Nota: dispensada na fase de Habilitação Técnica EPE (cf. Portaria MME 136/2026, Art. 6º, §2º), mas obrigatória para emissão da outorga pela ANEEL.'
+    },
+    'ren-anx2-12': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 12',
+      titulo: 'Documentos para Outorga: contratos de uso do sistema',
+      texto: 'CUST celebrado junto ao ONS e, no caso de acesso às Demais Instalações de Transmissão – DIT ou às instalações de distribuição, o Contrato de Uso do Sistema de Distribuição – CUSD celebrado com a concessionária ou permissionária de distribuição de energia elétrica.\nSubitem 12.1: O correspondente parecer de acesso, ou documento equivalente, deve ser encaminhado junto do contrato de uso da rede elétrica.'
+    },
+    'ren-anx2-13': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 13',
+      titulo: 'Documentos para Outorga: Sumário Executivo',
+      texto: 'Sumário Executivo para emissão de outorga, documento resumindo as características técnicas e empresariais do empreendimento para análise e publicação pela ANEEL, no formato disponibilizado no sítio da ANEEL na internet.'
+    },
+    'ren-anx2-14': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo II — item 14',
+      titulo: 'Documentos para Outorga: Declaração de Atendimento (Anexo III)',
+      texto: 'Declaração de Atendimento, nos termos do Anexo III desta Resolução Normativa. Assinada pelo representante legal, declarando: (1) propriedade/posse da área de implantação; (2) responsável técnico com CREA regular; (3a) ciência dos critérios de individualização de empreendimentos adjacentes (Art. 13, REN 1.071/2023); (3b) proibição de implantação na ADS (REN 1.055/2022); (3c) regras de alteração técnica (Art. 15, REN 1.071/2023); (3d) sujeição à fiscalização da ANEEL após a outorga.'
+    },
+    'ren-anx3': {
+      doc: 'REN ANEEL nº 1.161/2026', tipo: 'ren',
+      art: 'Anexo III — Declaração de Atendimento (modelo completo)',
+      titulo: 'Declaração de Atendimento — modelo completo',
+      texto: 'O declarante, representante legal da empresa requerente, declara, sob as penas da lei (responsabilidade civil, penal — Art. 299 do Código Penal — e administrativa): (1) Que o requerente tem propriedade, posse direta ou usufruto da área de implantação da central; (2) Que existe responsável técnico pelo empreendimento com inscrição no CREA em situação regular; (3) Que está ciente: (a) dos critérios de individualização de empreendimentos adjacentes — Art. 13, REN 1.071/2023; (b) da proibição de implantação na Área de Desenvolvimento de Subestação – ADS — REN 1.055/2022; (c) das regras de alteração de características técnicas — Art. 15, REN 1.071/2023; (d) de que os documentos apresentados estão sujeitos à fiscalização da ANEEL inclusive após a emissão da outorga.'
+    }
+  };
+
+  /* ── Mapeamento padrão-de-texto → chaves REFS ──── */
+  const FONTE_MAP = [
+    /* Portaria MME 136/2026 */
+    { p: 'Art. 3º, parágrafo único',         k: ['p136-art3-pu'] },
+    { p: 'Art. 3º, §único',                  k: ['p136-art3-pu'] },
+    { p: 'Art. 4º, §3º',                     k: ['p136-art4-s3'] },
+    { p: 'Art. 4º, §10',                     k: ['p136-art4-s10'] },
+    { p: 'Art. 4º, §11',                     k: ['p136-art4-s11'] },
+    { p: 'Art. 4º, §13',                     k: ['p136-art4-s13'] },
+    { p: 'Art. 6º, caput',                   k: ['p136-art6-caput'] },
+    { p: 'Art. 6º, §1º',                     k: ['p136-art6-s1'] },
+    { p: 'Art. 6º, §2º',                     k: ['p136-art6-s2'] },
+    { p: 'Art. 6º, §3º',                     k: ['p136-art6-s3'] },
+    { p: 'Art. 7º, inciso II',               k: ['p136-art7-ii'] },
+    { p: 'Art. 7º, inciso III',              k: ['p136-art7-iii'] },
+    { p: 'Art. 7º, inciso IV',               k: ['p136-art7-iv'] },
+    { p: 'Art. 7º, inciso V',               k: ['p136-art7-v'] },
+    { p: 'Art. 7º, inciso VI',               k: ['p136-art7-vi'] },
+    { p: 'Art. 7º, inciso VII',              k: ['p136-art7-vii'] },
+    { p: 'Art. 7º, inciso VIII',             k: ['p136-art7-viii'] },
+    { p: 'Art. 7º, inciso IX',               k: ['p136-art7-ix'] },
+    { p: 'Art. 7º, §2º',                     k: ['p136-art7-s2'] },
+    { p: 'Art. 9º, §§2º e 3º',              k: ['p136-art9-s2','p136-art9-s3'] },
+    { p: 'Art. 9º, §§1º e 2º',              k: ['p136-art9-s2'] },
+    { p: 'Art. 9º, §2º',                     k: ['p136-art9-s2'] },
+    { p: 'Art. 9º, §3º',                     k: ['p136-art9-s3'] },
+    { p: 'Art. 9º, §4º, inciso II',          k: ['p136-art9-s4-ii'] },
+    { p: 'Art. 9º, §13',                     k: ['p136-art9-s13'] },
+    { p: 'Art. 9º, §14',                     k: ['p136-art9-s14'] },
+    { p: 'Art. 10, caput',                   k: ['p136-art10-caput'] },
+    { p: 'Art. 10, §1º',                     k: ['p136-art10-s1'] },
+    { p: 'Art. 10, §2º',                     k: ['p136-art10-s2'] },
+    { p: 'Art. 10, §3º',                     k: ['p136-art10-s3'] },
+    { p: 'Art. 10, §4º',                     k: ['p136-art10-s4'] },
+    { p: 'Art. 10, §5º',                     k: ['p136-art10-s5'] },
+    { p: 'Art. 11, §1º',                     k: ['p136-art11-s1'] },
+    { p: 'Art. 11, §2º',                     k: ['p136-art11-s2'] },
+    { p: 'Art. 11, §4º',                     k: ['p136-art11-s4'] },
+    { p: 'Art. 17, §§2º e 3º',              k: ['p136-art17-s2','p136-art17-s3'] },
+    { p: 'Art. 17, §2º',                     k: ['p136-art17-s2'] },
+    { p: 'Art. 17, §3º',                     k: ['p136-art17-s3'] },
+    { p: 'inciso XIII (definição de DPA)',   k: ['p136-anx-art1-xiii'] },
+    { p: 'Art. 1º, inciso XIII',             k: ['p136-anx-art1-xiii'] },
+    { p: 'inciso XIX',                       k: ['p136-anx-art1-xix'] },
+    { p: 'inciso XXVIII',                    k: ['p136-anx-art1-xxviii'] },
+    { p: 'inciso XXXVI',                     k: ['p136-anx-art1-xxxvi'] },
+    { p: 'Art. 2º, §12',                     k: ['p136-anx-art2-s12'] },
+    { p: 'Art. 2º, §13',                     k: ['p136-anx-art2-s13'] },
+    { p: 'Art. 2º, §15',                     k: ['p136-anx-art2-s15'] },
+    { p: 'Art. 3º, §2º',                     k: ['p136-anx-art3-s2'] },
+    { p: 'Art. 4º, §10',                     k: ['p136-anx-art4-s10'] },
+    { p: 'Art. 4º, §14',                     k: ['p136-anx-art4-s14'] },
+    { p: 'Art. 4º, §15',                     k: ['p136-anx-art4-s15'] },
+    { p: 'Art. 9º, §3º',                     k: ['p136-anx-art9-s3'] },
+    { p: 'Capítulo V',                       k: ['p136-capv'] },
+    /* REN ANEEL 1.161/2026 */
+    { p: 'Art. 4º, caput',                   k: ['ren-art4-caput'] },
+    { p: 'Art. 4º, §2º',                     k: ['ren-art4-s2'] },
+    { p: 'Art. 5º, §§1º a 6º',              k: ['ren-art5-ss'] },
+    { p: 'Art. 5º, §§1º',                    k: ['ren-art5-ss'] },
+    { p: 'Art. 7º (conexão',                 k: ['ren-art7-caput'] },
+    { p: 'Art. 7º, parágrafo único',         k: ['ren-art7-pu'] },
+    { p: 'Art. 7º (conexão somente',         k: ['ren-art7-caput'] },
+    { p: 'Art. 8º (pedido',                  k: ['ren-art8-caput'] },
+    { p: 'Art. 8º, §2º',                     k: ['ren-art8-s2'] },
+    { p: 'Art. 8º e Anexos',                 k: ['ren-art8-caput'] },
+    { p: 'Art. 11, caput',                   k: ['ren-art11-caput'] },
+    { p: 'Art. 11 (prazo',                   k: ['ren-art11-caput'] },
+    { p: 'Art. 11, §1º',                     k: ['ren-art11-s1'] },
+    { p: 'Art. 13, §3º',                     k: ['ren-art13-s3'] },
+    { p: 'Art. 19',                          k: ['ren-art19'] },
+    { p: 'Anexo I, item 1',                  k: ['ren-anx1-1'] },
+    { p: 'Anexo I, item 2',                  k: ['ren-anx1-2'] },
+    { p: 'Anexo II, item 1',                 k: ['ren-anx2-1'] },
+    { p: 'Anexo II, item 2',                 k: ['ren-anx2-2'] },
+    { p: 'Anexo II, item 3',                 k: ['ren-anx2-3'] },
+    { p: 'Anexo II, item 4',                 k: ['ren-anx2-4'] },
+    { p: 'Anexo II, item 5',                 k: ['ren-anx2-5'] },
+    { p: 'Anexo II, item 6',                 k: ['ren-anx2-6'] },
+    { p: 'Anexo II, item 7',                 k: ['ren-anx2-7'] },
+    { p: 'Anexo II, item 11',                k: ['ren-anx2-11'] },
+    { p: 'Anexo II, item 12',                k: ['ren-anx2-12'] },
+    { p: 'Anexo II, subitem 12.1',           k: ['ren-anx2-12'] },
+    { p: 'Anexo II, item 13',               k: ['ren-anx2-13'] },
+    { p: 'Anexo II, item 14',               k: ['ren-anx2-14'] },
+    { p: 'Anexo III',                        k: ['ren-anx3'] },
+  ];
+
+  /* ── Sidebar open/close ─────────────────────────── */
+  function openSidebar(el) {
+    const text = el.textContent || '';
+    const matched = new Map();
+    FONTE_MAP.forEach(({ p, k }) => {
+      if (text.includes(p)) {
+        k.forEach(key => {
+          if (REFS[key] && !matched.has(key)) matched.set(key, REFS[key]);
+        });
+      }
+    });
+
+    const body = document.getElementById('sidebar-body');
+    const header = document.getElementById('sidebar-header');
+    const title = document.getElementById('sidebar-title');
+
+    if (matched.size === 0) {
+      body.innerHTML = '<div class="sidebar-empty">Nenhum trecho específico mapeado para esta referência.<br><br>Consulte diretamente o documento regulatório indicado.</div>';
+      title.textContent = 'Texto Regulatório';
+      header.className = 'sidebar-header';
+    } else {
+      let html = '';
+      let hasRen = false, hasPort = false;
+      matched.forEach(ref => {
+        const cls = ref.tipo === 'ren' ? 'ren' : '';
+        if (ref.tipo === 'ren') hasRen = true; else hasPort = true;
+        const textoFormatado = ref.texto.replace(/\n/g, '<br>');
+        html += `
+          <div class="sidebar-ref-block">
+            <div class="sidebar-ref-head ${cls}">
+              <div style="flex:1">
+                <div class="sidebar-ref-art">${ref.art}</div>
+                <div class="sidebar-ref-titulo">${ref.titulo}</div>
+              </div>
+              <span class="sidebar-ref-doc-label ${ref.tipo}">${ref.doc.replace('Portaria MME nº 136/2026','Port. 136/2026').replace('REN ANEEL nº 1.161/2026','REN 1.161/2026')}</span>
+            </div>
+            <div class="sidebar-ref-texto">"${textoFormatado}"</div>
+          </div>`;
+      });
+      body.innerHTML = html;
+
+      if (hasRen && !hasPort) {
+        title.textContent = 'REN ANEEL nº 1.161/2026';
+        header.className = 'sidebar-header sidebar-header-ren';
+      } else {
+        title.textContent = 'Referências Regulatórias';
+        header.className = 'sidebar-header';
+      }
+    }
+
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+
+  /* Adiciona listener de clique em todos os .fonte */
+  document.querySelectorAll('.fonte').forEach(el => {
+    el.addEventListener('click', () => openSidebar(el));
+  });
+</script>
+</body>
+</html>
