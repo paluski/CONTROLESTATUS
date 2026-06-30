@@ -20,6 +20,9 @@
       --shadow: 0 1px 3px rgba(0,0,0,.10);
       --purple: #7c3aed;
       --purple-l: #ede9fe;
+      --teal:   #0d9488;
+      --teal-d: #0f4c44;
+      --teal-l: #ccfbf1;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -470,6 +473,73 @@
     .sidebar-ref-doc-label.ren  { background: #ede9fe; color: #5b21b6; }
     .fonte { cursor: pointer; transition: background .15s; }
     .fonte:hover { background: #bfdbfe; border-color: #93c5fd; }
+
+    /* ── Fundiário (verde) ── */
+    .msb-fun { background: linear-gradient(135deg, #0f4c44 0%, #0d9488 100%); color: #fff; }
+    .phase-header.fun-phase { border-bottom: 3px solid var(--teal); }
+    .phase-num.num-teal   { background: var(--teal); }
+    .dot-teal  { background: var(--teal); }
+    .portal-fun { background: #ccfbf1; color: #0f4c44; }
+    .infobox.infobox-teal {
+      background: var(--teal-l);
+      border-color: #5eead4;
+      color: #0f4c44;
+    }
+    .tag-fun { background: #ccfbf1; color: #0f4c44; }
+    .sidebar-header.sidebar-header-teal { background: linear-gradient(135deg,#0f4c44 0%,#0d9488 100%); }
+
+    /* ── Subtópicos ── */
+    .subtopic-block {
+      margin-top: .55rem;
+      border-left: 3px solid var(--border);
+      padding-left: .85rem;
+    }
+    .subtopic-label {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--gray);
+      margin-bottom: .3rem;
+    }
+    .subtopic-block ul {
+      padding-left: .1rem;
+      list-style: none;
+    }
+    .subtopic-block ul li {
+      font-size: .82rem;
+      color: #374151;
+      padding: .12rem 0 .12rem .9rem;
+      position: relative;
+      line-height: 1.5;
+    }
+    .subtopic-block ul li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--gray);
+      font-weight: 700;
+    }
+    .subtopic-block ul li strong { color: #1e293b; }
+    .subtopic-block ul li em { color: #6b7280; font-style: normal; font-size: .78rem; }
+    .subtopic-warn {
+      font-size: .78rem;
+      background: var(--amber-l);
+      border: 1px solid #fcd34d;
+      border-radius: 5px;
+      padding: .3rem .6rem;
+      color: #92400e;
+      margin-top: .3rem;
+    }
+    .subtopic-ok {
+      font-size: .78rem;
+      background: var(--green-l);
+      border: 1px solid #86efac;
+      border-radius: 5px;
+      padding: .3rem .6rem;
+      color: #14532d;
+      margin-top: .3rem;
+    }
   </style>
 </head>
 <body>
@@ -494,14 +564,18 @@
   <div class="progress-bar"><div class="progress-fill" id="fill" style="width:0%"></div></div>
   <div class="progress-sub">
     <span class="progress-sub-item">
+      <span class="dot dot-teal"></span>
+      <span>Fundiário: <strong id="done-fun">0</strong>/<span id="total-fun">0</span></span>
+    </span>
+    <span class="progress-sub-item">
       <span class="dot dot-blue"></span>
       <span>Pré-Cadastramento: <strong id="done-pre">0</strong>/<span id="total-pre">0</span></span>
     </span>
     <span class="progress-sub-item">
       <span class="dot dot-purple"></span>
-      <span>Cadastramento Completo: <strong id="done-pos">0</strong>/<span id="total-pos">0</span></span>
+      <span>Pós-Leilão: <strong id="done-pos">0</strong>/<span id="total-pos">0</span></span>
     </span>
-    <span style="margin-left:auto;"><span id="done-count">0</span> de <span id="total-count">0</span> itens no total</span>
+    <span style="margin-left:auto;"><span id="done-count">0</span> de <span id="total-count">0</span> itens</span>
   </div>
 </div>
 
@@ -527,6 +601,470 @@
   <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, §2º e §3º (Capítulo II — Do Cadastramento e da Habilitação Técnica)</span></div>
 </div>
 
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║   SEÇÃO 0 — PROCESSO FUNDIÁRIO                     ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="main-section" id="msec-fun">
+
+  <div class="main-section-banner msb-fun">
+    <div class="msb-top">
+      <span class="msb-pill">Seção 0</span>
+      <span class="msb-title">Processo Fundiário — Antes do Pré-Cadastramento</span>
+      <span class="msb-count" id="label-fun">0 / 0 itens</span>
+    </div>
+    <div class="msb-desc">Prospecção, due diligence, documentação cartorária e formalização contratual da área onde o SAE será implantado. Deve estar concluído antes do cadastramento na EPE.</div>
+    <div class="msb-bar-wrap">
+      <div class="msb-bar"><div class="msb-fill" id="fill-fun" style="width:0%"></div></div>
+      <div class="msb-bar-label" id="pct-fun">0% concluído</div>
+    </div>
+  </div>
+
+  <div class="phase" id="phase0">
+    <div class="phase-header fun-phase" onclick="togglePhase('phase0')">
+      <div class="phase-num num-teal">0</div>
+      <div class="phase-title">Processo Fundiário da Área do SAE</div>
+      <span class="phase-portal portal-fun">🏡 Cartório / INCRA / SEMA</span>
+      <span class="phase-toggle" id="toggle-phase0">▼</span>
+    </div>
+    <div class="phase-body" id="body-phase0">
+
+      <div class="infobox infobox-teal">
+        <strong>🏡 Por que o fundiário é crítico para o LRCAP?</strong>
+        A REN ANEEL nº 1.161/2026 exige, na Declaração de Atendimento (Anexo III), que o empreendedor comprove <strong>propriedade, posse direta ou usufruto</strong> da área de implantação. Além disso, a EPE exige, na Ficha de Dados do AEGE, as coordenadas UTM do empreendimento e o Arranjo Geral (poligonal georreferenciada). Iniciar o processo fundiário com antecedência é essencial para cumprir o prazo de cadastramento (31/07/2026).
+        <br><span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo III (Declaração de Atendimento — item 1: propriedade/posse/usufruto) · Anexo II, item 6 (Arranjo Geral georreferenciado)</span>
+      </div>
+
+      <!-- 0.1 Prospecção e Triagem Inicial -->
+      <div class="section">
+        <div class="section-title">0.1 Prospecção e Triagem Inicial do Imóvel</div>
+
+        <div class="item" id="f1" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f1',this)">
+          <div class="item-body">
+            <label class="item-label">Identificação do imóvel candidato e subestação de referência <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Levantamento das propriedades rurais localizadas próximas ao barramento candidato declarado no AEGE.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Informações a registrar</div>
+              <ul>
+                <li><strong>Denominação do imóvel</strong> (nome da fazenda/sítio/gleba)</li>
+                <li><strong>UF e município</strong> de localização</li>
+                <li><strong>Endereço completo</strong>: CEP, logradouro, bairro</li>
+                <li><strong>Área total do imóvel</strong> (em m² e ha)</li>
+                <li><strong>Área necessária para o SAE</strong> (estimada em ha — tipicamente 5–15 ha para 30–100 MW)</li>
+                <li><strong>Subestação de referência candidata</strong>: nome e código ONS</li>
+                <li><strong>Distância do barramento</strong> (em metros) — impacta custo da linha de interesse restrito</li>
+                <li><strong>Orientação em relação à subestação</strong> (N/S/L/O) — viabilidade do traçado</li>
+                <li><strong>Contato do proprietário</strong>: nome/razão social, CNPJ/CPF, telefone</li>
+                <li><strong>Tipo de pessoa</strong>: PF ou PJ</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f2" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f2',this)">
+          <div class="item-body">
+            <label class="item-label">Levantamento fotográfico e croqui da área e arredores <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Registro visual completo para análise interna de viabilidade e aprovação do projeto.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Documentação fotográfica requerida</div>
+              <ul>
+                <li><strong>Croqui e esboço</strong> da área escolhida com dimensões aproximadas</li>
+                <li><strong>Fotos da subestação</strong> de referência (fachada, equipamentos, entorno)</li>
+                <li><strong>Fotos do traçado</strong> da linha de transmissão de interesse restrito</li>
+                <li><strong>Foto do acesso</strong> à área (portão, estrada, vicinais)</li>
+                <li><strong>Foto — Lado Norte</strong> da área</li>
+                <li><strong>Foto — Lado Sul</strong> da área</li>
+                <li><strong>Foto — Lado Leste</strong> da área</li>
+                <li><strong>Foto — Lado Oeste</strong> da área</li>
+                <li><strong>Fotos adicionais</strong> relevantes (vegetação, cursos d'água, obstruções)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 0.2 Due Diligence Técnica e Legal -->
+      <div class="section">
+        <div class="section-title">0.2 Due Diligence da Área — Diagnóstico Técnico e Legal</div>
+
+        <div class="item" id="f3" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f3',this)">
+          <div class="item-body">
+            <label class="item-label">Verificação de embargos ambientais sobre o imóvel <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Imóveis com embargos ambientais não podem ser objeto de financiamento nem de outorga sem regularização prévia.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">O que verificar</div>
+              <ul>
+                <li><strong>Consulta ao SINAFLOR/IBAMA</strong>: embargo do imóvel por desmatamento ilegal</li>
+                <li><strong>Consulta ao Sistema CAR</strong>: situação do Cadastro Ambiental Rural (ativo, pendente, suspenso)</li>
+                <li><strong>Sobreposição com APP</strong> (Área de Preservação Permanente): faixas de 30–200 m de cursos d'água, nascentes, topos de morro</li>
+                <li><strong>Sobreposição com Unidades de Conservação</strong> (UC): zonas de amortecimento e áreas protegidas</li>
+                <li><strong>Reserva Legal</strong>: localização e percentual averbado na matrícula</li>
+                <li><strong>Vegetação nativa</strong>: presença de árvores e indivíduos arbóreos que exigem LP ambiental para supressão</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ Embargos ambientais ativos inviabilizam a obtenção da Licença Ambiental exigida pela ANEEL para emissão da outorga.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f4" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f4',this)">
+          <div class="item-body">
+            <label class="item-label">Verificação de gravames e ônus sobre o imóvel <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Gravames não resolvidos impedem a assinatura de contrato de arrendamento ou compra e venda.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Tipos de gravame a verificar via certidão de ônus reais (matrícula)</div>
+              <ul>
+                <li><strong>Hipoteca</strong>: imóvel dado como garantia de dívida bancária — exige anuência do credor</li>
+                <li><strong>Penhora</strong>: imóvel bloqueado por processo judicial — exige levantamento ou autorização judicial</li>
+                <li><strong>Alienação Fiduciária</strong>: imóvel vinculado a financiamento imobiliário — exige anuência da instituição financeira</li>
+                <li><strong>Usufruto</strong>: terceiro tem direito de uso e gozo — deve constar no contrato</li>
+                <li><strong>Servidão registrada</strong>: passagem, aqueduto ou outra servidão sobre a área</li>
+                <li><strong>Indisponibilidade</strong>: CNPJ/CPF com restrição judicial de alienação de bens</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f5" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f5',this)">
+          <div class="item-body">
+            <label class="item-label">Verificação de processo de espólio ou inventário <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Imóveis em espólio (herança não inventariada) não podem ser negociados sem autorização judicial ou conclusão do inventário.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Como verificar</div>
+              <ul>
+                <li><strong>Certidão de distribuidor cível</strong> do foro da comarca do imóvel: verificar processos de inventário, arrolamento, divórcio com partilha</li>
+                <li><strong>Análise da matrícula</strong>: titular falecido indica imóvel em espólio</li>
+                <li><strong>Identificação dos herdeiros</strong> e seus percentuais de participação</li>
+                <li><strong>Inventariante</strong>: quem tem poder para assinar o contrato em nome do espólio</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ Em imóveis com espólio, todos os herdeiros (ou o inventariante autorizado judicialmente) devem assinar o contrato.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f6" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f6',this)">
+          <div class="item-body">
+            <label class="item-label">Diagnóstico de vegetação nativa, recursos hídricos e obstruções físicas <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Condicionantes físicas que podem inviabilizar ou encarecer o projeto.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Elementos a verificar em campo</div>
+              <ul>
+                <li><strong>Árvores e indivíduos arbóreos</strong>: presença e densidade — supressão exige Autorização de Supressão de Vegetação (ASV) na LP ambiental</li>
+                <li><strong>Rios, afluentes, bacias e reservatórios</strong>: distância das margens (APP: 30–200 m conforme largura do corpo d'água) — impacta área útil do SAE</li>
+                <li><strong>Nascentes</strong>: raio de 50 m é APP — não pode ser ocupado</li>
+                <li><strong>Presença de rochas</strong>: afloramentos rochosos impactam fundações e custo de terraplenagem</li>
+                <li><strong>Necessidade de servidão de passagem de terceiros</strong>: para acessar a área ou traçar a linha de transmissão, verificar se há imóveis de terceiros entre a área e a subestação</li>
+                <li><strong>Obstruções ao traçado da linha de transmissão</strong>: construções, outras linhas, rios largos, áreas protegidas, rodovias e ferrovias no caminho até a subestação</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f7" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f7',this)">
+          <div class="item-body">
+            <label class="item-label">Verificação do georreferenciamento do imóvel <span class="tag tag-cond">RECOMENDADO antes do cadastramento</span></label>
+            <div class="item-sub">O georreferenciamento é necessário para o Arranjo Geral (ANEEL) e para as coordenadas UTM no AEGE.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Requisitos do georreferenciamento</div>
+              <ul>
+                <li><strong>Imóvel georreferenciado</strong> conforme Lei 10.267/2001 e Norma Técnica INCRA para Georreferenciamento de Imóveis Rurais</li>
+                <li><strong>Sistema de referência</strong>: SIRGAS 2000 (coordenadas UTM) — mesmo sistema exigido pelo AEGE</li>
+                <li><strong>ART de georreferenciamento</strong>: emitida pelo engenheiro cartógrafo/agrimensor responsável</li>
+                <li><strong>Certificação no SNCR/INCRA</strong>: certificado de georreferenciamento emitido pelo INCRA</li>
+                <li><strong>Arquivo digital</strong>: shapefile ou similar com o polígono da área</li>
+                <li><strong>A área possui georreferenciamento?</strong>: verificar no SNCR (Sistema Nacional de Cadastro Rural)</li>
+              </ul>
+              <div class="subtopic-ok">✔ O georreferenciamento certificado no INCRA também é exigido para a averbação do Contrato de Arrendamento na matrícula.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 0.3 Documentação Cartorária -->
+      <div class="section">
+        <div class="section-title">0.3 Documentação Cartorária e Registral do Imóvel</div>
+
+        <div class="item" id="f8" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f8',this)">
+          <div class="item-body">
+            <label class="item-label">Matrícula atualizada do imóvel <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Deve ser emitida pelo Cartório de Registro de Imóveis há no máximo 30 dias da data de uso.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Informações a verificar na matrícula</div>
+              <ul>
+                <li><strong>Nº da matrícula</strong> e cartório emissor (comarca)</li>
+                <li><strong>Denominação do imóvel</strong> (nome oficial registrado)</li>
+                <li><strong>Titularidade atual</strong>: proprietário(s) e respectivas frações ideais</li>
+                <li><strong>Histórico de averbações</strong>: alienações, hipotecas, servidões, usufrutos</li>
+                <li><strong>Reserva Legal</strong> averbada: localização e área</li>
+                <li><strong>Área total registrada</strong>: conferir com área medida no georreferenciamento</li>
+                <li><strong>Descrição dos limites</strong>: confrontantes (proprietários vizinhos)</li>
+              </ul>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo III, item 1 (Declaração de Atendimento: propriedade/posse/usufruto da área)</span>
+          </div>
+        </div>
+
+        <div class="item" id="f9" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f9',this)">
+          <div class="item-body">
+            <label class="item-label">CCIR — Certificado de Cadastro de Imóvel Rural (INCRA) <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Comprova o cadastro do imóvel rural no INCRA. Exigido em transações imobiliárias e financiamentos.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Campos do CCIR</div>
+              <ul>
+                <li><strong>Nº do CCIR</strong> (código único do imóvel rural no INCRA)</li>
+                <li><strong>Exercício</strong>: deve ser o ano corrente ou o mais recente disponível</li>
+                <li><strong>Área total</strong> em hectares e fração mínima de módulo fiscal</li>
+                <li><strong>Módulo fiscal</strong>: número de módulos fiscais do imóvel (impacta exigência de georreferenciamento)</li>
+                <li><strong>Município e UF</strong> de localização</li>
+                <li><strong>Proprietário(s)</strong>: conferir com a matrícula</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f10" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f10',this)">
+          <div class="item-body">
+            <label class="item-label">ITR — Comprovante de Imposto Territorial Rural <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Declaração e comprovante de pagamento (ou isenção) do ITR dos últimos 5 exercícios.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Documentos exigidos</div>
+              <ul>
+                <li><strong>DIAT</strong> (Documento de Informação e Apuração do ITR): dos últimos 5 anos, obtido no e-CAC da Receita Federal</li>
+                <li><strong>Comprovante de pagamento do DITR</strong> ou certidão de isenção (imóveis &lt; 50 ha, agricultor familiar)</li>
+                <li><strong>CAF</strong> (Certificado de Atividade de Fiscultura): se aplicável para isenção</li>
+                <li><strong>Débitos de ITR</strong>: verificar no e-CAC — imóvel com ITR em atraso impede registro de atos no cartório</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f11" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f11',this)">
+          <div class="item-body">
+            <label class="item-label">CAR — Cadastro Ambiental Rural <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Instrumento de controle ambiental da propriedade rural. Exigido para acesso a crédito rural e financiamentos do BNDES.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Informações do CAR</div>
+              <ul>
+                <li><strong>Nº do CAR</strong> (código no SICAR nacional)</li>
+                <li><strong>Órgão emissor</strong>: SEMA estadual ou SICAR federal</li>
+                <li><strong>Situação</strong>: Ativo (regular), Pendente (em análise), Suspenso (problema identificado) ou Cancelado</li>
+                <li><strong>Sobreposição</strong> com APPs, Reserva Legal e outras áreas protegidas</li>
+                <li><strong>PRA</strong> (Programa de Regularização Ambiental): verificar se há comprometimento de regularização ambiental pendente</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ CAR Suspenso ou Cancelado pode inviabilizar a obtenção do financiamento no BNDES (CFI) para o Produto 2028-A.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 0.4 Documentação do Proprietário -->
+      <div class="section">
+        <div class="section-title">0.4 Documentação do Proprietário / Vendedor / Arrendante</div>
+
+        <div class="item" id="f12" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f12',this)">
+          <div class="item-body">
+            <label class="item-label">Documentos de identificação do proprietário — Pessoa Física <span class="tag tag-cond">SE APLICÁVEL</span></label>
+            <div class="item-sub">Para cada titular do imóvel (e respectivos cônjuges, se casados em regime que exija anuência).</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Documentos PF</div>
+              <ul>
+                <li><strong>RG</strong> (Carteira de Identidade) de cada representante legal — documento com foto</li>
+                <li><strong>CPF</strong> de cada representante legal — conferir regularidade na Receita Federal</li>
+                <li><strong>Comprovante de endereço</strong> atualizado (últimos 90 dias): conta de luz, água, telefone</li>
+                <li><strong>Certidão de casamento</strong>: se casado, indica o regime de bens — comunhão universal/parcial exige anuência do cônjuge</li>
+                <li><strong>Comprovante do estado civil</strong>: solteiro, casado, divorciado, viúvo</li>
+                <li><strong>RG e CPF do cônjuge</strong>: se o regime de bens exige anuência na assinatura</li>
+                <li><strong>Pacto antenupcial</strong>: se regime de separação total (registro no CRI)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f13" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f13',this)">
+          <div class="item-body">
+            <label class="item-label">Documentos de identificação do proprietário — Pessoa Jurídica <span class="tag tag-cond">SE APLICÁVEL</span></label>
+            <div class="item-sub">Para empresas ou fazendas constituídas como PJ.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Documentos PJ</div>
+              <ul>
+                <li><strong>Cartão CNPJ</strong>: situação cadastral ativa na Receita Federal</li>
+                <li><strong>Contrato Social</strong> (ou Estatuto Social) atualizado com todas as alterações — registrado na Junta Comercial</li>
+                <li><strong>Ata de eleição da diretoria</strong> mais recente: quem são os administradores com poderes para assinar</li>
+                <li><strong>RG e CPF dos representantes legais</strong> (administradores/sócios signatários)</li>
+                <li><strong>Procuração</strong>: se assinado por procurador, procuração pública com poderes específicos para alienar/arrendar imóveis</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f14" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f14',this)">
+          <div class="item-body">
+            <label class="item-label">Certidões negativas dos proprietários <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Necessárias para averbar o contrato e evitar riscos jurídicos na transação.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Certidões recomendadas</div>
+              <ul>
+                <li><strong>Certidão Negativa de Débitos Federais</strong> (CND/PGFN + RFB): via Receita Federal</li>
+                <li><strong>Certidão Negativa de Débitos do FGTS</strong>: via Caixa Econômica Federal</li>
+                <li><strong>Certidão de Distribuição Cível e Criminal</strong>: foro estadual do domicílio do proprietário</li>
+                <li><strong>Certidão de Distribuição Trabalhista</strong>: TRT da região</li>
+                <li><strong>Certidão de Protesto</strong>: cartório de protestos da comarca</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 0.5 Negociação e Contrato -->
+      <div class="section">
+        <div class="section-title">0.5 Negociação Comercial e Formalização do Contrato</div>
+
+        <div class="item" id="f15" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f15',this)">
+          <div class="item-body">
+            <label class="item-label">Definição do formato de negociação e condições comerciais <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Arrendamento (locação de longo prazo) ou compra e venda — cada formato tem implicações fiscais, contábeis e de garantias distintas.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Parâmetros da negociação</div>
+              <ul>
+                <li><strong>Formato</strong>: Arrendamento Rural (Lei 4.504/1964) ou Compra e Venda</li>
+                <li><strong>Valor de venda</strong> (R$/ha) — se aplicável</li>
+                <li><strong>Valor de locação/arrendamento</strong> (R$/ha/ano) — tipicamente pago anualmente ou mensalmente</li>
+                <li><strong>Quantidade de hectares negociada</strong> (m² e ha)</li>
+                <li><strong>Prêmio de exclusividade</strong>: valor pago para garantir a exclusividade da área durante as negociações, antes da assinatura do contrato definitivo</li>
+                <li><strong>Condição comercial diferenciada</strong>: escalonamento, reajuste por IPCA/IGP-M, bônus por aprovação no leilão</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f16" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f16',this)">
+          <div class="item-body">
+            <label class="item-label">Dados bancários do proprietário para pagamento <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Necessários para o pagamento do prêmio de exclusividade, arrendamento e outras obrigações contratuais.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Informações bancárias</div>
+              <ul>
+                <li><strong>Banco</strong>: nome e código ISPB</li>
+                <li><strong>Agência/Cooperativa</strong>: número e dígito</li>
+                <li><strong>Conta corrente ou poupança</strong>: número e dígito — deve estar no nome do proprietário</li>
+                <li><strong>Tipo de operação</strong>: CC, CP, ou poupança</li>
+                <li><strong>Chave PIX</strong>: CPF/CNPJ, e-mail, telefone ou chave aleatória</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f17" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f17',this)">
+          <div class="item-body">
+            <label class="item-label">Informações do corretor imobiliário <span class="tag tag-opt">SE HOUVER</span></label>
+            <div class="item-sub">Se a negociação envolver corretor, registrar seus dados para fins de pagamento de comissão e documentação.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Dados do corretor</div>
+              <ul>
+                <li><strong>Nome completo</strong> do corretor</li>
+                <li><strong>Telefone</strong> de contato</li>
+                <li><strong>CPF</strong> do corretor (verificar CRECI ativo)</li>
+                <li><strong>Valor da comissão</strong> acordada (R$ ou % sobre o negócio)</li>
+                <li><strong>Dados bancários do corretor</strong>: banco, agência, conta, chave PIX</li>
+                <li><strong>Recibo de pagamento</strong>: emitir e arquivar comprovante de pagamento de comissão</li>
+                <li><strong>Documento com CPF</strong>: RG ou CNH do corretor</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="item" id="f18" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f18',this)">
+          <div class="item-body">
+            <label class="item-label">Contrato de Arrendamento Rural ou Promessa de Compra e Venda assinado <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Instrumento que garante o acesso à área para implantação do SAE. Deve ter prazo compatível com o CRCAP de 15 anos + fase de implantação.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Cláusulas essenciais do contrato</div>
+              <ul>
+                <li><strong>Identificação das partes</strong>: arrendante/vendedor e arrendatário/comprador com qualificação completa</li>
+                <li><strong>Objeto</strong>: descrição da área com nº da matrícula, denominação, município e coordenadas</li>
+                <li><strong>Prazo</strong>: mínimo de 20–25 anos (15 anos de CRCAP + 54 meses de implantação + margem)</li>
+                <li><strong>Destinação</strong>: implantação, operação e manutenção de SAE em baterias para leilão de energia</li>
+                <li><strong>Valor e condições de pagamento</strong>: periodicidade, reajuste (IPCA/IGP-M), vencimentos</li>
+                <li><strong>Cláusula de exclusividade</strong>: proibição de negociar com terceiros durante a vigência</li>
+                <li><strong>Poderes ao arrendatário</strong>: construir benfeitorias, instalar equipamentos, solicitar licenças e outorgas em nome próprio</li>
+                <li><strong>Reconhecimento de firmas</strong>: em cartório — exigido para registro e para a Declaração de Atendimento à ANEEL</li>
+                <li><strong>Registro em Cartório de Imóveis</strong>: averbação na matrícula — garante oponibilidade a terceiros</li>
+              </ul>
+              <div class="subtopic-ok">✔ O contrato registrado na matrícula é a comprovação de posse direta exigida na Declaração de Atendimento da REN ANEEL 1.161/2026 (Anexo III, item 1).</div>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo III, item 1 (Declaração de Atendimento: propriedade, posse direta ou usufruto da área de implantação)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 0.6 Poligonal e Arranjo Geral -->
+      <div class="section">
+        <div class="section-title">0.6 Poligonal Georreferenciada e Arranjo Geral (requisito ANEEL/EPE)</div>
+
+        <div class="item" id="f19" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f19',this)">
+          <div class="item-body">
+            <label class="item-label">Georreferenciamento da área certificado no INCRA <span class="tag tag-req">OBRIGATÓRIO para Outorga ANEEL</span></label>
+            <div class="item-sub">Exigido para o Arranjo Geral (ANEEL) e para as coordenadas UTM da Ficha de Dados no AEGE.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Documentos do georreferenciamento</div>
+              <ul>
+                <li><strong>Memorial descritivo</strong>: descrição dos vértices, ângulos e confrontações em SIRGAS 2000</li>
+                <li><strong>Planta georreferenciada</strong>: com escala, orientação e vértices numerados</li>
+                <li><strong>ART de georreferenciamento</strong>: emitida pelo engenheiro responsável junto ao CREA</li>
+                <li><strong>Certificado INCRA</strong>: emitido após análise técnica — atesta que o georreferenciamento atende às normas do INCRA</li>
+                <li><strong>Arquivo shapefile ou DXF</strong>: para geração das coordenadas UTM a inserir no AEGE (via ProGriD/IBGE)</li>
+                <li><strong>Transformação para coordenadas UTM</strong>: usando ferramenta ProGriD do IBGE (exigida pelo AEGE para o preenchimento das Guias de Empreendimento e Conexão)</li>
+              </ul>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 6 (Arranjo Geral georreferenciado, formato conforme instruções ANEEL, responsável CREA)</span>
+          </div>
+        </div>
+
+        <div class="item" id="f20" data-section="fun">
+          <input type="checkbox" onchange="updateItem('f20',this)">
+          <div class="item-body">
+            <label class="item-label">Desenho do polígono do SAE e da rede de interesse restrito elaborado <span class="tag tag-req">OBRIGATÓRIO para Outorga ANEEL</span></label>
+            <div class="item-sub">Documento técnico que delimita o SAE e a linha até o ponto de conexão — exigido tanto pelo AEGE (EPE) quanto pela ANEEL na outorga.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Conteúdo do Arranjo Geral</div>
+              <ul>
+                <li><strong>Poligonal do SAE</strong>: delimitação da área do sistema de armazenamento de energia (módulos de baterias, inversores, subestação coletora interna, cercamento)</li>
+                <li><strong>Rede de interesse restrito do armazenador</strong>: linha de transmissão da subestação coletora interna até o ponto de conexão com o SIN</li>
+                <li><strong>Ponto de conexão</strong>: subestação identificada e código ONS</li>
+                <li><strong>Escala e orientação norte</strong>: com escala gráfica</li>
+                <li><strong>Formato</strong>: conforme instruções publicadas no sítio da ANEEL (em geral AutoCAD DWG ou PDF georreferenciado)</li>
+                <li><strong>Assinatura de engenheiro</strong>: com ART do CREA — responsabilidade técnica exigida pelo Art. 19 da REN 1.161/2026</li>
+              </ul>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 6 · Art. 19 (responsabilidade do engenheiro com CREA regular)</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /phase0 -->
+
+</div><!-- /msec-fun -->
+
+<div class="section-divider">Etapa 1 — Cadastramento na EPE</div>
 
 <!-- ╔══════════════════════════════════════════════════════╗
      ║   SEÇÃO 1 — PRÉ-CADASTRAMENTO                      ║
@@ -565,21 +1103,78 @@
       <div class="infobox">
         <strong>🔗 Portal: Sistema AEGE — www.epe.gov.br</strong>
         Preencha a Ficha de Dados no Sistema de Acompanhamento de Empreendimentos de Geração de Energia (AEGE)
-        e siga as instruções publicadas no sítio da EPE.
-        <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput (Capítulo II)</span>
+        e siga as instruções publicadas no sítio da EPE. O Cadastramento só é efetivado com a apresentação da documentação requerida e obtenção do número de processo.
+        <br><span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput (Capítulo II) · Art. 6º, §1º (prazo: 15/06 a 31/07/2026)</span>
+      </div>
+
+      <!-- 1.0 Adesão AEGE -->
+      <div class="section">
+        <div class="section-title">1.0 Adesão e Configuração no Sistema AEGE</div>
+
+        <div class="item" id="ia0" data-section="pre">
+          <input type="checkbox" onchange="updateItem('ia0',this)">
+          <div class="item-body">
+            <label class="item-label">Adesão da empresa ao Sistema AEGE <span class="tag tag-req">OBRIGATÓRIO — 1º passo</span></label>
+            <div class="item-sub">Deve ser realizada antes de qualquer inscrição ou preenchimento de Ficha de Dados. A análise pela EPE leva até 5 dias úteis.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Passo a passo da adesão</div>
+              <ul>
+                <li><strong>Acesso</strong>: https://aege-adesao.epe.gov.br</li>
+                <li><strong>Preencher o formulário de adesão</strong>: dados da empresa (razão social, CNPJ), dados do Usuário Responsável (nome, CPF, e-mail, telefone)</li>
+                <li><strong>Envio à EPE</strong>: após preenchimento, aguardar análise em até 5 dias úteis</li>
+                <li><strong>Recebimento de login e senha</strong>: enviados por e-mail ao Usuário Responsável após aprovação</li>
+                <li><strong>Definir Representante Legal</strong>: usuário que assinará documentos — cadastrado pelo Usuário Responsável no sistema; será o signatário dos documentos à EPE</li>
+                <li><strong>Definir Interlocutor</strong>: usuário responsável pela gestão das informações do empreendimento — receberá notificações da EPE</li>
+                <li><strong>Manter e-mails atualizados</strong>: todas as notificações da EPE chegam por e-mail aos usuários cadastrados — atraso em resposta pode causar inabilitação</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ A habilitação técnica é emitida em nome do empreendimento (não do empreendedor). Se houver SPE, registrar a SPE como "Empreendimento (Razão Social)" no AEGE.</div>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput (exigência de cadastramento via AEGE)</span>
+          </div>
+        </div>
+
+        <div class="item" id="ia1" data-section="pre">
+          <input type="checkbox" onchange="updateItem('ia1',this)">
+          <div class="item-body">
+            <label class="item-label">Inscrição do empreendimento no LRCAP 2026 no AEGE <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">A inscrição gera o Número de Inscrição específico para o leilão e habilita o preenchimento dos campos azuis (específicos do leilão).</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Sequência de inscrição</div>
+              <ul>
+                <li><strong>Incluir o empreendimento</strong> no AEGE: clicar em "Empreendimentos" → tipo SAE → "Incluir" → preencher nome do SAE</li>
+                <li><strong>Evitar homonímia</strong>: o sistema bloqueia nomes iguais de mesma fonte — escolher nome único</li>
+                <li><strong>Preencher campos amarelos</strong> (núcleo permanente): informações comuns a todos os leilões do empreendimento</li>
+                <li><strong>Acessar menu "Inscrição"</strong>: selecionar empreendimento → escolher o leilão LRCAP 2026 → designar Representante Legal → "Salvar"</li>
+                <li><strong>Número de Inscrição</strong>: gerado automaticamente — necessário para referência nos documentos</li>
+                <li><strong>Preencher campos azuis</strong>: habilitados após a inscrição — específicos do leilão (Cronograma, Orçamento, REIDI etc.)</li>
+                <li><strong>Declaração de conformidade</strong>: na guia "Verificação e Finalização" — declarar que o projeto segue as diretrizes das Instruções de Cadastramento SAE</li>
+              </ul>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput e §1º</span>
+          </div>
+        </div>
       </div>
 
       <!-- 1.1 -->
       <div class="section">
-        <div class="section-title">1.1 Ficha de Dados — Informações Técnicas do SAE (preencher no AEGE)</div>
+        <div class="section-title">1.1 Guia Empreendimento e Capacidade — Ficha de Dados AEGE</div>
 
         <div class="item" id="i1" data-section="pre">
           <input type="checkbox" onchange="updateItem('i1',this)">
           <div class="item-body">
-            <label class="item-label">Ficha de Dados preenchida no sistema AEGE <span class="tag tag-req">OBRIGATÓRIO</span></label>
-            <div class="item-sub">
-              Inclui: potência instalada (MW), potência de descarga, capacidade de armazenamento (MWh), tecnologia de bateria,
-              ponto de conexão (barramento candidato), município/UF, coordenadas geográficas.
+            <label class="item-label">Guia Empreendimento: titularidade, localização e coordenadas UTM <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Campos amarelos (permanentes) — base do empreendimento no AEGE.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Campos a preencher — Guia Empreendimento</div>
+              <ul>
+                <li><strong>Empreendedor (Razão Social)</strong> e <strong>CNPJ Empreendedor</strong>: importados automaticamente da adesão</li>
+                <li><strong>Empreendimento (Razão Social)</strong> e <strong>CNPJ do Empreendimento</strong>: preencher com a SPE, se existir; caso contrário, repetir dados do empreendedor</li>
+                <li><strong>Unidade da Federação</strong> e <strong>Município</strong> de localização do SAE</li>
+                <li><strong>Coordenadas UTM do SAE</strong>: em números inteiros, sem casas decimais, sistema <strong>SIRGAS 2000</strong> — usar ferramenta ProGriD do IBGE para converter de coordenadas geográficas</li>
+                <li><strong>Representante Legal</strong> (campo azul): designado após inscrição no leilão — será o signatário dos documentos</li>
+                <li><strong>Interlocutor</strong>: responsável pela gestão das informações no AEGE</li>
+                <li><strong>Endereço para correspondência</strong> (Guia Outorgas): manter atualizado — toda correspondência da EPE usa este endereço</li>
+              </ul>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
           </div>
@@ -588,26 +1183,59 @@
         <div class="item" id="i2" data-section="pre">
           <input type="checkbox" onchange="updateItem('i2',this)">
           <div class="item-body">
-            <label class="item-label">Disponibilidade de potência máxima ≥ 30 MW declarada <span class="tag tag-req">OBRIGATÓRIO</span></label>
-            <div class="item-sub">Projetos abaixo de 30 MW são desclassificados automaticamente pela EPE.</div>
-            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso III · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
+            <label class="item-label">Guia Capacidade: Potência Final Instalada ≥ 30 MW declarada <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Projetos abaixo de 30 MW de disponibilidade de potência máxima são desclassificados automaticamente pela EPE.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Campos da Guia Capacidade no AEGE</div>
+              <ul>
+                <li><strong>Potência Final Instalada</strong> (kW): potência total do SAE — soma das potências de descarga de todos os módulos de baterias</li>
+                <li><strong>Potência Injetável Máx</strong> (kW): valor da potência máxima injetável no ponto de conexão — pode ser menor que a potência instalada pelas perdas internas</li>
+                <li><strong>Fator de Capacidade Máxima (Fcmax)</strong>: limita a potência máxima do inversor — preencher com 1,0 se não houver limitação</li>
+                <li><strong>Montante de Consumo Interno e Perdas (DP)</strong>: potência consumida internamente e nas perdas até o PMI — não pode ser comercializada</li>
+                <li><strong>Disponibilidade de Potência = (Pot × Fcmax − DP) × ß</strong>: deve ser ≥ 30 MW</li>
+              </ul>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso III · Anexo I, Art. 2º, §12 (fórmula Pdisp) · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
           </div>
         </div>
 
         <div class="item" id="i3" data-section="pre">
           <input type="checkbox" onchange="updateItem('i3',this)">
           <div class="item-body">
-            <label class="item-label">Capacidade de operação contínua ≥ 4 horas declarada <span class="tag tag-req">OBRIGATÓRIO</span></label>
-            <div class="item-sub">Ciclo completo = potência contratada × 4h. SAEs com menos de 4h são desabilitados.</div>
-            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 4º, §3º (compromisso de entrega) · Art. 7º, inciso IV (causa de não habilitação) · Capítulo I e II</span>
+            <label class="item-label">Guia Características Técnicas: Unidades de Armazenamento — operação contínua ≥ 4 horas <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Cada unidade armazenadora deve ser capaz de operar com potência máxima por pelo menos 4 horas consecutivas.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Campos a preencher — Subguia Unidades de Armazenamento</div>
+              <ul>
+                <li><strong>Tecnologia de bateria</strong>: Lítio-Íon (LFP, NMC), Sódio-Enxofre, Fluxo de Vanádio, etc.</li>
+                <li><strong>Número de unidades armazenadoras</strong>: quantidade de strings/racks/containers</li>
+                <li><strong>Capacidade de armazenamento por unidade</strong> (kWh): energia nominal de cada módulo</li>
+                <li><strong>Capacidade total de armazenamento</strong> (MWh): soma de todas as unidades — deve ser ≥ Potência × 4h</li>
+                <li><strong>Potência de descarga</strong> (MW): potência máxima de saída no PMI</li>
+                <li><strong>Duração nominal</strong> (h): relação MWh/MW — deve ser ≥ 4h</li>
+                <li><strong>Fabricante e modelo</strong> dos módulos de bateria: especificação dos equipamentos considerados</li>
+                <li><strong>Fabricante e modelo dos inversores</strong> (PCS — Power Conversion System)</li>
+              </ul>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 4º, §3º (compromisso de entrega 4h) · Art. 7º, inciso IV (causa de não habilitação) · Capítulo I e II</span>
           </div>
         </div>
 
         <div class="item" id="i4" data-section="pre">
           <input type="checkbox" onchange="updateItem('i4',this)">
           <div class="item-body">
-            <label class="item-label">Eficiência total (Roundtrip Efficiency — RTE) ≥ 85% declarada <span class="tag tag-req">OBRIGATÓRIO</span></label>
-            <div class="item-sub">Referenciada ao Ponto de Medição Individual (PMI), ao longo de todo o horizonte contratual de 15 anos.</div>
+            <label class="item-label">Eficiência total (Roundtrip Efficiency — RTE) ≥ 85% declarada no AEGE <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Referenciada ao Ponto de Medição Individual (PMI), ao longo de todo o horizonte contratual de 15 anos. Inclui todas as perdas internas do SAE.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Como calcular e declarar a RTE</div>
+              <ul>
+                <li><strong>RTE = (Energia descarga no PMI) / (Energia recarga no PMI)</strong>: considera todas as perdas do sistema</li>
+                <li><strong>Perdas incluídas</strong>: perdas dos módulos de bateria (coulombic + voltaic efficiency), perdas nos PCS (inversores bidirecionais), perdas no transformador, perdas no sistema de arrefecimento (HVAC), perdas no sistema de gestão de energia (BMS/EMS)</li>
+                <li><strong>Degradação ao longo dos 15 anos</strong>: a RTE mínima de 85% deve ser mantida ao longo de toda a vida útil contratual — declarar a RTE no final de vida (EOL)</li>
+                <li><strong>Garantia do fabricante</strong>: o estudo técnico deve ser respaldado por garantias ou certificações do fabricante das baterias</li>
+                <li><strong>Campo no AEGE</strong>: declarar a RTE na Subguia Informações Energéticas das Características Técnicas</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso VI · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
           </div>
         </div>
@@ -616,7 +1244,17 @@
           <input type="checkbox" onchange="updateItem('i5',this)">
           <div class="item-body">
             <label class="item-label">Tempo máximo de recarga completa ≤ 6 horas declarado <span class="tag tag-req">OBRIGATÓRIO</span></label>
-            <div class="item-sub">Recarga de 0% a 100%, incluindo tempo de repouso inerente ao ciclo. Recargas parciais são permitidas proporcionalmente.</div>
+            <div class="item-sub">Recarga de 0% a 100% da capacidade contratada, incluindo tempo de repouso inerente ao ciclo de operação das baterias.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Como calcular e declarar</div>
+              <ul>
+                <li><strong>Tempo de recarga completa</strong>: de 0% a 100% da DoD (Depth of Discharge) contratada — inclui eventuais tempos de repouso/balanceamento celular</li>
+                <li><strong>Recargas parciais</strong>: tempo proporcional à fração da capacidade a ser recomposta (ex: recarga de 50% → máximo 3h)</li>
+                <li><strong>C-rate de recarga</strong>: tipicamente C/4 a C/6 — conferir especificação do fabricante para baterias LFP em operação ciclada</li>
+                <li><strong>Potência de recarga contratada</strong>: deve ser compatível com a potência de CUST/CUSD para recarga (Art. 9º, §13)</li>
+                <li><strong>Campo no AEGE</strong>: declarar tempo de recarga na Subguia Características Técnicas das Unidades de Armazenamento</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 4º, §10 (requisito operacional) · Art. 4º, §11 (recargas parciais) · Art. 7º, inciso VII (causa de não habilitação) · Capítulo I e II</span>
           </div>
         </div>
@@ -626,6 +1264,14 @@
           <div class="item-body">
             <label class="item-label">Custo Variável Unitário (CVU) = zero declarado <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">SAEs com CVU &gt; 0 não são habilitados tecnicamente. A remuneração é integral via Receita Fixa.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Onde declarar no AEGE</div>
+              <ul>
+                <li><strong>Guia Leilão — Subguia Verificação e Finalização</strong>: declarar CVU = 0 (zero)</li>
+                <li><strong>CVU = 0 significa</strong> que o SAE não tem custo de combustível nem COP — toda receita vem da Receita Fixa de disponibilidade</li>
+                <li><strong>Receita Fixa</strong>: deve cobrir CAPEX + OPEX + reinvestimentos + encargos + descomissionamento (Art. 9º, §4º, inciso II)</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso II · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
           </div>
         </div>
@@ -633,9 +1279,20 @@
         <div class="item" id="i7" data-section="pre">
           <input type="checkbox" onchange="updateItem('i7',this)">
           <div class="item-body">
-            <label class="item-label">Fator de Capacidade Máxima (Fcmax) declarado <span class="tag tag-req">OBRIGATÓRIO</span></label>
-            <div class="item-sub">Informado pelo empreendedor para cálculo da Disponibilidade de Potência: <em>Disp = b × (Pot × Fcmax − DP)</em>.</div>
-            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 2º, §12 (fórmula Pdisp) · Art. 4º, §3º (fórmula de comprometimento) · Capítulo II — Das Características do Leilão</span>
+            <label class="item-label">Guia Leilão — Orçamento: custo do projeto declarado <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <div class="item-sub">Custo total do projeto em R$ × mil, sem juros durante a construção, com data base dezembro de 2025.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Componentes do orçamento (campos azuis — Guia Leilão)</div>
+              <ul>
+                <li><strong>CAPEX total</strong> (R$ × mil): custo de aquisição dos módulos de baterias, inversores (PCS), BMS/EMS, subestação coletora interna, civil e montagem, linha de transmissão de interesse restrito, infraestrutura (HVAC, segurança, TI/SCADA)</li>
+                <li><strong>Data base</strong>: dezembro de 2025 (ano anterior ao leilão de dezembro/2026)</li>
+                <li><strong>Custo de conexão</strong>: obras de ampliação na subestação para receber o SAE (pagamento à concessionária de transmissão)</li>
+                <li><strong>Custo anual de O&amp;M</strong>: inclui manutenção preventiva/corretiva, monitoramento, seguro patrimonial</li>
+                <li><strong>Cronograma de implantação</strong>: datas de início e conclusão das obras — campo na Subguia Cronograma</li>
+                <li><strong>Motorização</strong>: datas de início de operação em teste (OT) e operação comercial (OC) de cada unidade armazenadora</li>
+              </ul>
+            </div>
+            <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 2º, §12 (fórmula Pdisp) · Art. 9º, §4º, inciso II (composição da Receita Fixa) · Capítulo II — Das Características do Leilão</span>
           </div>
         </div>
 
@@ -643,7 +1300,17 @@
           <input type="checkbox" onchange="updateItem('i8',this)">
           <div class="item-body">
             <label class="item-label">Consumo interno e perdas (DP) até a subestação de conexão declarados <span class="tag tag-req">OBRIGATÓRIO</span></label>
-            <div class="item-sub">Montante de potência que não pode ser comercializado no Leilão. Definido pelo empreendedor por sua conta e risco.</div>
+            <div class="item-sub">Montante de potência que não pode ser comercializado no Leilão. Definido pelo empreendedor por sua conta e risco — impacta diretamente a Disponibilidade de Potência ofertada.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">O que compõe o DP</div>
+              <ul>
+                <li><strong>Perdas no transformador</strong>: da saída do PCS ao barramento de alta tensão na SE coletora interna</li>
+                <li><strong>Perdas na linha interna</strong>: cabos de média e alta tensão entre os containers e a SE coletora</li>
+                <li><strong>Consumo próprio dos auxiliares</strong>: sistema de arrefecimento (HVAC), BMS, EMS, iluminação, segurança</li>
+                <li><strong>Perdas na linha de transmissão de interesse restrito</strong>: da SE coletora até o ponto de conexão (barramento candidato)</li>
+                <li><strong>DP deve ser &lt; que a Potência Instalada</strong>: Disponibilidade = (Pot × Fcmax − DP) × ß ≥ 30 MW</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 1º, inciso XXXVI (definição de DP — Montante de Consumo Interno e Perdas de Potência) · Capítulo I — Das Definições e Abreviações</span>
           </div>
         </div>
@@ -661,6 +1328,25 @@
               Inclui obrigatoriamente requisitos de <strong>grid-forming</strong> (operação em modo formador de rede).
               O SAE deve manter disponíveis e de forma contínua os recursos da Nota Técnica ONS/EPE, mesmo quando não estiver em processo de carga ou descarga.
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Capacidades obrigatórias (grid-forming)</div>
+              <ul>
+                <li>Controle de tensão e frequência independente da rede (modo ilha / black-start)</li>
+                <li>Suporte de inércia sintética (inertia emulation) e controle primário de frequência</li>
+                <li>Amortecimento de oscilações (power oscillation damping — POD)</li>
+                <li>Ride-through durante afundamentos de tensão (FRT/LVRT conforme ONS)</li>
+                <li>Curva de capabilidade Q×P declarada e verificável</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ Modo grid-following isolado <strong>não atende</strong> aos requisitos — verificar com o fabricante do PCS se o equipamento suporta modo grid-forming nativo ou via firmware.</div>
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Documentos a preparar</div>
+              <ul>
+                <li>Declaração do fabricante do PCS/Inversor confirmando modo grid-forming</li>
+                <li>Datasheet técnico com curvas de controle (P/Q, droop, inércia sintética)</li>
+                <li>Relatório de testes de fábrica (FAT) ou certificação de terceiros (IEC 62933 ou equivalente)</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 4º, §13 (obrigação operacional contínua) · Art. 7º, inciso VIII (causa de não habilitação) · Art. 13 (requisitos técnicos no Edital) · Capítulo I e II
             <br>📄 <span class="fonte-doc">EPEDE-ERE079/2024</span> — Nota Técnica EPE/ONS: Requisitos Técnicos Mínimos para Conexão de SAE via Baterias (documento de referência citado na Portaria)
             <br>📄 <span class="fonte-doc">EPEDE-ENT095/2025</span> — Requisitos de Conexão SAE, Rev. 4 (versão mais recente da Nota Técnica)</span>
@@ -672,6 +1358,17 @@
           <div class="item-body">
             <label class="item-label">Conformidade com requisitos de segurança operacional comprovada <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">Normas aplicáveis e instruções de Cadastramento publicadas pela EPE. SAEs não conformes são desabilitados.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Normas e certificações a verificar</div>
+              <ul>
+                <li>IEC 62933-5-2 (Segurança de sistemas de armazenamento de energia em baterias)</li>
+                <li>IEC 62619 (Segurança de baterias de íon de lítio — uso estacionário)</li>
+                <li>ABNT NBR 16.782 (equivalente brasileiro — se exigida no Edital)</li>
+                <li>Proteção contra incêndio e explosão (NFPA 855 ou equivalente)</li>
+                <li>Plano de Emergência e Resposta a Incidentes (PERI) do BESS</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ As instruções definitivas de Cadastramento serão publicadas pela EPE — monitorar o portal da EPE e da ANEEL após agosto/2026.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso IX · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
           </div>
         </div>
@@ -681,6 +1378,15 @@
           <div class="item-body">
             <label class="item-label">Baterias novas (não reutilizadas) confirmadas <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">O empreendedor deverá empregar baterias novas. O Edital da ANEEL poderá disciplinar a matéria com maiores detalhes.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Como comprovar "baterias novas"</div>
+              <ul>
+                <li>Declaração do fabricante de que as células/módulos são de produção nova (0 ciclos de operação comercial)</li>
+                <li>Número de série dos módulos ou células a ser fornecido após entrega (na fase de implantação)</li>
+                <li>Não confundir com baterias remanufaturadas (second-life) — estas são vedadas</li>
+              </ul>
+              <div class="subtopic-ok">✓ Baterias de demonstração em fábrica (FAT) com poucos ciclos de teste podem ser aceitas — verificar redação final do Edital.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, §2º · Capítulo II — Do Cadastramento e da Habilitação Técnica</span>
           </div>
         </div>
@@ -693,6 +1399,16 @@
               A capacidade remanescente do barramento candidato deve ser ≥ potência injetada + potência necessária para recarga.
               O ponto de conexão <strong>não pode ser alterado</strong> após o cadastramento.
               A Nota Técnica de Quantitativos do ONS será publicada até 30/09/2026.
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Como verificar a capacidade remanescente</div>
+              <ul>
+                <li>Aguardar publicação da Nota Técnica de Quantitativos do ONS (prazo: até 30/09/2026)</li>
+                <li>Confirmar na Guia Conexão do AEGE: nome do barramento, código ONS, nível de tensão (kV)</li>
+                <li>Calcular: CR_barramento ≥ Pot_injetável_máx (MW) + Pot_recarga (MW)</li>
+                <li>Se CR insuficiente → empreendimento classificado na Etapa Complementar (menor prioridade no leilão)</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ O ponto de conexão declarado no AEGE é <strong>definitivo e irretratável</strong> após o cadastramento. Certifique-se do barramento correto antes de finalizar.</div>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 7º, inciso V (causa de não habilitação) · Art. 11, §2º (vedação de alteração do ponto de conexão) · Art. 11, §4º (prazo da Nota Técnica) · Capítulo II e V — Da Capacidade Remanescente do SIN</span>
           </div>
@@ -711,6 +1427,25 @@
               Deve conter: perfil de operação previsto, eficiência global do sistema (RTE), potência de descarga,
               capacidade de armazenamento (MWh), descrição da tecnologia e equipamentos adotados.
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Conteúdo mínimo do estudo</div>
+              <ul>
+                <li>Perfil de despacho previsto: número de ciclos/dia, janela operacional (horário de descarga)</li>
+                <li>RTE global declarado (≥ 85%) — metodologia de cálculo e premissas de degradação (EOL)</li>
+                <li>Potência de descarga líquida (MW) e duração mínima (≥ 4h)</li>
+                <li>Capacidade total de armazenamento instalada (MWh) vs. capacidade útil</li>
+                <li>Energia injetada anual estimada (MWh/ano) — base do Anexo II da REN 1.161/2026</li>
+                <li>Tecnologia de bateria: química, fabricante, modelo, número de módulos</li>
+                <li>Topologia do sistema: string → rack → container → barramento CC → PCS → transformador elevador</li>
+              </ul>
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Responsabilidade técnica</div>
+              <ul>
+                <li>Assinar o estudo como engenheiro responsável com CREA ativo</li>
+                <li>ART (Anotação de Responsabilidade Técnica) quitada e anexada junto ao documento</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 7 · Seção "Qualificação Técnica de SAE por meio de Baterias"
             <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput (documentação referida na Portaria GM/MME nº 102/2016)</span>
           </div>
@@ -724,6 +1459,24 @@
               Delimitação da poligonal do SAE e da rede de interesse restrito, da subestação coletora até o ponto de conexão.
               Formato conforme instruções publicadas no sítio da ANEEL. Assinado por engenheiro com CREA regular.
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">O que deve constar no Arranjo Geral</div>
+              <ul>
+                <li>Poligonal do empreendimento com coordenadas UTM (SIRGAS 2000) — consistente com a Guia Empreendimento do AEGE</li>
+                <li>Localização dos containers/racks de baterias e PCS dentro da área</li>
+                <li>Rede de interesse restrito: traçado da linha desde o BESS até o barramento de conexão (subestação)</li>
+                <li>Tensão de conexão (kV), extensão da linha (km), configuração (aéreo/subterrâneo)</li>
+                <li>Escala, norte geográfico, legenda e carimbo com dados do empreendimento e engenheiro responsável</li>
+              </ul>
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Formato e responsabilidade</div>
+              <ul>
+                <li>Arquivo no formato aceito pelo sistema da ANEEL (verificar instruções no edital — normalmente PDF + DWG/SHP)</li>
+                <li>ART de elaboração do projeto quitada e anexada</li>
+                <li>Engenheiro responsável: CREA ativo, especialidade em engenharia elétrica ou civil</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 6 · Seção "Qualificação Técnica de SAE por meio de Baterias"
             <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 19 (responsabilidade do engenheiro com CREA regular)</span>
           </div>
@@ -735,6 +1488,17 @@
             <label class="item-label">Demais documentos exigidos pela Portaria GM/MME nº 102/2016 <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">
               Os requisitos gerais de habilitação técnica desta Portaria se aplicam, com exceção dos itens de licença ambiental (LP/LI/LO), que são dispensados nesta fase do LRCAP 2026.
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Documentos típicos da Portaria 102/2016 (verificar lista completa na norma)</div>
+              <ul>
+                <li>Documento de constituição da empresa (contrato social / estatuto + última alteração)</li>
+                <li>Comprovante de inscrição no CNPJ</li>
+                <li>Ato de nomeação do representante legal com poderes para assinar documentos junto à EPE/ANEEL</li>
+                <li>Declaração de capacidade financeira ou fiança bancária (se exigida)</li>
+                <li>Certidão Negativa de Débitos Trabalhistas (CNDT)</li>
+              </ul>
+              <div class="subtopic-ok">✓ Licença Prévia (LP), Licença de Instalação (LI) e Licença de Operação (LO) estão <strong>dispensadas</strong> nesta fase do LRCAP 2026 (Art. 6º, §2º da Portaria 136/2026).</div>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, caput (remissão à Portaria GM/MME nº 102/2016) · Art. 6º, §2º (exceção: LP/LI/LO dispensados) · Art. 18 (aplicação geral da Portaria 102/2016)</span>
           </div>
@@ -749,6 +1513,16 @@
               <strong>independentemente da Capacidade Remanescente do SIN</strong>, garantindo acesso ao leilão.
               <br>• Rede Básica (ONS): CUST + CCT
               <br>• Distribuição: CUSD + CCD, ou CCT
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Como obter contratos de uso e conexão</div>
+              <ul>
+                <li>Solicitar Consulta de Viabilidade de Acesso (CVA) ao ONS (Rede Básica) ou à distribuidora local</li>
+                <li>Protocolar Solicitação de Acesso (SA) conforme Módulo 3 do PRODIST (distribuição) ou PRL do ONS</li>
+                <li>Após aprovação do estudo de impacto de rede: assinar CUST/CCT ou CUSD/CCD</li>
+                <li>Anexar contratos assinados na Guia Conexão do AEGE</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ O processo de acesso à rede pode levar de 6 a 24 meses. Iniciar com antecedência para garantir enquadramento na Etapa Inicial.</div>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 4º, §10 · Art. 1º, inciso XIX ("Empreendimento com Contrato de Uso e Conexão") e inciso XX ("Empreendimento Sem Contrato de Uso e Conexão") · Capítulo I — Das Definições</span>
           </div>
@@ -787,6 +1561,17 @@
         <div class="item-body">
           <label class="item-label">Aporte de Garantia de Proposta junto ao Agente Custodiante <span class="tag tag-req">OBRIGATÓRIO</span></label>
           <div class="item-sub">Valor e instituição custodiante definidos no Edital da ANEEL. Habilita o Proponente Vendedor a participar do Leilão.</div>
+          <div class="subtopic-block">
+            <div class="subtopic-label">Como cumprir este requisito</div>
+            <ul>
+              <li>Aguardar publicação do Edital da ANEEL para confirmar o valor exato por MW de Disponibilidade</li>
+              <li>Identificar a instituição custodiante designada (banco ou câmara de compensação credenciada)</li>
+              <li>Modalidades típicas: carta de fiança bancária, caução em dinheiro, título público ou seguro-garantia</li>
+              <li>Prazo de validade da garantia deve cobrir a data do leilão + período de carência pós-leilão</li>
+              <li>Registrar a garantia no sistema do Agente Custodiante antes do prazo limite fixado no Edital</li>
+            </ul>
+            <div class="subtopic-warn">⚠️ Garantia não aportada ou expirada antes do leilão impede a participação. Confirmar validade e suficiência no dia do leilão.</div>
+          </div>
           <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 3º, §2º (validação das Garantias de Proposta antes do início) · Art. 1º, inciso XXIX (definição de Garantias de Proposta) · Art. 1º, inciso III (definição do Agente Custodiante) · Capítulo III — Da Configuração do Sistema</span>
         </div>
       </div>
@@ -809,6 +1594,17 @@
               <li>Custos de descomissionamento e descarte ambiental</li>
             </ul>
           </div>
+          <div class="subtopic-block">
+            <div class="subtopic-label">Como calcular a Receita Fixa</div>
+            <ul>
+              <li>Fórmula: RF (R$/ano) = CAPEX/ano + O&amp;M/ano + CUST-CUSD/ano + reinvestimentos/ano + tributos/ano + descomissionamento/ano</li>
+              <li>Converter para R$/MW·ano: dividir RF pelo total de MW de Disponibilidade contratada</li>
+              <li>Fator ß: multiplicar pelo fator de localização (0,9 se barramento bonificado, 1,0 para demais)</li>
+              <li>Corrigir a base monetária para a data base de referência do Edital (verificar indexador — IPCA ou IGPM)</li>
+              <li>Lançar o valor no sistema do Leilão (plataforma ANEEL/CCEE) até o prazo do Edital</li>
+            </ul>
+            <div class="subtopic-warn">⚠️ A Receita Fixa é definida exclusivamente pelo vendedor — a ANEEL/CCEE não valida a suficiência do valor. Um valor subestimado pode comprometer a viabilidade financeira do projeto durante os 15 anos do CRCAP.</div>
+          </div>
           <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 9º, §4º, inciso II, alíneas a-k (composição da Receita Fixa) · Anexo I (Sistemática), Art. 1º, inciso LXI (definição de Receita Fixa do Produto) · Art. 2º, §13 (responsabilidade exclusiva do vendedor) · Capítulo III — Do Edital e dos Contratos</span>
         </div>
       </div>
@@ -821,6 +1617,16 @@
             SAEs conectados nos barramentos do Anexo II recebem fator ß = 0,9 (redução de 10% no Preço da Disponibilidade de Potência),
             aumentando competitividade no leilão. Barramentos bonificados incluem subestações em AL, BA, CE, MG, PB, PE, PI e RN.
             Fator ß = 1 para demais pontos de conexão.
+          </div>
+          <div class="subtopic-block">
+            <div class="subtopic-label">Impacto prático da bonificação</div>
+            <ul>
+              <li>Com ß = 0,9: Preço da Disponibilidade = RF/Disp × 0,9 — menor preço → maior competitividade no leilão</li>
+              <li>Verificar o barramento declarado no AEGE (Guia Conexão) contra a lista do Anexo II da Portaria 136/2026</li>
+              <li>Estados com barramentos bonificados (Tabela 1, Anexo II): AL, BA, CE, MG, PB, PE, PI, RN</li>
+              <li>Se o barramento não constar na lista → ß = 1 (sem desconto)</li>
+            </ul>
+            <div class="subtopic-ok">✓ A bonificação é aplicada automaticamente pelo sistema do leilão se o barramento constar no Anexo II — não requer ação adicional além de declarar o barramento correto no AEGE.</div>
           </div>
           <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 17, §§2º e 3º (bonificação de localização) · Anexo I (Sistemática), Art. 2º, §12 (fórmula: Pdisp = RFdisp/Disp × ß) · Anexo II (lista dos barramentos bonificados, Tabela 1) · Capítulo II da Sistemática e das Disposições Finais</span>
         </div>
@@ -892,6 +1698,16 @@
           <div class="item-body">
             <label class="item-label">Identificar qual das 4 rotas de credenciamento da Etapa 1 se aplica ao projeto <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">As rotas estão descritas no Regulamento de Credenciamento de Sistemas Estacionários de Armazenamento de Energia em Baterias, publicado no sítio do BNDES.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">As 4 rotas da Etapa 1 (CFI/BNDES)</div>
+              <ul>
+                <li><strong>Rota 1 — Fabricante Nacional:</strong> o fabricante das células/módulos possui unidade produtiva no Brasil com CNPJ ativo</li>
+                <li><strong>Rota 2 — Integradora Nacional:</strong> a montagem (integração de células importadas em módulos/racks/containers) é realizada no Brasil por empresa nacional</li>
+                <li><strong>Rota 3 — Conteúdo Local Mínimo:</strong> o sistema atinge percentual mínimo de conteúdo local definido no Regulamento CFI (verificar versão vigente no BNDES)</li>
+                <li><strong>Rota 4 — Compromisso de Futura Nacionalização:</strong> o empreendedor assina compromisso de atingir as metas de conteúdo local ao longo do prazo do CRCAP</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ As denominações e requisitos exatos de cada rota devem ser confirmados no Regulamento CFI atualizado no portal do BNDES — o texto pode ter sido revisado após a publicação da Portaria 136/2026.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §2º ("possível optar por uma das quatro rotas de credenciamento previstas nesta Etapa") · Capítulo IV — Do Requisito Mínimo de Nacionalização</span>
           </div>
         </div>
@@ -901,6 +1717,16 @@
           <div class="item-body">
             <label class="item-label">Solicitar e obter credenciamento no Sistema CFI do BNDES (Etapa 1) <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">O credenciamento deve ser obtido <em>antes da assinatura do CRCAP</em> com a CCEE. A assinatura do contrato fica condicionada à apresentação da documentação comprobatória emitida pelo BNDES à ANEEL.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Processo de solicitação</div>
+              <ul>
+                <li>Acessar o Sistema CFI no portal do BNDES (www.bndes.gov.br) e criar cadastro de usuário</li>
+                <li>Preencher formulário de solicitação de credenciamento: dados do empreendimento, rota escolhida, documentação da rota</li>
+                <li>Documentação típica conforme a rota: contrato com fabricante/integradora nacional, planilha de conteúdo local, ou instrumento de compromisso</li>
+                <li>Protocolar pedido e acompanhar análise pelo BNDES — prazo de análise a verificar no Regulamento CFI</li>
+              </ul>
+              <div class="subtopic-ok">✓ O credenciamento CFI <strong>não obriga</strong> uso de financiamento do BNDES — é apenas uma comprovação de requisito de nacionalização para o LRCAP 2026.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §1º (condicionamento da assinatura do CRCAP) · Art. 10, caput (obrigação de comprovação dos requisitos mínimos de nacionalização) · Capítulo IV</span>
           </div>
         </div>
@@ -908,11 +1734,21 @@
         <div class="item" id="i19" data-section="pos">
           <input type="checkbox" onchange="updateItem('i19',this)">
           <div class="item-body">
-            <label class="item-label">Guardar Certidão de Credenciamento emitida pelo BNDES <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <label class="item-label">Guardar e renovar Certidão de Credenciamento emitida pelo BNDES <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">
               Apresentar à ANEEL antes da assinatura do CRCAP. Na fase de implantação, a comprovação de utilização
               do SAE credenciado deve ser renovada junto ao BNDES nas datas estabelecidas pela ANEEL.
               A não comprovação implica extinção do CRCAP.
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Gestão da certidão ao longo do contrato</div>
+              <ul>
+                <li>Apresentar a Certidão original à ANEEL antes da assinatura do CRCAP (pré-requisito incontornável)</li>
+                <li>Acompanhar o prazo de validade da certidão e solicitar renovação junto ao BNDES antes do vencimento</li>
+                <li>Na fase de implantação: comprovar que o SAE efetivamente instalado corresponde ao credenciado (mesmos equipamentos, mesma rota)</li>
+                <li>Guardar os documentos de suporte do credenciamento por toda a vigência do CRCAP (15 anos) para fins de fiscalização</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ A não comprovação de uso do SAE credenciado na data estabelecida pela ANEEL na fase de implantação implica <strong>extinção do CRCAP</strong> (Art. 10, §4º). Risco muito alto — criar calendário de acompanhamento.</div>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §1º (certidão à ANEEL para assinatura do CRCAP) · Art. 10, §3º (comprovação na fase de implantação) · Art. 10, §4º (penalidade: extinção do CRCAP) · Capítulo IV</span>
           </div>
@@ -951,6 +1787,17 @@
           <div class="item-body">
             <label class="item-label">Certidões de regularidade fiscal — FGTS, Fazendas Municipal, Estadual e Federal <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">Do domicílio ou sede do interessado. Devem estar válidas durante toda a instrução e vigência da outorga.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Quais certidões obter e onde</div>
+              <ul>
+                <li><strong>CND Federal + INSS:</strong> Certidão Conjunta de Débitos relativos a Tributos Federais e à Dívida Ativa da União — Receita Federal (www.receita.fazenda.gov.br)</li>
+                <li><strong>CRF/FGTS:</strong> Certificado de Regularidade do FGTS — Caixa Econômica Federal (www.caixa.gov.br)</li>
+                <li><strong>CND Estadual:</strong> da Secretaria de Fazenda do estado onde a empresa tem sede</li>
+                <li><strong>CND Municipal:</strong> da Prefeitura do município sede</li>
+                <li><strong>CNDT:</strong> Certidão Negativa de Débitos Trabalhistas — Tribunal Superior do Trabalho (www.tst.jus.br)</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ As certidões têm validade de 60 a 180 dias. Planejar a retirada próxima à data de protocolo do pedido de outorga para evitar vencimento durante a análise da ANEEL.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 1 · Seção "Qualificação Jurídica" — Documentos Necessários à Obtenção de Outorga de Autorização
             <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 4º, §2º (obrigação de manutenção da regularidade fiscal durante a vigência)</span>
           </div>
@@ -970,6 +1817,16 @@
               </ul>
               <em>Dispensado se requerente tiver cadastro atualizado na ANEEL conforme REN 948/2021, Anexo II, Módulo II, Art. 4º (subitem 2.5).</em>
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Como elaborar o organograma</div>
+              <ul>
+                <li>Formato gráfico (fluxograma em PDF) com setas indicando a direção do controle acionário</li>
+                <li>Cada caixa deve conter: nome/razão social, CNPJ, percentual de participação</li>
+                <li>Indicar tipo de participação: direta ou indireta; ordinária, preferencial ou debenturista com direito a voto</li>
+                <li>Para SPEs (empresas de projeto): mostrar todos os sócios da SPE e suas controladoras até o nível final (pessoa física ou fundo)</li>
+              </ul>
+              <div class="subtopic-ok">✓ Se a empresa já tem cadastro atualizado na ANEEL (REN 948/2021, Módulo II), o organograma pode ser dispensado — verificar com a ANEEL antes de elaborar.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 2 e subitens 2.1 a 2.5 · Seção "Qualificação Jurídica"</span>
           </div>
         </div>
@@ -982,6 +1839,16 @@
               Acompanhado do ato que instituiu a atual administração. O objeto social deve contemplar atividades vinculadas à autorização
               (Lei 6.404/1976, Art. 2º, §2º — subitem 3.1).
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Documentos e verificações necessárias</div>
+              <ul>
+                <li>Contrato Social consolidado (última versão com todas as alterações incorporadas) ou Estatuto Social + última Ata de Assembleia que alterou o documento</li>
+                <li>Registro na Junta Comercial (NIRE) ou Cartório de RTD (para sociedades simples)</li>
+                <li>Verificar se o objeto social menciona: geração, armazenamento ou comercialização de energia elétrica</li>
+                <li>Se o objeto social não cobrir armazenamento de energia: aprovar alteração em Assembleia/Reunião de Sócios antes de protocolar o pedido de outorga</li>
+                <li>Ata de eleição/nomeação da atual diretoria/administração, com registro na Junta Comercial</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 3 e subitem 3.1 · Seção "Qualificação Jurídica"</span>
           </div>
         </div>
@@ -991,6 +1858,15 @@
           <div class="item-body">
             <label class="item-label">Comprovação de representação legal do signatário dos requerimentos <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">Documento que comprova que a pessoa física signatária está autorizada a representar legalmente a empresa requerente.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Formas de comprovar a representação legal</div>
+              <ul>
+                <li>Se o signatário é diretor/sócio administrador: basta a certidão da Junta Comercial com o registro do Contrato Social/Estatuto com sua nomeação</li>
+                <li>Se o signatário é procurador: procuração pública lavrada em Cartório de Notas com poderes para representar a empresa junto à ANEEL</li>
+                <li>Para consórcios: procuração da empresa líder com poderes outorgados pelos demais consorciados</li>
+                <li>Se há cadeia de procurações (substabelecimentos): apresentar todos os instrumentos encadeados</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 4 · Seção "Qualificação Jurídica"</span>
           </div>
         </div>
@@ -1003,6 +1879,17 @@
               Firmado por instrumento público ou particular (Lei 6.404/1976, Art. 279; Lei 8.666/1993, Art. 33).
               Deve conter: percentual de participação de cada empresa (subitem 5.1) e designação da empresa líder
               responsável perante a ANEEL (subitem 5.2).
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Requisitos mínimos do contrato de consórcio</div>
+              <ul>
+                <li>Identificação de todos os consorciados: razão social, CNPJ, endereço</li>
+                <li>Percentual de participação de cada empresa no consórcio</li>
+                <li>Designação formal da empresa líder responsável perante a ANEEL/EPE/CCEE</li>
+                <li>Responsabilidade solidária de todos os consorciados pelas obrigações do CRCAP</li>
+                <li>Prazo de vigência do consórcio (deve cobrir toda a duração do CRCAP — mínimo 15 anos + implantação)</li>
+                <li>Registro em Cartório de RTD ou instrumento público (lavrado em Cartório de Notas)</li>
+              </ul>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 5 e subitens 5.1 e 5.2 · Seção "Qualificação Jurídica"
             <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 2º, parágrafo único (responsabilidade solidária nos consórcios)</span>
@@ -1017,11 +1904,20 @@
         <div class="item" id="i25" data-section="pos">
           <input type="checkbox" onchange="updateItem('i25',this)">
           <div class="item-body">
-            <label class="item-label">Arranjo Geral do empreendimento (georreferenciado) <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <label class="item-label">Arranjo Geral do empreendimento (georreferenciado) — versão final para outorga <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">
               Contendo a delimitação da poligonal do SAE e da rede de interesse restrito do armazenador,
               partindo da subestação coletora até o ponto de conexão. Formato conforme instruções publicadas no sítio da ANEEL.
               Responsabilidade de engenheiro com CREA regular.
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Diferenças em relação à versão entregue no AEGE (pré-cadastramento)</div>
+              <ul>
+                <li>Esta é a versão <strong>definitiva</strong> para outorga — deve refletir a localização e configuração real aprovada após o leilão</li>
+                <li>Qualquer alteração no layout do BESS ou traçado da linha de conexão desde o pré-cadastramento deve ser atualizada aqui</li>
+                <li>Coordenadas UTM SIRGAS 2000 devem ser consistentes com o georreferenciamento do Processo Fundiário (Seção 0)</li>
+                <li>Incluir a ADS (Área de Desenvolvimento da Subestação) se o ponto de conexão for em subestação da Rede Básica — o SAE não pode ser implantado na ADS (REN 1.055/2022)</li>
+              </ul>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 6 · Seção "Qualificação Técnica de SAE por meio de Baterias"
             <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 19 (responsabilidade do engenheiro com inscrição CREA regular)</span>
@@ -1031,11 +1927,21 @@
         <div class="item" id="i26" data-section="pos">
           <input type="checkbox" onchange="updateItem('i26',this)">
           <div class="item-body">
-            <label class="item-label">Estudo técnico de estimativa de injeção anual de energia elétrica <span class="tag tag-req">OBRIGATÓRIO</span></label>
+            <label class="item-label">Estudo técnico de estimativa de injeção anual de energia elétrica — versão final <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">
               Deve incluir: perfil de operação previsto, eficiência global (RTE), potência de descarga,
               capacidade de armazenamento (MWh), descrição da tecnologia e equipamentos adotados.
               Assinado por responsável técnico com CREA regular.
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Itens adicionais vs. versão do pré-cadastramento</div>
+              <ul>
+                <li>Confirmar fabricante e modelo definitivos de baterias e PCS — não podem diferir dos declarados no AEGE sem processo de alteração</li>
+                <li>Atualizar o cálculo de RTE considerando as eficiências dos equipamentos confirmados pelo fornecedor (não estimativas preliminares)</li>
+                <li>Incluir declaração explícita de atendimento ao RTE ≥ 85% em condições EOL (End of Life) após 15 anos</li>
+                <li>Incluir referência ao Número de Inscrição AEGE e ao Número de Autorização (após a outorga, para fins de atualização)</li>
+              </ul>
+              <div class="subtopic-ok">✓ A ANEEL pode solicitar complementações a qualquer momento (Art. 20 da REN 1.161/2026) — manter toda a documentação base (datasheets, cálculos, planilhas) organizada e acessível.</div>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 7 · Seção "Qualificação Técnica de SAE por meio de Baterias"
             <br>📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 19 (responsabilidade do engenheiro) · Art. 20 (ANEEL pode solicitar complementações)</span>
@@ -1055,6 +1961,18 @@
               Dispensada na fase de Habilitação Técnica EPE, mas <strong>obrigatória para a emissão da outorga pela ANEEL</strong>.
               O Edital definirá o prazo máximo para obtenção pelos vencedores do leilão.
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Processo de licenciamento ambiental para BESS</div>
+              <ul>
+                <li><strong>Órgão licenciador:</strong> IBAMA (se o SAE estiver em área de competência federal) ou SEMA/SEMAD estadual (competência estadual para a maioria dos casos)</li>
+                <li><strong>Enquadramento:</strong> verificar o porte e localização do projeto — BESS de 30–300 MW geralmente exige EIA/RIMA (estudos de impacto ambiental) ou RAS (relatório ambiental simplificado)</li>
+                <li><strong>LP (Licença Prévia):</strong> obtida ainda na fase de planejamento, antes da outorga — iniciar assim que vencer o leilão</li>
+                <li><strong>LI (Licença de Instalação):</strong> necessária antes do início das obras civis</li>
+                <li><strong>LO (Licença de Operação):</strong> exigida antes do início da operação comercial</li>
+                <li>Prazo típico para LP: 6–18 meses — iniciar o processo imediatamente após a vitória no leilão</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ BESS é uma tecnologia relativamente nova no Brasil — verificar com o órgão ambiental competente qual o enquadramento correto e se há Resolução CONAMA ou normativa estadual específica aplicável.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 11 · Seção "Documentos Adicionais para Autorização"
             <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 6º, §2º (dispensa da LP/LI/LO para Habilitação Técnica EPE) · Art. 6º, §3º (prazo para licenciamento a ser definido no Edital)</span>
           </div>
@@ -1065,6 +1983,16 @@
           <div class="item-body">
             <label class="item-label">CUST — Contrato de Uso do Sistema de Transmissão (celebrado com o ONS) <span class="tag tag-req">OBRIGATÓRIO para Outorga ANEEL</span></label>
             <div class="item-sub">Para acesso à Rede Básica. Deve ser encaminhado junto com o correspondente Parecer de Acesso ou documento equivalente.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Informações que devem constar no CUST</div>
+              <ul>
+                <li>Ponto de conexão: identificação do barramento (código ONS, subestação, tensão em kV)</li>
+                <li>Montante de uso para descarga: MW a injetar na rede durante a operação</li>
+                <li>Montante de uso para recarga: MW a consumir da rede para carregar as baterias</li>
+                <li>O CUST deve cobrir <strong>ambos os montantes</strong> simultaneamente (Art. 9º, §13 da Portaria 136/2026)</li>
+                <li>Vigência do CUST: deve cobrir ao menos toda a vigência do CRCAP (início: 01/08/2028 + 15 anos)</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 12 e subitem 12.1 · Seção "Documentos Adicionais para Autorização"
             <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 9º, §13 (exigência de contratação de montantes de uso para descarga e recarga total)</span>
           </div>
@@ -1078,6 +2006,15 @@
               Para acesso às DIT ou instalações de distribuição. Deve ser encaminhado junto com o Parecer de Acesso.
               Para SAEs vencedores do LRCAP: aceito também documento de acesso emitido pelo ONS ou CUSD para fins de alteração de característica técnica.
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Quando o CUSD se aplica</div>
+              <ul>
+                <li>Se o BESS se conectar em tensão abaixo de 230 kV em instalações da distribuidora local (DIT ou sub-transmissão)</li>
+                <li>Solicitar à concessionária de distribuição (ex.: Equatorial, Energisa, CEMIG, COPEL, CPFL, etc.) conforme o estado do projeto</li>
+                <li>Processo de solicitação: Módulo 3 do PRODIST (ANEEL) — Acesso ao Sistema de Distribuição</li>
+                <li>Prazo para obtenção: variável por distribuidora — pode levar de 12 a 24 meses após a solicitação</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 12 e subitem 12.2 · Seção "Documentos Adicionais para Autorização"</span>
           </div>
         </div>
@@ -1087,6 +2024,17 @@
           <div class="item-body">
             <label class="item-label">Sumário Executivo para emissão de outorga <span class="tag tag-req">OBRIGATÓRIO</span></label>
             <div class="item-sub">Documento resumindo as características técnicas e empresariais do empreendimento para análise da ANEEL.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Conteúdo típico do Sumário Executivo</div>
+              <ul>
+                <li>Identificação do empreendedor: razão social, CNPJ, endereço, representante legal</li>
+                <li>Dados do empreendimento: nome, localização (UF, município), coordenadas UTM, área (ha)</li>
+                <li>Características técnicas: potência (MW), capacidade (MWh), duração (h), tecnologia de bateria, número de unidades</li>
+                <li>Ponto de conexão: barramento, tensão de conexão (kV), tipo (Rede Básica ou Distribuição)</li>
+                <li>Estágio atual do projeto: licenciamento ambiental, contratos de acesso, status do BNDES (para 2028-A)</li>
+                <li>Formato conforme modelo publicado pela ANEEL nas instruções do pedido de outorga</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 13 · Seção "Documentos Adicionais para Autorização"</span>
           </div>
         </div>
@@ -1107,6 +2055,17 @@
               </ul>
               Responsabilidade civil, penal (Art. 299 do Código Penal) e administrativa pela veracidade das informações.
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Como preparar a Declaração de Atendimento</div>
+              <ul>
+                <li>Baixar o modelo exato do Anexo III da REN 1.161/2026 (disponível no portal da ANEEL)</li>
+                <li><strong>Item 1 — Domínio/posse da área:</strong> comprova-se com os documentos do Processo Fundiário (Seção 0): matrícula + contrato de arrendamento ou escritura pública</li>
+                <li>Verificar se a área declarada é a mesma do Arranjo Geral e da poligonal registrada no AEGE</li>
+                <li>Assinatura com firma reconhecida em cartório ou assinatura digital ICP-Brasil do representante legal</li>
+                <li>Não alterar o modelo padrão — a ANEEL rejeita declarações com formatação modificada</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ Esta declaração conecta diretamente o Processo Fundiário (Seção 0) com a outorga. A matrícula ou contrato de arrendamento devem estar em nome da empresa ou SPE requerente — não em nome de pessoa física diferente do declarante.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 14 (referência ao Anexo III) · Anexo III completo (modelo da Declaração de Atendimento) · Capítulo IV — Disposições Finais</span>
           </div>
         </div>
@@ -1124,6 +2083,16 @@
               O DRO-SAE facilita: obtenção de licenças ambientais; atendimento a exigências de órgãos públicos ou agentes financiadores;
               apresentação de documentos na fase de outorga. Validade: 4 anos, sem prorrogação. Não garante direito de preferência.
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Quando e por que solicitar o DRO-SAE</div>
+              <ul>
+                <li>Recomendado para projetos que precisam do número de protocolo ANEEL para instruir processos ambientais junto ao IBAMA/SEMA</li>
+                <li>Útil para apresentar às instituições financeiras como comprovação de existência formal do projeto antes da outorga</li>
+                <li>Pode ser solicitado <em>antes</em> do resultado do leilão (não exige vitória) — usar o Número de Inscrição AEGE como referência</li>
+                <li>Documentação exigida pelo Anexo I da REN 1.161/2026: Formulário + Declaração de Atendimento (Anexo III)</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ O DRO-SAE tem validade de <strong>4 anos sem prorrogação</strong> e <strong>não garante direito de preferência</strong> sobre o ponto de conexão — não confundir com uma outorga.</div>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo I, item 1 · Art. 4º (solicitação do DRO-SAE) · Art. 5º, §§1º a 6º (características, validade e restrições do DRO-SAE) · Art. 5º, §3º (facultatividade) · Capítulo II</span>
           </div>
         </div>
@@ -1133,6 +2102,14 @@
           <div class="item-body">
             <label class="item-label">Declaração de Atendimento (Anexo III) junto ao pedido de DRO-SAE <span class="tag tag-opt">OPCIONAL</span></label>
             <div class="item-sub">Caso opte pelo DRO-SAE, a Declaração de Atendimento deve ser apresentada junto ao Formulário de Requerimento.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">O que declarar para o DRO-SAE</div>
+              <ul>
+                <li>Mesmo modelo do Anexo III da REN 1.161/2026 usado para a outorga definitiva</li>
+                <li>Item 1 (domínio/posse da área): pode ser comprovado com contrato de arrendamento, opção de compra, ou carta de intenção do proprietário — a ANEEL aceita documentos preliminares para o DRO</li>
+                <li>Obter o DRO-SAE cedo facilita a obtenção da Licença Prévia (LP) — órgãos ambientais reconhecem o protocolo ANEEL como comprovação do projeto</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo I, item 2 · Capítulo II — Do Requerimento de Outorga de Autorização</span>
           </div>
         </div>
@@ -1172,6 +2149,16 @@
               Deve acompanhar o CUST quando da apresentação à ANEEL.
               Para conexão em Rede Básica/DIT/ICG, o Parecer de Acesso é dispensado na fase de Habilitação Técnica na EPE.
             </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">O que é o Parecer de Acesso e como obtê-lo</div>
+              <ul>
+                <li>Documento emitido pelo ONS após estudo de impacto de rede, que confirma a viabilidade técnica da conexão no barramento solicitado</li>
+                <li>Obtido após protocolar Solicitação de Acesso (SA) no Processo de Regulamentação e Liberação (PRL) do ONS</li>
+                <li>O Parecer de Acesso precede a celebração do CUST e CCT — não há contrato sem o parecer aprovado</li>
+                <li>Prazo médio do ONS para emitir o parecer: 6–12 meses após a SA</li>
+                <li>Se o barramento da Etapa Inicial (leilão) diferir do barramento do DPA: verificar necessidade de novo processo de acesso</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, subitem 12.1 (parecer de acesso deve acompanhar o contrato)
             <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 11, §1º (dispensa do Parecer de Acesso para habilitação técnica EPE quando conexão em RB/DIT/ICG)</span>
           </div>
@@ -1182,6 +2169,15 @@
           <div class="item-body">
             <label class="item-label">CUST — Contrato de Uso do Sistema de Transmissão (ONS) <span class="tag tag-req">OBRIGATÓRIO para Outorga</span></label>
             <div class="item-sub">Para acesso à Rede Básica. Deve cobrir os montantes de uso necessários para a descarga e a recarga total do SAE.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Pontos de atenção na celebração do CUST</div>
+              <ul>
+                <li>Verificar se o montante de descarga no CUST corresponde exatamente à potência injetável declarada no AEGE (MW)</li>
+                <li>Verificar se o montante de recarga no CUST é suficiente para recarregar o BESS no prazo de ≤ 6h (potência de recarga = capacidade MWh / tempo recarga h)</li>
+                <li>O CUST deve cobrir o período completo de suprimento do CRCAP: de 01/08/2028 até o fim do contrato</li>
+                <li>Qualquer revisão dos montantes após a assinatura do CUST exige um processo de alteração contratual junto ao ONS (lento e custoso)</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 12 · Seção "Documentos Adicionais para Autorização"
             <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 9º, §13 (exigência de contratação de montantes de uso para descarga e recarga) · Anexo I, Art. 1º, inciso XIX (definição de "Empreendimento com Contrato de Uso e Conexão")</span>
           </div>
@@ -1192,6 +2188,15 @@
           <div class="item-body">
             <label class="item-label">CCT — Contrato de Conexão às Instalações de Transmissão (ONS) <span class="tag tag-req">OBRIGATÓRIO para Outorga</span></label>
             <div class="item-sub">Celebrado com o ONS para formalizar a conexão física à Rede Básica. Apresentado em conjunto com o CUST.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">O que o CCT formaliza</div>
+              <ul>
+                <li>A conexão física do BESS ao barramento da subestação: equipamentos de conexão (disjuntores, transformador elevador, medição)</li>
+                <li>Responsabilidades do empreendedor vs. ONS/Transmissora na construção e manutenção das instalações de conexão</li>
+                <li>Ponto de medição de energia (fronteira entre o BESS e a rede): determinante para o faturamento do CUST e o cálculo da Disponibilidade</li>
+                <li>Celebrado junto com o CUST — apresentar ambos à ANEEL no protocolo da outorga</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 1º, inciso XIX, alínea "a" (definição: CUST + CCT para Rede Básica) · Capítulo I — Das Definições</span>
           </div>
         </div>
@@ -1199,10 +2204,21 @@
         <div class="item" id="i37" data-section="pos">
           <input type="checkbox" onchange="updateItem('i37',this)">
           <div class="item-body">
-            <label class="item-label">Cadastramento em Temporada de Acesso após vitória no leilão (para obter Diagnóstico Prévio de Acesso — DPA) <span class="tag tag-pos">PÓS-LEILÃO</span></label>
+            <label class="item-label">Cadastramento em Temporada de Acesso após vitória no leilão (para obter DPA) <span class="tag tag-pos">PÓS-LEILÃO</span></label>
             <div class="item-sub">
               A Etapa Inicial do Leilão equivale a uma Temporada de Acesso. Os vencedores devem se cadastrar
-              em Temporada de Acesso subsequente para obter o DPA, que viabilizará a assinatura do CUST definitivo.
+              em Temporada de Acesso subsequente para obter o DPA (Diagnóstico Prévio de Acesso), que viabilizará a assinatura do CUST definitivo.
+            </div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Fluxo: Temporada de Acesso → DPA → CUST</div>
+              <ul>
+                <li>Após resultado do leilão: aguardar abertura da próxima Temporada de Acesso do ONS (acompanhar calendário em ons.org.br)</li>
+                <li>Protocolar Solicitação de Acesso (SA) na Temporada de Acesso: dados do projeto, barramento candidato, montantes de descarga e recarga</li>
+                <li>ONS realiza estudo de impacto de rede e emite o DPA com as condições técnicas para conexão</li>
+                <li>Com o DPA aprovado: negociar e assinar o CUST e CCT definitivos com o ONS</li>
+                <li>Prazo total do processo: 12–24 meses — iniciar imediatamente após a divulgação do resultado do leilão</li>
+              </ul>
+              <div class="subtopic-warn">⚠️ A Etapa Inicial do leilão equivale a uma Temporada de Acesso (Art. 4º, §14), mas os vencedores precisam se cadastrar em uma <em>nova</em> Temporada de Acesso para que o ONS emita o DPA formal (§15). Não confundir os dois momentos.</div>
             </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 4º, §14 (Etapa Inicial equiparada à Temporada de Acesso) · Art. 4º, §15 (cadastramento em Temporada de Acesso pelos vencedores para emissão do DPA) · Art. 1º, inciso XIII (definição de DPA)</span>
           </div>
@@ -1217,6 +2233,16 @@
           <div class="item-body">
             <label class="item-label">CUSD — Contrato de Uso do Sistema de Distribuição <span class="tag tag-cond">SE APLICÁVEL</span></label>
             <div class="item-sub">Para acesso às DIT ou instalações de distribuição. Celebrado com a concessionária/permissionária.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Processo junto à distribuidora</div>
+              <ul>
+                <li>Protocolar Solicitação de Acesso (SA) na distribuidora local conforme Módulo 3 do PRODIST</li>
+                <li>Aguardar Estudo de Acesso emitido pela distribuidora (prazo regulatório: 180 dias para projetos de grande porte)</li>
+                <li>Com estudo aprovado: negociar condições do CUSD (montante de uso, tarifa, vigência) e assinar</li>
+                <li>O CUSD deve cobrir tanto a descarga (injeção) quanto a recarga (consumo) do BESS</li>
+                <li>Confirmar com a distribuidora se o ponto de conexão está dentro de suas instalações de distribuição ou nas DIT (instalações de transmissão da distribuidora)</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Anexo II, item 12 · Seção "Documentos Adicionais para Autorização"
             <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I, Art. 1º, inciso XIX, alínea "b" (definição: CUSD + CCD ou CCT para Distribuição)</span>
           </div>
@@ -1227,6 +2253,15 @@
           <div class="item-body">
             <label class="item-label">CCD — Contrato de Conexão ao Sistema de Distribuição <span class="tag tag-cond">SE APLICÁVEL</span></label>
             <div class="item-sub">Celebrado com a concessionária/permissionária de distribuição, formalizando a conexão física.</div>
+            <div class="subtopic-block">
+              <div class="subtopic-label">O que o CCD define</div>
+              <ul>
+                <li>Ponto de conexão físico: subestação ou barramento da distribuidora onde o BESS se conecta</li>
+                <li>Responsabilidades sobre a instalação dos equipamentos de conexão (disjuntor de interligação, proteções, medição)</li>
+                <li>Custos de conexão: pagamento de reforços de rede eventualmente necessários para viabilizar a conexão</li>
+                <li>Celebrado em conjunto com o CUSD — apresentar ambos à ANEEL</li>
+              </ul>
+            </div>
             <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 1º, inciso XIX, alínea "b" (definição: CUSD + CCD ou CCT para acesso ao Sistema de Distribuição) · Capítulo I — Das Definições</span>
           </div>
         </div>
@@ -1261,6 +2296,17 @@
         <div class="item-body">
           <label class="item-label">Aporte de Garantia de Fiel Cumprimento junto ao Agente Custodiante <span class="tag tag-req">OBRIGATÓRIO</span></label>
           <div class="item-sub">Valor e prazo definidos no Edital da ANEEL. Aportado pelos vencedores após o resultado do leilão.</div>
+          <div class="subtopic-block">
+            <div class="subtopic-label">Diferença em relação à Garantia de Proposta (Fase 2)</div>
+            <ul>
+              <li><strong>Garantia de Proposta</strong> (pré-leilão): valor menor, serve para habilitar a participação no leilão — devolvida aos não vencedores</li>
+              <li><strong>Garantia de Fiel Cumprimento</strong> (pós-vitória): valor maior, garante o cumprimento das obrigações do CRCAP ao longo dos 15 anos</li>
+              <li>Modalidades tipicamente aceitas: carta de fiança bancária, seguro-garantia, caução em dinheiro ou títulos públicos federais</li>
+              <li>Prazo para aporte: definido no Edital após a divulgação do resultado — normalmente 15 a 30 dias</li>
+              <li>Mantida pelo Agente Custodiante durante toda a vigência do CRCAP — renovar antes de cada vencimento</li>
+            </ul>
+            <div class="subtopic-warn">⚠️ A não renovação da Garantia de Fiel Cumprimento dentro do prazo pode caracterizar inadimplência contratual e ativar penalidades no CRCAP — criar calendário de vencimentos.</div>
+          </div>
           <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 1º, inciso XXVIII (definição: Garantias de Fiel Cumprimento) · Art. 9º, §14 (ANEEL poderá estabelecer regras diferenciadas de garantias nos Editais) · Capítulo V — Da Divulgação dos Resultados</span>
         </div>
       </div>
@@ -1274,6 +2320,25 @@
             apresentar Certidão de Credenciamento BNDES à ANEEL antes da assinatura.
             O empreendimento vencedor do Produto 2028-A <strong>não pode participar</strong> do leilão do Produto 2028-B.
           </div>
+          <div class="subtopic-block">
+            <div class="subtopic-label">Pré-requisitos para assinar o CRCAP</div>
+            <ul>
+              <li>Garantia de Fiel Cumprimento aportada e validada pelo Agente Custodiante</li>
+              <li>Para Produto 2028-A: Certidão de Credenciamento CFI/BNDES apresentada à ANEEL</li>
+              <li>Outorga de autorização emitida pela ANEEL (ou protocolo do pedido aceito, conforme o Edital)</li>
+              <li>Representante legal com poderes para assinar contratos com a CCEE — verificar instrumento de mandato</li>
+            </ul>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Obrigações do CRCAP após a assinatura</div>
+              <ul>
+                <li>Entrar em operação comercial até 01/08/2028 (ou conforme o Edital)</li>
+                <li>Manter Disponibilidade ≥ 30 MW × Fcmax − DP durante os 15 anos do contrato</li>
+                <li>CVU = 0 (custo variável unitário nulo) — nenhum custo variável pode ser cobrado da CCEE</li>
+                <li>Reportar disponibilidade e operação ao ONS conforme as Regras de Operação do CRCAP</li>
+                <li>Renovar Certidão CFI/BNDES nos prazos estabelecidos pela ANEEL durante a implantação</li>
+              </ul>
+            </div>
+          </div>
           <span class="fonte">📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Anexo I (Sistemática), Art. 9º, §3º (obrigação incondicional de celebração do CRCAP) · Art. 9º, §§1º e 2º (resultado e oferta atendida) · Art. 2º, §15 (vedação de participar do 2028-B quem ganhou o 2028-A) · Capítulo V — Da Divulgação dos Resultados e Celebração dos CRCAPs
           <br>📄 <span class="fonte-doc">Portaria MME nº 136/2026</span> — Art. 10, §1º (condição: Certidão BNDES para produto 2028-A) · Art. 9º, §§2º e 3º</span>
         </div>
@@ -1286,6 +2351,26 @@
           <div class="item-sub">
             Para SAEs &gt; 5.000 kW: marcos intermediários devem ser informados ao sistema de acompanhamento de obras da ANEEL.
             Prorrogação de prazo somente com início de obras comprovado pela fiscalização — exceto para SAEs comercializados em leilão do ACR.
+          </div>
+          <div class="subtopic-block">
+            <div class="subtopic-label">Marcos críticos de implantação (referência — verificar no Edital)</div>
+            <ul>
+              <li><strong>M0 — Outorga:</strong> publicação do ato de autorização pela ANEEL → início do prazo de 54 meses</li>
+              <li><strong>M1 (~12 meses):</strong> Licença de Instalação (LI) obtida + pedido de Pedido de Reserva de Capacidade para Obras (PRCO) ao ONS</li>
+              <li><strong>M2 (~18–24 meses):</strong> contratos EPC assinados + equipamentos principais encomendados (baterias, PCS, transformadores)</li>
+              <li><strong>M3 (~30–36 meses):</strong> obras civis concluídas + chegada de equipamentos em campo</li>
+              <li><strong>M4 (~42–48 meses):</strong> comissionamento e testes do BESS + solicitação de Licença de Operação (LO)</li>
+              <li><strong>M5 — 54 meses:</strong> início da operação comercial e declaração de disponibilidade à CCEE/ONS</li>
+            </ul>
+            <div class="subtopic-block">
+              <div class="subtopic-label">Comunicações obrigatórias à ANEEL durante obras</div>
+              <ul>
+                <li>Informar início das obras no sistema de acompanhamento de obras da ANEEL (para projetos &gt; 5.000 kW)</li>
+                <li>Atualizar os marcos intermediários periodicamente — prazos definidos nas instruções da ANEEL pós-outorga</li>
+                <li>Notificar qualquer alteração de características técnicas (potência, tecnologia, ponto de conexão) antes de executar — requer autorização prévia da ANEEL</li>
+              </ul>
+            </div>
+            <div class="subtopic-warn">⚠️ Prorrogação do prazo de 54 meses só é possível com comprovação de início das obras perante a fiscalização da ANEEL. Sem início de obras comprovado → extinção da outorga.</div>
           </div>
           <span class="fonte">📄 <span class="fonte-doc">REN ANEEL nº 1.161/2026</span> — Art. 11, caput (prazo de 54 meses) · Art. 11, §1º (marcos intermediários para &gt; 5.000 kW) · Art. 13, §3º (dispensa da condição de início de obras para SAEs do ACR) · Capítulo III — Da Outorga de Autorização</span>
         </div>
@@ -1414,6 +2499,8 @@
     const allItems  = document.querySelectorAll('.item input[type="checkbox"]');
     const doneItems = document.querySelectorAll('.item input[type="checkbox"]:checked');
 
+    const funItems  = document.querySelectorAll('.item[data-section="fun"] input[type="checkbox"]');
+    const funDone   = document.querySelectorAll('.item[data-section="fun"] input[type="checkbox"]:checked');
     const preItems  = document.querySelectorAll('.item[data-section="pre"] input[type="checkbox"]');
     const preDone   = document.querySelectorAll('.item[data-section="pre"] input[type="checkbox"]:checked');
     const posItems  = document.querySelectorAll('.item[data-section="pos"] input[type="checkbox"]');
@@ -1423,6 +2510,7 @@
     const done  = doneItems.length;
     const pct   = total ? Math.round(done / total * 100) : 0;
 
+    const funPct = funItems.length ? Math.round(funDone.length / funItems.length * 100) : 0;
     const prePct = preItems.length ? Math.round(preDone.length / preItems.length * 100) : 0;
     const posPct = posItems.length ? Math.round(posDone.length / posItems.length * 100) : 0;
 
@@ -1433,12 +2521,18 @@
     document.getElementById('total-count').textContent = total;
 
     // section counters in sticky bar
+    document.getElementById('done-fun').textContent  = funDone.length;
+    document.getElementById('total-fun').textContent = funItems.length;
     document.getElementById('done-pre').textContent  = preDone.length;
     document.getElementById('total-pre').textContent = preItems.length;
     document.getElementById('done-pos').textContent  = posDone.length;
     document.getElementById('total-pos').textContent = posItems.length;
 
     // section banners
+    document.getElementById('fill-fun').style.width  = funPct + '%';
+    document.getElementById('pct-fun').textContent   = funPct + '% concluído';
+    document.getElementById('label-fun').textContent = funDone.length + ' / ' + funItems.length + ' itens';
+
     document.getElementById('fill-pre').style.width  = prePct + '%';
     document.getElementById('pct-pre').textContent   = prePct + '% concluído';
     document.getElementById('label-pre').textContent = preDone.length + ' / ' + preItems.length + ' itens';
