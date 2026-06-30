@@ -509,6 +509,8 @@ h1.mm-title{
   box-shadow:0 2px 8px rgba(0,0,0,.55); border:2px solid #0b1220; z-index:3;
 }
 .mm-node.side-left .mm-card-toggle{ right:auto; left:-10px; }
+.mm-card.lvl-3{ padding:5px 11px; gap:8px; border-radius:12px; }
+.mm-card.lvl-3 .mm-card-icon{ width:22px; height:22px; font-size:11px; border-radius:7px; }
 .mm-state-dot{
   position:absolute; left:-6px; top:-6px; width:15px; height:15px; border-radius:50%;
   display:flex; align-items:center; justify-content:center; font-size:8.5px; font-weight:900; color:#0b1220;
@@ -2519,13 +2521,18 @@ function buildModel(){
 }
 
 /* ---------- layout (d3.tree por lado, raiz central) ---------- */
-const MM_COL = 272, MM_ROW = 78;
+const MM_COL = 400, MM_GAP = 9;
 function mmExpandedChildren(n){ return (MM_EXPANDED.has(n.id) && n.children && n.children.length) ? n.children : null; }
+function mmSlotH(hn){ return hn.data.__synth ? 0 : mmCardSize(hn.data)[1]; }
 function layoutSide(branches, sign){
   if(!branches.length) return;
   const synth = { __synth:true, children:branches };
   const h = d3.hierarchy(synth, n => n.__synth ? n.children : mmExpandedChildren(n));
-  d3.tree().nodeSize([MM_ROW, MM_COL])(h);
+  // nodeSize row=1 → distância vertical entre irmãos = a própria função de
+  // separação (em px), dimensionada pela altura real de cada cartão. Assim a
+  // vertical fica compacta (sem sobreposição) e o mapa cresce na horizontal.
+  d3.tree().nodeSize([1, MM_COL])
+    .separation((a,b)=> (mmSlotH(a)+mmSlotH(b))/2 + MM_GAP + (a.parent===b.parent?0:18))(h);
   const rootX = h.x;
   h.each(node=>{ if(node.data.__synth) return; node.data._x = sign*(node.depth*MM_COL); node.data._y = node.x - rootX; });
 }
@@ -2540,10 +2547,10 @@ function mmVisible(){
   return out;
 }
 function mmCardSize(n){
-  if(n.level===0) return [186,66];
-  if(n.level===1) return [206,60];
-  if(n.level===2) return [190,54];
-  return [180,46];
+  if(n.level===0) return [186,60];
+  if(n.level===1) return [206,52];
+  if(n.level===2) return [190,46];
+  return [180,34];
 }
 function mmColor(n){ return (MM_PAL[n.color]||MM_PAL.root).main; }
 function mmLinkW(n){ return n.level<=1?3:(n.level===2?2.2:1.5); }
