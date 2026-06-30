@@ -7,7 +7,14 @@
       "Bash(python -c \"import pypdf; print\\('pypdf OK', pypdf.__version__\\)\")",
       "Bash(python -c \"import pdfplumber; print\\('pdfplumber OK'\\)\")",
       "Bash(python -c \"import fitz; print\\('pymupdf OK'\\)\")",
-      "Bash(python -)"
+      "Bash(python -)",
+      "Bash(curl -s __TRACKED_VAR__/rest/v1/registros?select=id,status,resposta -H 'apikey: __TRACKED_VAR__' -H 'Authorization: Bearer __TRACKED_VAR__')",
+      "Bash(curl -s https://whymkugcxklgeefghpok.supabase.co/rest/v1/registros?select=id -H 'apikey: sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI' -H 'Authorization: Bearer sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI' -H 'Prefer: count=exact' -I)",
+      "Bash(curl -s 'https://whymkugcxklgeefghpok.supabase.co/rest/v1/registros?select=id,resposta&resposta=neq.' -H 'apikey: sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI' -H 'Authorization: Bearer sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI')",
+      "Bash(curl -s -X PATCH https://whymkugcxklgeefghpok.supabase.co/rest/v1/registros?resposta=eq. -H 'apikey: sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI' -H 'Authorization: Bearer sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI' -H 'Content-Type: application/json' -H 'Prefer: return=minimal, count=exact' -d '{\"status\":\"Pendente Resposta\"}' -I)",
+      "Bash(curl -s https://whymkugcxklgeefghpok.supabase.co/rest/v1/registros?select=status -H 'apikey: sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI' -H 'Authorization: Bearer sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI')",
+      "Bash(python -c \"import sys,json,collections; d=json.load\\(sys.stdin\\); print\\(collections.Counter\\(r['status'] for r in d\\)\\)\")",
+      "Bash(curl -s -X PATCH https://whymkugcxklgeefghpok.supabase.co/rest/v1/registros?resposta=eq. -H 'apikey: sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI' -H 'Authorization: Bearer sb_publishable_FUi97JZ7rdkaZ4P15svGBg_u4v-vMCI' -H 'Content-Type: application/json' -H 'Prefer: return=minimal, count=exact' -d '{\"status\":\"Pendente Resposta\"}' -D - -o /dev/null)"
     ]
   }
 }

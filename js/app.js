@@ -270,8 +270,8 @@
   function readingStatus(r) {
     if (r.status) return `<span class="badge ${statusClass(r.status)}">${txt(r.status)}</span>`;
     return isAnswered(r)
-      ? '<span class="badge s-respondida">Respondida</span>'
-      : '<span class="badge s-pendente">Pendente</span>';
+      ? '<span class="badge s-respondida">Respondido</span>'
+      : '<span class="badge s-pendente">Pendente Resposta</span>';
   }
   function orgTag(r) {
     if (!r.orgao_responsavel) return "";
@@ -1150,7 +1150,7 @@
       classificacao: "Dúvida",
       data_protocolo: "2026-06-16",
       orgao_responsavel: "EPE",
-      status: "Pendente",
+      status: "Pendente Resposta",
       pergunta: "Texto da pergunta de exemplo…",
       resposta: "Texto da resposta de exemplo…",
       responsavel: "Bruno Brambilla",
