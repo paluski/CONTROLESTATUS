@@ -433,6 +433,9 @@ h1.mm-title{
 }
 .mm-status-chip:hover{ color:var(--text-1); }
 .mm-status-chip.active{ color:#0b1220; }
+.mm-status-chip:disabled{ cursor:not-allowed; opacity:.55; }
+.mm-status-chip:disabled:hover{ color:var(--text-2); }
+.mm-status-chip.active:disabled{ color:#0b1220; }
 .mm-sec{ margin-bottom:20px; }
 .mm-sec-title{ font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text-3); margin-bottom:9px; display:flex; align-items:center; gap:8px; }
 .mm-sec-title::after{ content:''; flex:1; height:1px; background:var(--border); }
@@ -456,6 +459,7 @@ h1.mm-title{
 }
 </style>
 <script src="vendor/d3.v7.min.js"></script>
+<script src="sync-map.js"></script>
 </head>
 <body>
 
@@ -2035,12 +2039,24 @@ const MM_STATES = {
   'aprovado':    {label:'Aprovado',     color:'#5ed68f', glyph:'✓'},
   'reprovado':   {label:'Reprovado',    color:'#f87171', glyph:'✕'}
 };
-/* Status apenas ilustrativo — edite à vontade; não altera a estrutura. */
-const MM_STATUS_SEED = {
-  prospeccao:'andamento', juridico:'aprovado', fundiario:'analise', ambiental:'andamento',
-  aneel:'analise', epe:'andamento', conn:'nao-iniciado', prazos:'nao-iniciado',
-  'juridico/spe':'aprovado', 'ambiental/lp':'aprovado', 'ambiental/li':'andamento', 'ambiental/lo':'nao-iniciado'
-};
+/* O status de partida de cada nó vem só do Checklist (ver applySyncStatus).
+   Nós sem correspondência no Checklist começam "não iniciado" e podem ser
+   marcados manualmente pelo usuário no painel lateral. */
+const MM_STATUS_SEED = {};
+
+/* Converte o estado do Checklist (pending/partial/done) para o vocabulário
+   de status do Mapa Mental e aplica aos nós vinculados (ver sync-map.js). */
+const SYNC_STATE_MAP = { pending:'nao-iniciado', partial:'andamento', done:'aprovado' };
+function applySyncStatus(){
+  if(!window.LRCAP_SYNC) return;
+  const synced = window.LRCAP_SYNC.read();
+  Object.keys(synced).forEach((nodeId)=>{
+    if(MM_BY_ID[nodeId]) MM_STATUS[nodeId] = SYNC_STATE_MAP[synced[nodeId]] || 'nao-iniciado';
+  });
+}
+function mmIsSynced(nodeId){
+  return !!(window.LRCAP_SYNC && window.LRCAP_SYNC.SYNCED_NODES[nodeId]);
+}
 const MM_NORMA = {
   prospeccao:'LRCAP-2026 · Portaria MME do leilão',
   juridico:'RN ANEEL nº 1.161/2026 (Anexo II — qualificação jurídica)',
@@ -2287,9 +2303,12 @@ function mmOpenPanel(d){
   document.getElementById('mm-panel-sub').textContent=d.sub||'';
 
   const st=MM_STATUS[d.id]||'nao-iniciado';
+  const synced=mmIsSynced(d.id);
   let html='<div class="mm-sec"><div class="mm-sec-title">Status</div><div class="mm-status-row">';
-  Object.entries(MM_STATES).forEach(([k,v])=>{ html+=`<button class="mm-status-chip ${k===st?'active':''}" data-status="${k}" style="${k===st?`background:${v.color};border-color:${v.color}`:''}">${v.label}</button>`; });
-  html+='</div></div>';
+  Object.entries(MM_STATES).forEach(([k,v])=>{ html+=`<button class="mm-status-chip ${k===st?'active':''}" data-status="${k}" ${synced?'disabled':''} style="${k===st?`background:${v.color};border-color:${v.color}`:''}">${v.label}</button>`; });
+  html+='</div>';
+  if(synced) html+=`<p style="margin-top:8px;font-size:11.5px;color:var(--text-3)">🔗 Sincronizado com o <a href="checklist_lrcap.html" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Checklist</a> — marque os itens lá para atualizar aqui.</p>`;
+  html+='</div>';
 
   let desc=d.tip, detail=null;
   if(d.doc){ detail=getLeafDetail(d.label); desc=detail.summary; }
@@ -2369,7 +2388,7 @@ function mmWireUI(){
 
   document.getElementById('mm-panel-body').addEventListener('click',e=>{
     const stc=e.target.closest('[data-status]');
-    if(stc && MM_SELECTED){ MM_STATUS[MM_SELECTED.id]=stc.dataset.status; mmRefreshCard(MM_SELECTED); mmOpenPanel(MM_SELECTED); return; }
+    if(stc && !stc.disabled && MM_SELECTED && !mmIsSynced(MM_SELECTED.id)){ MM_STATUS[MM_SELECTED.id]=stc.dataset.status; mmRefreshCard(MM_SELECTED); mmOpenPanel(MM_SELECTED); return; }
     const go=e.target.closest('[data-goto]');
     if(go) mmGoto(go.dataset.goto);
   });
@@ -2385,6 +2404,7 @@ const MM = {
   init(){
     buildModel();
     MM_EXPANDED=new Set(['SAE']);          // começa mostrando apenas o 1º nível (ramos)
+    applySyncStatus();
     mmSetup();
     mmUpdate();
     requestAnimationFrame(()=>mmFit());
@@ -2396,6 +2416,14 @@ const MM = {
 };
 
 MM.init();
+
+/* Atualiza ao vivo quando o Checklist (outra aba, mesma origem) grava novo estado. */
+window.addEventListener('storage', (e)=>{
+  if(!window.LRCAP_SYNC || e.key !== window.LRCAP_SYNC.STORAGE_KEY) return;
+  applySyncStatus();
+  mmUpdate();
+  if(MM_SELECTED) mmOpenPanel(MM_SELECTED);
+});
 </script>
 </body>
 </html>

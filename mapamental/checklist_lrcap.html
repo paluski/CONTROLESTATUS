@@ -699,6 +699,7 @@ try{ if(localStorage.getItem('lrcap_flowcheck_theme') === 'light') document.body
   </div>
 </div>
 
+<script src="sync-map.js"></script>
 <script>
 /* ════════════════════════════════════════════════════════════
    DADOS — cada "etapa" (caixa) é um item do checklist. Os "items"
@@ -1984,7 +1985,26 @@ ensureIds(flowData);
 
 let CHECK = loadChecks();
 function loadChecks(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }catch(e){ return {}; } }
-function saveChecks(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(CHECK)); }catch(e){} }
+function saveChecks(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(CHECK)); }catch(e){} publishSync(); }
+
+/* ── Vínculo com o Mapa Mental (mapamental/sync-map.js) ── */
+function findStepById(id){
+  function walk(list){
+    for(const entry of list){
+      if(entry.type === 'fork'){ const f = walk([].concat.apply([], entry.branches||[])); if(f) return f; }
+      else if(entry.id === id) return entry;
+    }
+    return null;
+  }
+  return walk(flowData);
+}
+function publishSync(){
+  if(!window.LRCAP_SYNC) return;
+  window.LRCAP_SYNC.publish((cid) => {
+    const n = findStepById(cid);
+    return n ? nodeState(n) : undefined;
+  });
+}
 
 function hasItems(n){ return n.items && n.items.length; }
 function subKey(n,i){ return n.id + ':' + i; }
@@ -2872,6 +2892,7 @@ function redrawDiagram(durationMs){
 }
 
 renderFlow();
+publishSync();
 redrawDiagram(700);
 window.addEventListener('resize', () => drawDiagramConnectors());
 if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>drawDiagramConnectors()); }
