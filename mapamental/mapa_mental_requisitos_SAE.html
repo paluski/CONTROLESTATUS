@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAE — Requisitos Regulatórios | Mapa Mental & Fluxograma</title>
+<title>SAE — Requisitos Regulatórios | Mapa Mental</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -71,24 +71,6 @@ h1.mm-title{
 }
 .mm-subtitle{ font-size:14.5px; color:var(--text-2); max-width:680px; line-height:1.55; }
 
-/* view switch (mapa mental / fluxograma) */
-.view-switch{
-  display:flex; gap:4px; background:var(--surface); border:1px solid var(--border-strong);
-  border-radius:999px; padding:4px; margin-top:4px;
-}
-.view-switch button{
-  appearance:none; border:none; cursor:pointer; border-radius:999px;
-  padding:9px 20px; font-size:13.5px; font-weight:700; letter-spacing:.01em;
-  color:var(--text-2); background:transparent; display:flex; align-items:center; gap:7px;
-  transition:color .2s ease, background .2s ease, box-shadow .2s ease;
-}
-.view-switch button svg{ width:15px; height:15px; }
-.view-switch button.active{
-  color:#0b1220; background:linear-gradient(135deg,#dfe6ff,#bfe9d3);
-  box-shadow:var(--shadow-sm);
-}
-.view-switch button:not(.active):hover{ color:var(--text-1); background:var(--surface-strong); }
-
 .mm-controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
 .mm-btn{
   appearance:none; border:1px solid var(--border-strong); border-radius:999px;
@@ -113,20 +95,6 @@ h1.mm-title{
 .leg-dot.c-orange{color:var(--orange-soft); background:var(--orange);}
 .leg-dot.c-teal{color:var(--teal-soft); background:var(--teal);}
 .leg-dot.c-pink{color:var(--pink-soft); background:var(--pink);}
-
-/* type selector (fluxograma) */
-.type-switch{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
-.type-pill{
-  appearance:none; cursor:pointer; border-radius:14px; padding:10px 18px;
-  font-size:13.5px; font-weight:700; color:var(--text-2);
-  background:var(--surface); border:1px solid var(--border-strong);
-  display:flex; align-items:center; gap:8px; transition:all .2s ease;
-}
-.type-pill .tp-dot{ width:9px; height:9px; border-radius:50%; }
-.type-pill:hover{ color:var(--text-1); background:var(--surface-strong); transform:translateY(-1px); }
-.type-pill.active{ color:var(--text-1); box-shadow:var(--shadow-sm); }
-.type-pill.active[data-type="bateria"]{ background:linear-gradient(135deg, var(--blue-soft), rgba(94,214,143,.10)); border-color:rgba(77,163,255,.55); }
-.type-pill.active[data-type="uhr"]{ background:linear-gradient(135deg, var(--purple-soft), rgba(199,146,255,.10)); border-color:rgba(199,146,255,.55); }
 
 /* ---------------- Views ---------------- */
 .view{ display:none; }
@@ -305,119 +273,10 @@ h1.mm-title{
 .leaf-modal-detail p b, .leaf-modal-detail p strong{ color:var(--text-1); font-weight:700; }
 .leaf-modal-detail p i, .leaf-modal-detail p em{ color:var(--text-1); font-style:normal; border-left:2px solid var(--border-strong); padding-left:8px; display:inline; }
 
-/* ---------------- Flowchart ---------------- */
-.flow-wrap{ max-width:760px; margin:0 auto; animation:fadeUp .4s ease both; }
-
-.flow-phase{ position:relative; margin-bottom:6px; }
-.phase-head{
-  display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:14px;
-  margin-bottom:14px; font-size:13px; font-weight:800; letter-spacing:.02em; text-transform:uppercase;
-  cursor:pointer; user-select:none; transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
-}
-.phase-head:hover{ transform:translateY(-1px); box-shadow:var(--shadow-sm); }
-.phase-head .ph-dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 12px 2px currentColor; flex-shrink:0; }
-.phase-head .ph-note{ font-size:11px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--text-3); margin-left:auto; text-align:right; }
-.phase-head .ph-chevron{ width:17px; height:17px; flex-shrink:0; transition:transform .25s ease; }
-.flow-phase.collapsed .phase-head .ph-chevron{ transform:rotate(-90deg); }
-.flow-phase.collapsed .phase-head{ margin-bottom:0; }
-.phase-body{ display:grid; grid-template-rows:1fr; overflow:hidden; transition:grid-template-rows .38s ease; }
-.flow-phase.collapsed .phase-body{ grid-template-rows:0fr; }
-.phase-body-inner{ min-height:0; overflow:hidden; }
-
-.phase-head[data-color="blue"]{ background:var(--blue-soft); border:1px solid rgba(77,163,255,.3); color:var(--blue-text); }
-.phase-head[data-color="blue"] .ph-dot{ background:var(--blue); color:var(--blue); }
-.phase-head[data-color="green"]{ background:var(--green-soft); border:1px solid rgba(94,214,143,.3); color:var(--green-text); }
-.phase-head[data-color="green"] .ph-dot{ background:var(--green); color:var(--green); }
-.phase-head[data-color="amber"]{ background:var(--amber-soft); border:1px solid rgba(255,180,94,.3); color:var(--amber-text); }
-.phase-head[data-color="amber"] .ph-dot{ background:var(--amber); color:var(--amber); }
-.phase-head[data-color="gray"]{ background:var(--gray-soft); border:1px solid rgba(154,166,194,.3); color:var(--gray-text); }
-.phase-head[data-color="gray"] .ph-dot{ background:var(--gray); color:var(--gray); }
-.phase-head[data-color="purple"]{ background:var(--purple-soft); border:1px solid rgba(199,146,255,.3); color:var(--purple-text); }
-.phase-head[data-color="purple"] .ph-dot{ background:var(--purple); color:var(--purple); }
-
-.steps-col{ display:flex; flex-direction:column; align-items:stretch; gap:0; }
-
-.step{ position:relative; padding-left:46px; padding-bottom:14px; }
-.step:last-child{ padding-bottom:4px; }
-.step::before{ /* vertical connector line */
-  content:''; position:absolute; left:17px; top:34px; bottom:-2px; width:2px;
-  background:linear-gradient(var(--border-strong), var(--border-strong));
-}
-.step:last-child::before{ display:none; }
-.step .step-num{
-  position:absolute; left:0; top:0; width:36px; height:36px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800;
-  background:var(--surface-strong); border:1.5px solid var(--border-strong); color:var(--text-1);
-  z-index:2; flex-shrink:0;
-}
-.step[data-color="blue"] .step-num{ border-color:var(--blue); color:var(--blue-text); box-shadow:0 0 14px -2px var(--blue); }
-.step[data-color="green"] .step-num{ border-color:var(--green); color:var(--green-text); box-shadow:0 0 14px -2px var(--green); }
-.step[data-color="amber"] .step-num{ border-color:var(--amber); color:var(--amber-text); box-shadow:0 0 14px -2px var(--amber); }
-.step[data-color="gray"] .step-num{ border-color:var(--gray); color:var(--gray-text); box-shadow:0 0 14px -2px var(--gray); }
-.step[data-color="purple"] .step-num{ border-color:var(--purple); color:var(--purple-text); box-shadow:0 0 14px -2px var(--purple); }
-
-.step.optional .step-card{ border-style:dashed; }
-.step.optional .opt-tag{
-  display:inline-block; font-size:9.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
-  padding:2px 7px; border-radius:6px; background:rgba(255,255,255,.1); color:var(--text-2); margin-left:8px;
-  vertical-align:middle;
-}
-
-.step-card{
-  background:var(--surface); border:1px solid var(--border); border-radius:14px;
-  padding:13px 16px; cursor:pointer; user-select:none; box-shadow:var(--shadow-sm);
-  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
-  position:relative;
-}
-.step-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg); }
-.step[data-color="blue"] .step-card.open, .step[data-color="blue"] .step-card:hover{ border-color:rgba(77,163,255,.55); background:var(--blue-soft); }
-.step[data-color="green"] .step-card.open, .step[data-color="green"] .step-card:hover{ border-color:rgba(94,214,143,.55); background:var(--green-soft); }
-.step[data-color="amber"] .step-card.open, .step[data-color="amber"] .step-card:hover{ border-color:rgba(255,180,94,.55); background:var(--amber-soft); }
-.step[data-color="gray"] .step-card.open, .step[data-color="gray"] .step-card:hover{ border-color:rgba(154,166,194,.55); background:var(--gray-soft); }
-.step[data-color="purple"] .step-card.open, .step[data-color="purple"] .step-card:hover{ border-color:rgba(199,146,255,.55); background:var(--purple-soft); }
-
-.step-card .sc-label{ font-size:14.5px; font-weight:700; letter-spacing:-.01em; padding-right:24px; }
-.step-card .sc-sub{ font-size:12px; color:var(--text-2); margin-top:3px; }
-.step-card .sc-chevron{ position:absolute; right:14px; top:16px; width:17px; height:17px; color:var(--text-2); transition:transform .25s ease, color .2s ease; }
-.step-card.open .sc-chevron{ transform:rotate(90deg); color:var(--text-1); }
-.step-card .sc-tip{
-  font-size:11.5px; color:var(--text-3); line-height:1.5;
-  max-height:0; opacity:0; overflow:hidden; transition:max-height .3s ease, opacity .25s ease, margin .3s ease;
-}
-.step-card.open .sc-tip{ max-height:100px; opacity:1; margin-top:8px; }
-.step-card .sc-leaves{
-  display:grid; grid-template-rows:0fr; overflow:hidden; transition:grid-template-rows .3s ease;
-}
-.step-card.open .sc-leaves{ grid-template-rows:1fr; }
-.sc-leaves-inner{ min-height:0; overflow:hidden; }
-.sc-leaves-list{ display:flex; flex-wrap:wrap; gap:6px; padding-top:9px; }
-
-/* decision / branch fork */
-.decision-label{
-  position:relative; padding-left:46px; margin:-2px 0 12px; font-size:11px; font-weight:700;
-  letter-spacing:.05em; text-transform:uppercase; color:var(--text-3);
-  display:flex; align-items:center; gap:6px;
-}
-.decision-label svg{ width:13px; height:13px; }
-.branch-fork{ position:relative; padding-left:46px; padding-bottom:14px; }
-.branch-fork::before{ content:''; position:absolute; left:17px; top:0; bottom:-2px; width:2px; background:var(--border-strong); }
-.fork-row{ display:flex; gap:12px; flex-wrap:wrap; }
-.fork-card{ flex:1 1 220px; min-width:200px; }
-.fork-card .step-card{ border-radius:14px; }
-.fork-card .sc-label{ font-size:13px; }
-
-/* small intro / closing note cards inside flow */
-.flow-note{
-  max-width:760px; margin:18px auto 0; padding:13px 18px; border-radius:14px;
-  background:var(--surface); border:1px dashed var(--border-strong); font-size:12px; color:var(--text-2); line-height:1.6;
-}
-.flow-note b{ color:var(--text-1); }
-
 /* responsive */
 @media (max-width:880px){
   .branches-row{ gap:18px; }
   .branch{ width:100%; max-width:340px; }
-  .fork-row{ flex-direction:column; }
 }
 
 @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
@@ -605,22 +464,6 @@ h1.mm-title{
   <h1 class="mm-title">Requisitos Regulatórios — SAE</h1>
   <p class="mm-subtitle">Sistemas de Armazenamento de Energia. Clique em qualquer etapa para revelar os próximos níveis.</p>
 
-  <div class="view-switch" id="view-switch">
-    <button class="active" data-view="mindmap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5V12M12 12L6.5 17M12 12L17.5 17"/></svg>
-      Mapa mental
-    </button>
-    <button data-view="flow">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="6" rx="1.5"/><rect x="14" y="3" width="7" height="6" rx="1.5"/><rect x="8.5" y="15" width="7" height="6" rx="1.5"/><path d="M6.5 9v3a2 2 0 0 0 2 2h0M17.5 9v3a2 2 0 0 0-2 2h0M12 14v1"/></svg>
-      Fluxograma
-    </button>
-  </div>
-
-  <div class="type-switch" id="type-switch" style="display:none">
-    <button class="type-pill active" data-type="bateria"><span class="tp-dot" style="background:var(--blue)"></span>SAE Bateria Eletroquímica</button>
-    <button class="type-pill" data-type="uhr"><span class="tp-dot" style="background:var(--purple)"></span>SAE UHR (Hidrelétrica Reversível)</button>
-  </div>
-
   <div class="mm-controls">
     <button class="mm-btn primary" id="btn-expand">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m11 0h3a2 2 0 0 0 2-2v-3"/></svg>
@@ -630,10 +473,6 @@ h1.mm-title{
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg>
       Recolher tudo
     </button>
-    <a class="mm-btn" href="fluxograma_lrcap.html" target="_blank" rel="noopener" style="text-decoration:none">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M3 9h18M9 3v18"/></svg>
-      Fluxograma Completo
-    </a>
   </div>
 
   <div class="mm-legend" id="legend-mindmap">
@@ -645,12 +484,6 @@ h1.mm-title{
     <div class="leg-item"><div class="leg-dot c-green"></div>EPE — habilitação técnica</div>
     <div class="leg-item"><div class="leg-dot c-amber"></div>Tipo de conexão</div>
     <div class="leg-item"><div class="leg-dot c-gray"></div>Prazos e operação</div>
-  </div>
-  <div class="mm-legend" id="legend-flow" style="display:none">
-    <div class="leg-item"><div class="leg-dot c-blue"></div>ANEEL — outorga</div>
-    <div class="leg-item"><div class="leg-dot c-green"></div>EPE — leilão (opcional)</div>
-    <div class="leg-item"><div class="leg-dot c-amber"></div>Conexão à rede</div>
-    <div class="leg-item"><div class="leg-dot c-gray"></div>Operação / pós-outorga</div>
   </div>
 </div>
 
@@ -702,10 +535,6 @@ h1.mm-title{
       </aside>
     </div>
   </div>
-</div>
-
-<div class="view" id="view-flow">
-  <div class="flow-wrap" id="flow-container"></div>
 </div>
 
 <div id="leaf-modal-overlay">
@@ -2011,144 +1840,6 @@ document.addEventListener('keydown', (e)=>{
 });
 
 /* =========================================================
-   DADOS — FLUXOGRAMA (passo a passo por tipo de geração)
-   ========================================================= */
-const QUALIF_JURIDICA = {
-  id:'jur', color:'blue', label:'Qualificação Jurídica', sub:'Documentos societários e fiscais',
-  tip:'Exigida para qualquer requerente, independente da tecnologia de SAE.',
-  leaves:['Regularidade fiscal: FGTS + Fazendas Municipal/Estadual/Federal','Organograma societário (participações >5%)','Ato constitutivo/estatuto + administração atual','Comprovação de representação legal','Contrato de Constituição de Consórcio (se houver)']
-};
-const DOCS_ADICIONAIS = {
-  id:'adoc', color:'blue', label:'Documentos adicionais', sub:'Para emissão da outorga',
-  tip:'Completam o pedido de outorga após a qualificação jurídica e técnica.',
-  leaves:['Licença ambiental','CUST (ONS) e/ou CUSD (distribuidora)','Parecer de acesso correspondente','Sumário Executivo para emissão de outorga','Declaração de Atendimento (Anexo III)']
-};
-const ANALISE_HISTORICO = {
-  id:'hist', color:'blue', label:'Análise de histórico do requerente', sub:'ANEEL examina penalidades e adimplência',
-  tip:'A ANEEL avalia o histórico do interessado e de seus controladores diretos quanto a penalidades e obrigações setoriais (art. 10).'
-};
-const OUTORGA_PUBLICADA = {
-  id:'outorga', color:'blue', label:'Outorga de autorização publicada', sub:'Vigência de 35 anos',
-  tip:'Publicada no D.O.U.; pedido pode ser indeferido/arquivado se faltar documentação dos Anexos I e II.',
-  leaves:['Vigência: 35 anos a partir da publicação','Prazo de implantação: 54 meses para operação comercial de todas as unidades','Marcos intermediários acompanhados pela fiscalização (potência > 5.000 kW)']
-};
-const CONEXAO_DECISION = {
-  id:'conexao-fork', color:'amber',
-  branches:[
-    { id:'rb', label:'Rede Básica / DIT', sub:'Acesso via ONS', tip:'Conexão na Rede Básica ou Demais Instalações de Transmissão, operada pelo ONS.',
-      leaves:['Parecer de Acesso ONS','Suprimento ≤ 5 anos da data do leilão (quando aplicável)','Validade 90 dias (Procedimentos de Rede)','Envio até 75 dias antes do leilão (Portaria MME 102/2016)'] },
-    { id:'dist', label:'Distribuição', sub:'Acesso via distribuidora', tip:'Conexão na rede de distribuição da concessionária ou permissionária.',
-      leaves:['Orçamento Estimado (DAL) — exclusivo por leilão','Orçamento de Conexão — prazo da distribuidora','CUSD + CCD (contratos assinados)','Envio até 75 dias antes do leilão'] },
-  ]
-};
-const OBRAS = {
-  id:'obras', color:'gray', label:'Início das obras de implantação', sub:'Pode ocorrer antes da outorga',
-  tip:'Por conta e risco do agente; a ausência de outorga não gera responsabilidade da ANEEL (art. 6º).'
-};
-const CONEXAO_REDE = {
-  id:'conexao-rede', color:'gray', label:'Conexão ao sistema elétrico', sub:'Somente após contratos + outorga',
-  tip:'A conexão exige contratos de uso/conexão da rede celebrados e a outorga emitida (art. 7º). Não autoriza, por si, operação em teste ou comercial.'
-};
-const OPERACAO = {
-  id:'operacao', color:'gray', label:'Operação em teste → Operação comercial', sub:'Conforme RN 1.029/2022',
-  tip:'Operação comercial deve iniciar dentro do prazo de 54 meses da outorga. SAE adjacentes não podem compartilhar medição/controle (art. 12).'
-};
-const POS_OUTORGA_NOTE = '<b>Procedimentos sob demanda (pós-outorga):</b> alteração de características técnicas (Anexo II atualizado), prorrogação de prazo (requerer ≥ 6 meses antes do vencimento), transferência de titularidade e revogação a pedido — todos via sistema informatizado da ANEEL.';
-
-const FLOWS = {
-  bateria: {
-    label:'SAE Bateria Eletroquímica',
-    phases:[
-      { id:'aneel', color:'blue', title:'ANEEL — Outorga de autorização', note:'RN 1.161/2026',
-        steps:[
-          { id:'dro', optional:true, label:'DRO-SAE', sub:'Opcional · facilita licenças e financiamento',
-            tip:'Despacho de Registro do Requerimento de Outorga. Não garante exclusividade nem direito de preferência. Validade de 4 anos, sem prorrogação.',
-            leaves:['Formulário de Requerimento de Outorga (Anexo I)','Declaração de Atendimento (Anexo III)'] },
-          QUALIF_JURIDICA,
-          { id:'tecbat', color:'blue', label:'Qualificação Técnica — Bateria', sub:'Arranjo geral + estudo técnico',
-            tip:'Documentação técnica específica para SAE de bateria eletroquímica (Anexo II, itens 6 e 7).',
-            leaves:['Arranjo Geral + rede de interesse restrito (subestação coletora → ponto de conexão)','Estudo técnico de estimativa de injeção anual','Perfil de operação, eficiência global e potência de descarga','Capacidade de armazenamento, tecnologia e equipamentos'] },
-          DOCS_ADICIONAIS,
-          ANALISE_HISTORICO,
-          OUTORGA_PUBLICADA,
-        ],
-        decision: CONEXAO_DECISION,
-        tailSteps:[ OBRAS, CONEXAO_REDE, OPERACAO ]
-      },
-      { id:'epe', color:'green', title:'EPE — Cadastro e habilitação técnica', note:'Leilão LRCAP-2026 · Sistema AEGE',
-        steps:[
-          { id:'adesao', label:'Aderir ao Sistema AEGE', sub:'Abra: https://aege-adesao.epe.gov.br',
-            tip:'Formulário eletrônico de Adesão da empresa ao AEGE — é o primeiro passo, antes de existir qualquer login.',
-            leaves:['Abrir https://aege-adesao.epe.gov.br','Preencher os dados da empresa no Formulário de Adesão','Enviar o formulário à EPE','Aguardar verificação da EPE (até 5 dias úteis)'] },
-          { id:'login-aege', label:'Acessar o Sistema AEGE', sub:'Login e senha recebidos por e-mail',
-            tip:'O login e a senha são enviados por e-mail ao Usuário Responsável após a adesão ser aprovada. Para trocar a senha depois, use https://sen.epe.gov.br.',
-            leaves:['Abrir o AEGE e entrar com login e senha recebidos por e-mail','Se precisar trocar a senha: acessar https://sen.epe.gov.br','Senha deve ter ≥ 12 caracteres, com maiúscula, minúscula, número e símbolo'] },
-          { id:'cadastro-usuarios', label:'Menu "Cadastro" — identificar o empreendedor', sub:'Dados da empresa + usuários',
-            tip:'Tela onde o Usuário Responsável preenche Razão Social/CNPJ e inclui os demais usuários do sistema.',
-            leaves:['Clicar no menu "Cadastro"','Preencher a tela "Dados do Empreendedor" (Razão Social, CNPJ)','Clicar em "Incluir" para cada novo usuário','Se já existir cadastro em outro sistema EPE: informar o CPF e clicar em "Trazer os dados do CPF"','Designar o Representante Legal e o Interlocutor'] },
-          { id:'incluir-empreendimento', label:'Menu "Empreendimentos" — incluir o projeto', sub:'Selecionar o tipo de fonte e nomear',
-            tip:'Quem inclui o empreendimento se torna automaticamente o Interlocutor do projeto.',
-            leaves:['Clicar no menu "Empreendimentos"','Selecionar o tipo de empreendimento no menu vertical','Clicar em "Incluir"','Digitar o nome do empreendimento (sem siglas como "EOL", "UEE" etc.)','Clicar em "Salvar"'] },
-          { id:'inscricao', label:'Menu "Inscrição" — vincular ao leilão LRCAP-2026', sub:'Inscrição ≠ cadastramento',
-            tip:'A inscrição é apenas a intenção de participar; o Cadastramento só se efetiva com a apresentação da documentação completa e a obtenção do número de processo.',
-            leaves:['Clicar em "Inscrição" no menu do AEGE','Selecionar o empreendimento com número de inscrição "0" na lista de busca','Clicar em "Editar"','No campo "Leilão", selecionar LRCAP-2026','Designar o Representante Legal na lista suspensa','Clicar em "Salvar" → o sistema gera o Número de Inscrição'] },
-          { id:'campos-azuis', label:'Preencher os campos azuis do leilão', sub:'Liberados só após a inscrição',
-            tip:'Campos amarelos = núcleo do empreendimento (valem para todos os leilões); campos azuis = específicos do LRCAP-2026.',
-            leaves:['Guia Empreendimento → Representante Legal','Guia Conexão → Subestação Elevadora (tipo, tensão, transformadores)','Guia Conexão → Instalação Conexão (UF do ponto de conexão, submercado, tipo de conexão)','Guia Leilão → Cronograma, Motorização, Orçamento, REIDI'] },
-          { id:'mema', label:'Memorial Descritivo A — Tecnologia', sub:'Dimensionamento e desempenho',
-            tip:'Identificação do empreendimento e estudos de desempenho da bateria, enviados por upload junto ao requerimento de cadastramento.',
-            leaves:['Química do cátodo e do ânodo','Potência (kW) e capacidade (kWh)','Fatores de perda: RTE, eficiência de conversores, autoconsumo','Simulação diária do estado de carga','Estudo de degradação da bateria','RTE remanescente ao longo do contrato','Estratégia de "Augmentation"','Plano de descarte/reciclagem','Catálogo dos equipamentos (BESS + PCS)'] },
-          { id:'memb', label:'Memorial Descritivo B–F', sub:'Localização, segurança, unifilar, ART',
-            tip:'Conjunto de desenhos e documentos técnicos complementares, também enviados por upload.',
-            leaves:['B: Desenho de localização DWG (UTM/SIRGAS 2000) com matrícula RGI','C: Planilha de coordenadas da poligonal (Anexo IV)','D: Plano de emergência e prevenção a incêndio','E: Diagrama Unifilar completo (CC/CA, subestação, ponto de conexão)','F: ART dos responsáveis técnicos + comprovante de recolhimento'] },
-          { id:'docacesso-epe', label:'Documento de Acesso', sub:'Conforme tipo de conexão',
-            tip:'Obrigatório para distribuidoras; pode ser dispensado para Rede Básica/DIT a depender da portaria do leilão.' },
-        ],
-        decision:{ id:'acesso-epe-fork', color:'green', branches:[
-          { id:'ons', label:'Parecer de Acesso ONS', sub:'Rede Básica / DIT / ICG', tip:'Válido se suprimento ≤ 5 anos, dentro da validade de 90 dias e enviado até 75 dias antes do leilão.' },
-          { id:'dal', label:'DAL / Orçamento de Conexão', sub:'Distribuição', tip:'Orçamento Estimado (DAL) ou Orçamento de Conexão emitido pela distribuidora, conforme RN ANEEL 1000/2021.' },
-          { id:'infacesso', label:'Informação de Acesso EPE', sub:'Suprimento > 3 anos', tip:'Emitida apenas para Rede Básica/DIT/ICG; exclusiva por leilão, não substitui solicitação ao ONS pós-leilão.' },
-        ]},
-        tailSteps:[
-          { id:'direito', label:'Direito de Uso do Local', sub:'+ Certidão RGI ≤ 30 dias', tip:'Declaração nos termos do Anexo VI, acompanhada de certidão de inteiro teor com georreferenciamento averbado.' },
-          { id:'declcn', label:'Declaração de Conteúdo Nacional', sub:'Anexo VII', tip:'Assinatura do Representante Legal, com firma reconhecida ou assinatura digital.' },
-          { id:'verificacao', label:'Guia Leilão → Verificação e Finalização', sub:'Checagem automática + declaração automática',
-            tip:'O AEGE roda críticas automáticas nos dados e exibe a íntegra da declaração do item 4.6 (equipamentos novos, ADS, requisitos mínimos de conexão/grid-forming). Status "N" (não verificado) não impede a inscrição, mas erros não corrigidos podem levar à inabilitação.',
-            leaves:['Abrir a guia "Leilão" → subguia "Verificação e Finalização"','Corrigir os campos sinalizados em vermelho (preenchimento obrigatório)','Confirmar a Declaração automática gerada pelo AEGE','Repetir a verificação até o status ficar "V" (Verificado)'] },
-          { id:'ficha', label:'Imprimir a Ficha de Dados', sub:'Botão "F. Dados" no AEGE', tip:'Gera o PDF com todos os dados preenchidos no AEGE — documento indispensável para instruir o processo de Habilitação Técnica (Anexo V).' },
-          { id:'analise-epe', label:'Análise técnica da EPE', sub:'Pode solicitar complementação', tip:'Verifica sobreposição física de projetos; documentação incompleta torna o cadastramento ineficaz. Após aceito, o botão "Comprovante" é liberado no AEGE para impressão do protocolo de cadastramento.' },
-        ],
-        decision2:{ id:'habilitacao-fork', color:'green', branches:[
-          { id:'habilitado', label:'Habilitação Técnica concedida', sub:'Botão "Habilitação Técnica" no AEGE', tip:'Disponível até a data do leilão: imprime Habilitação Técnica, Ficha de Dados, Ofício de COP/CEC e Parecer de Acesso da EPE. Gera o CEG, que identifica o empreendimento durante todo o ciclo de vida.' },
-          { id:'inabilitado', label:'Inabilitado → Recurso', sub:'5 dias úteis, até 2ª instância', tip:'Recurso ao Superintendente de Geração; decisão final ao Diretor de Estudos de Energia Elétrica.' },
-        ]}
-      },
-    ]
-  },
-  uhr: {
-    label:'SAE UHR — Hidrelétrica Reversível',
-    phases:[
-      { id:'aneel', color:'purple', title:'ANEEL — Outorga de autorização', note:'RN 1.161/2026 · não há rito específico de leilão na EPE para UHR',
-        steps:[
-          { id:'dro', optional:true, label:'DRO-SAE', sub:'Opcional · facilita licenças e financiamento',
-            tip:'Despacho de Registro do Requerimento de Outorga. Não garante exclusividade. Validade de 4 anos, sem prorrogação.',
-            leaves:['Formulário de Requerimento de Outorga (Anexo I)','Declaração de Atendimento (Anexo III)'] },
-          { ...QUALIF_JURIDICA, color:'purple' },
-          { id:'tecuhr', color:'purple', label:'Qualificação Técnica — UHR', sub:'Reservatórios, dutos e estudo hídrico',
-            tip:'Documentação técnica específica para usina hidrelétrica reversível em ciclo fechado (Anexo II, itens 8 a 10).',
-            leaves:['Arranjo Geral com reservatórios, dutos forçados e casa de força','Outorga de uso dos recursos hídricos (ou dispensa do órgão competente)','Estudo técnico: potência injetável e potência bombeável','Altura de queda, vazão de projeto e eficiência global','Capacidade de armazenamento e perfil de operação previsto'] },
-          { ...DOCS_ADICIONAIS, color:'purple' },
-          { ...ANALISE_HISTORICO, color:'purple' },
-          { ...OUTORGA_PUBLICADA, color:'purple' },
-        ],
-        decision:{ ...CONEXAO_DECISION, color:'amber' },
-        tailSteps:[ OBRAS, CONEXAO_REDE, OPERACAO ]
-      },
-    ]
-  }
-};
-
-/* =========================================================
    RENDER — MAPA MENTAL
    ========================================================= */
 const chevronSVG = `<svg class="nc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
@@ -2311,144 +2002,13 @@ function animateRedraw(durationMs){
 window.addEventListener('resize', ()=>{ drawConnectors(); });
 
 /* =========================================================
-   RENDER — FLUXOGRAMA
-   ========================================================= */
-let stepCounter = 0;
-
-function buildLeafChip(l){
-  return `<div class="leaf-chip" data-leaf="${escAttr(l)}">${l}<svg class="leaf-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>`;
-}
-
-function buildStep(step){
-  const leaves = (step.leaves||[]).map(buildLeafChip).join('');
-  stepCounter++;
-  const optTag = step.optional ? `<span class="opt-tag">Opcional</span>` : '';
-  return `
-  <div class="step ${step.optional?'optional':''}" data-color="${step.color}">
-    <div class="step-num">${stepCounter}</div>
-    <div class="step-card flow-toggle">
-      <div class="sc-label">${step.label}${optTag}</div>
-      <div class="sc-sub">${step.sub||''}</div>
-      ${chevronSVG.replace('nc-chevron','sc-chevron')}
-      <div class="sc-tip">${step.tip||''}</div>
-      ${leaves?`<div class="sc-leaves"><div class="sc-leaves-inner"><div class="sc-leaves-list">${leaves}</div></div></div>`:''}
-    </div>
-  </div>`;
-}
-
-function buildForkCard(b, color){
-  const leaves = (b.leaves||[]).map(buildLeafChip).join('');
-  return `
-  <div class="fork-card" data-color="${color}">
-    <div class="step-card flow-toggle">
-      <div class="sc-label">${b.label}</div>
-      <div class="sc-sub">${b.sub||''}</div>
-      ${chevronSVG.replace('nc-chevron','sc-chevron')}
-      <div class="sc-tip">${b.tip||''}</div>
-      ${leaves?`<div class="sc-leaves"><div class="sc-leaves-inner"><div class="sc-leaves-list">${leaves}</div></div></div>`:''}
-    </div>
-  </div>`;
-}
-
-function buildDecision(decision, defaultColor){
-  if(!decision) return '';
-  const color = decision.color||defaultColor;
-  return `
-  <div class="decision-label">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9 9-9z"/></svg>
-    Decisão — tipo de conexão / documento de acesso
-  </div>
-  <div class="branch-fork">
-    <div class="fork-row">${decision.branches.map(b=>buildForkCard(b,color)).join('')}</div>
-  </div>`;
-}
-
-function buildPhase(phase){
-  const stepsHtml = phase.steps.map(buildStep).join('');
-  const decisionHtml = buildDecision(phase.decision, phase.color);
-  const tailHtml = (phase.tailSteps||[]).map(buildStep).join('');
-  const decision2Html = buildDecision(phase.decision2, phase.color);
-  return `
-  <div class="flow-phase" data-id="${phase.id}">
-    <div class="phase-head phase-toggle" data-color="${phase.color}">
-      <div class="ph-dot"></div>${phase.title}
-      ${phase.note?`<div class="ph-note">${phase.note}</div>`:''}
-      ${chevronSVG.replace('nc-chevron','ph-chevron').replace('M9 6l6 6-6 6','M6 9l6 6 6-6')}
-    </div>
-    <div class="phase-body"><div class="phase-body-inner">
-      <div class="steps-col">${stepsHtml}</div>
-      ${decisionHtml}
-      <div class="steps-col">${tailHtml}</div>
-      ${decision2Html}
-    </div></div>
-  </div>`;
-}
-
-const MANUAL_NOTE = '<b>Manual do Empreendedor — Sistema AEGE:</b> os passos de Adesão, login, cadastro de usuários e Inscrição (fase ANEEL/EPE acima) seguem o Manual do Empreendedor (EPE-DEE-RE-028/2009). Sessões do AEGE expiram em 30 minutos de inatividade — salve cada guia periodicamente para não perder dados.';
-const UHR_AEGE_NOTE = '<b>Se vier a participar de leilão:</b> a EPE-DEE-RE-079 trata apenas de SAE em bateria eletroquímica. Caso uma UHR venha a ser ofertada em leilão, a mecânica de acesso ao AEGE (Adesão, login, Cadastro, Inscrição) do Manual do Empreendedor se aplicaria de forma análoga, mas sob instruções específicas a serem publicadas pela EPE/MME para esse tipo de fonte.';
-
-function renderFlow(type){
-  stepCounter = 0;
-  const data = FLOWS[type];
-  const container = document.getElementById('flow-container');
-  const extraNote = type==='bateria' ? MANUAL_NOTE : UHR_AEGE_NOTE;
-  container.innerHTML = data.phases.map(buildPhase).join('') +
-    `<div class="flow-note">${POS_OUTORGA_NOTE}<br><br><b>Disposição transitória (RN 1.161/2026):</b> pedidos já protocolados antes de 24/06/2026 têm 90 dias para se adequar aos novos requisitos, sob pena de indeferimento automático.</div>` +
-    `<div class="flow-note">${extraNote}</div>`;
-
-  container.querySelectorAll('.flow-toggle').forEach(el=>{
-    el.addEventListener('click', ()=>{ el.classList.toggle('open'); });
-  });
-  container.querySelectorAll('.phase-toggle').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      el.closest('.flow-phase').classList.toggle('collapsed');
-    });
-  });
-  container.querySelectorAll('.leaf-chip').forEach(el=>{
-    el.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      openLeafModal(el.dataset.leaf);
-    });
-  });
-}
-
-/* =========================================================
-   CONTROLES GERAIS (expandir / recolher / alternar views)
+   CONTROLES GERAIS (expandir / recolher)
    ========================================================= */
 function setAll(expand){
-  const activeView = document.querySelector('.view.active');
-  if(activeView.id === 'view-mindmap'){
-    if(expand) MM.expandAll(); else MM.collapseAll();
-  } else {
-    activeView.querySelectorAll('.flow-toggle').forEach(el=>{ el.classList.toggle('open', expand); });
-    activeView.querySelectorAll('.flow-phase').forEach(el=>{ el.classList.toggle('collapsed', !expand); });
-  }
+  if(expand) MM.expandAll(); else MM.collapseAll();
 }
 document.getElementById('btn-expand').addEventListener('click', ()=>setAll(true));
 document.getElementById('btn-collapse').addEventListener('click', ()=>setAll(false));
-
-let currentFlowType = 'bateria';
-document.getElementById('view-switch').addEventListener('click', (e)=>{
-  const btn = e.target.closest('button[data-view]');
-  if(!btn) return;
-  document.querySelectorAll('.view-switch button').forEach(b=>b.classList.toggle('active', b===btn));
-  const view = btn.dataset.view;
-  document.getElementById('view-mindmap').classList.toggle('active', view==='mindmap');
-  document.getElementById('view-flow').classList.toggle('active', view==='flow');
-  document.getElementById('type-switch').style.display = view==='flow' ? 'flex' : 'none';
-  document.getElementById('legend-mindmap').style.display = view==='mindmap' ? 'flex' : 'none';
-  document.getElementById('legend-flow').style.display = view==='flow' ? 'flex' : 'none';
-  if(view==='flow' && !document.getElementById('flow-container').innerHTML){ renderFlow(currentFlowType); }
-  if(view==='mindmap'){ MM.onShow(); }
-});
-
-document.getElementById('type-switch').addEventListener('click', (e)=>{
-  const btn = e.target.closest('button[data-type]');
-  if(!btn) return;
-  document.querySelectorAll('.type-pill').forEach(b=>b.classList.toggle('active', b===btn));
-  currentFlowType = btn.dataset.type;
-  renderFlow(currentFlowType);
-});
 
 /* =========================================================
    MAPA MENTAL — engine interativo (D3 / d3-hierarchy + d3-zoom)

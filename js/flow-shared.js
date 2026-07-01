@@ -1,16 +1,12 @@
 /* =====================================================================
- *  CAMADA COMPARTILHADA — Perguntas × Fluxograma LRCAP-2026
+ *  CAMADA COMPARTILHADA — utilitários usados pela página de Cadastro
  *  ---------------------------------------------------------------------
- *  Usado pela página de Cadastro (index.html) e pelo Fluxograma
- *  (mapamental/fluxograma_lrcap.html). Não duplica dados: só define a
- *  taxonomia de blocos/documentos do fluxograma e funções utilitárias
- *  que ambas as páginas precisam compartilhar.
+ *  Define a taxonomia de blocos/documentos usada para vincular perguntas
+ *  a uma etapa do processo, além de funções utilitárias do app.
  *
  *    window.isAnswered(reg)      -> true se a pergunta tem resposta
  *    window.flowSlug(texto)      -> slug estável (sem acento, kebab-case)
  *    window.FLOW_TOPICS          -> [{id, label, docs:[{id,label}]}, ...]
- *                                   na mesma ordem/rótulos das etapas do
- *                                   fluxograma (ver STEPS em fluxograma_lrcap.html)
  * ===================================================================== */
 
 (function () {

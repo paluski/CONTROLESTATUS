@@ -3,8 +3,8 @@
 --  ---------------------------------------------------------------------
 --  Rode no SQL Editor do Supabase (depois do schema.sql e do
 --  schema-documentos.sql). Adiciona à tabela "registros" os campos
---  necessários para que o Fluxograma (mapamental/fluxograma_lrcap.html)
---  consiga listar as perguntas de cada etapa, sem criar tabela nova.
+--  necessários para vincular cada pergunta a uma etapa do processo,
+--  sem criar tabela nova.
 --
 --    topico_fluxo      -> id do bloco do fluxograma (ex.: "fundiario")
 --                         ou do bloco + documento lateral

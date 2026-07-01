@@ -83,7 +83,7 @@
   function debounce(fn, ms) {
     let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
   }
-  // Definida em js/flow-shared.js — reaproveitada aqui e no Fluxograma (mesma regra, sem duplicar).
+  // Definida em js/flow-shared.js (sem duplicar).
   const isAnswered = window.isAnswered;
   function naturalCompare(a, b) {
     return String(a == null ? "" : a).localeCompare(String(b == null ? "" : b), "pt", { numeric: true, sensitivity: "base" });
@@ -910,12 +910,12 @@
       numero_protocolo: $("f_protocolo").value.trim(),
     };
   }
-  /* Selects em cascata (Bloco do Fluxograma -> Documento daquele bloco). */
+  /* Selects em cascata (Etapa do processo -> Documento daquela etapa). */
   function fillTopicoBlocoSelect() {
     const sel = $("f_topico_bloco");
     if (!sel || !window.FLOW_TOPICS) return;
     const cur = sel.value;
-    sel.innerHTML = `<option value="">— Sem vínculo com o fluxograma —</option>` +
+    sel.innerHTML = `<option value="">— Sem vínculo com uma etapa —</option>` +
       window.FLOW_TOPICS.map((t) => `<option value="${txt(t.id)}">${txt(t.label)}</option>`).join("");
     sel.value = cur;
   }
