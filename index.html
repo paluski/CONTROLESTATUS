@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=10" />
+  <link rel="stylesheet" href="css/styles.css?v=11" />
 </head>
 <body>
   <div id="app">
@@ -93,6 +93,7 @@
             <select id="filterClass" class="select filter-select" aria-label="Filtrar por tipo"><option value="">Tipo: todos</option></select>
             <select id="filterOrgao" class="select filter-select" aria-label="Filtrar por órgão"><option value="">Órgão: todos</option></select>
             <select id="filterStatus" class="select filter-select" aria-label="Filtrar por status"><option value="">Status: todos</option></select>
+            <select id="filterStatusResposta" class="select filter-select" aria-label="Filtrar por status da resposta"><option value="">Status Resposta: todos</option></select>
             <select id="filterResp" class="select filter-select" aria-label="Filtrar por responsável"><option value="">Responsável: todos</option></select>
             <button id="clearFilters" class="btn btn-ghost filter-clear" type="button">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -133,6 +134,7 @@
                 <th class="sortable" data-sort="data_protocolo">Data protocolo</th>
                 <th class="sortable" data-sort="orgao_responsavel">Órgão responsável</th>
                 <th class="sortable" data-sort="status">Status</th>
+                <th class="sortable" data-sort="status_resposta">Status Resposta</th>
                 <th>Pergunta</th>
                 <th>Resposta</th>
                 <th class="col-actions">Ações</th>
@@ -217,6 +219,14 @@
                     <option value="Pendente Resposta"></option>
                   </datalist>
                 </div>
+                <div class="field">
+                  <label for="f_status_resposta">Status Resposta</label>
+                  <select id="f_status_resposta" name="status_resposta" class="select">
+                    <option value="">— Não avaliado —</option>
+                    <option value="Atende a pergunta">Atende a pergunta</option>
+                    <option value="Não atende a pergunta">Não atende a pergunta</option>
+                  </select>
+                </div>
               </div>
 
               <div class="field">
@@ -250,7 +260,7 @@
             <p class="import-help">
               Colunas aceitas (a ordem não importa):
               <b>Documento</b>, <b>Capítulo</b>, <b>Item referente</b>, <b>Tipo da pergunta</b>,
-              <b>Data de protocolo</b>, <b>Órgão responsável</b>, <b>Status</b>, <b>Pergunta</b> e <b>Resposta</b>.
+              <b>Data de protocolo</b>, <b>Órgão responsável</b>, <b>Status</b>, <b>Status Resposta</b>, <b>Pergunta</b> e <b>Resposta</b>.
               No <b>Capítulo</b>, use <code>&gt;</code> para criar níveis (ex.: <i>Área &gt; Georreferenciamento</i>).
             </p>
             <label id="dropzone" class="dropzone" for="fileInput">
@@ -337,7 +347,7 @@
           <table>
             <thead>
               <tr>
-                <th>Documento</th><th>Capítulo</th><th>Item</th><th>Tipo</th><th>Status</th><th>Pergunta</th><th>Resposta</th>
+                <th>Documento</th><th>Capítulo</th><th>Item</th><th>Tipo</th><th>Status</th><th>Status Resposta</th><th>Pergunta</th><th>Resposta</th>
               </tr>
             </thead>
             <tbody id="importPreviewBody"></tbody>
@@ -486,9 +496,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Aplicação -->
-  <script src="js/config.js?v=10"></script>
-  <script src="js/data.js?v=10"></script>
+  <script src="js/config.js?v=11"></script>
+  <script src="js/data.js?v=11"></script>
   <script src="js/flow-shared.js?v=1"></script>
-  <script src="js/app.js?v=10"></script>
+  <script src="js/app.js?v=11"></script>
 </body>
 </html>

@@ -24,14 +24,16 @@ create table if not exists public.registros (
   data_protocolo    date,
   orgao_responsavel text,
   status            text,
+  status_resposta   text,            -- se a resposta atende à pergunta ("Atende a pergunta" / "Não atende a pergunta")
   pergunta          text,
   resposta          text,
   created_at        timestamptz not null default now()
 );
 
--- Caso a tabela já tenha sido criada antes (sem documento/capitulo), garante as colunas:
+-- Caso a tabela já tenha sido criada antes (sem documento/capitulo/status_resposta), garante as colunas:
 alter table public.registros add column if not exists documento text;
 alter table public.registros add column if not exists capitulo  text;
+alter table public.registros add column if not exists status_resposta text;
 
 -- Índices úteis para busca/ordenação
 create index if not exists idx_registros_created_at on public.registros (created_at desc);

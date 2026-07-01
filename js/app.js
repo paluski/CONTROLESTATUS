@@ -13,6 +13,7 @@
     { key: "data_protocolo",    label: "Data de protocolo",         match: ["data de protocolo", "data protocolo", "data do protocolo", "protocolo", "data"] },
     { key: "orgao_responsavel", label: "Órgão responsável",         match: ["orgao responsavel", "orgao", "responsavel", "orgao responsavel pela resposta"] },
     { key: "status",            label: "Status",                    match: ["status", "situacao", "situacao atual"] },
+    { key: "status_resposta",   label: "Status Resposta",           match: ["status resposta", "status da resposta", "resposta atende", "atende a pergunta"] },
     { key: "pergunta",          label: "Pergunta",                  match: ["pergunta", "questao", "duvida"] },
     { key: "resposta",          label: "Resposta",                  match: ["resposta", "retorno"] },
     { key: "responsavel",       label: "Responsável pela pergunta", match: ["responsavel pela pergunta", "responsavel", "responsável", "autor", "autor da pergunta"] },
@@ -38,7 +39,7 @@
   let hashChecked = false;
   let docModalDocId = null;
   const docModalCollapsed = new Set();
-  const state = { search: "", classificacao: "", orgao: "", status: "", documento: "", responsavel: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
+  const state = { search: "", classificacao: "", orgao: "", status: "", statusResposta: "", documento: "", responsavel: "", sortKey: null, sortDir: "asc", viewMode: "navigate", answered: "", navDoc: null, navItems: [] };
 
   /* ---------- Utilidades --------------------------------------------- */
   function normalize(s) {
@@ -78,6 +79,13 @@
     if (n.includes("respond")) return "s-respondida";
     if (n.includes("conclu") || n.includes("finaliz")) return "s-concluida";
     if (n.includes("cancel") || n.includes("indefer")) return "s-cancelada";
+    return "";
+  }
+  function statusRespostaClass(v) {
+    const n = normalize(v);
+    if (!n) return "";
+    if (n.includes("nao atende")) return "s-naoatende";
+    if (n.includes("atende")) return "s-atende";
     return "";
   }
   function debounce(fn, ms) {
@@ -212,6 +220,7 @@
     fillSelect($("filterClass"), distinct("classificacao"),        "Tipo: todos",         state.classificacao);
     fillSelect($("filterOrgao"), distinct("orgao_responsavel"),    "Órgão: todos",        state.orgao);
     fillSelect($("filterStatus"),distinct("status"),               "Status: todos",       state.status);
+    fillSelect($("filterStatusResposta"), ["Atende a pergunta", "Não atende a pergunta"], "Status Resposta: todos", state.statusResposta);
     fillSelect($("filterResp"),  distinct("responsavel"),          "Responsável: todos",  state.responsavel);
   }
   function populateDatalists() {
@@ -230,6 +239,7 @@
       if (state.classificacao && (r.classificacao || "") !== state.classificacao) return false;
       if (state.orgao && (r.orgao_responsavel || "") !== state.orgao) return false;
       if (state.status && (r.status || "") !== state.status) return false;
+      if (state.statusResposta && (r.status_resposta || "") !== state.statusResposta) return false;
       if (state.responsavel && (r.responsavel || "") !== state.responsavel) return false;
       if (state.documento) {
         const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
@@ -238,7 +248,7 @@
       if (q) {
         const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "";
         const itemTxt = r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "";
-        const hay = normalize([r.item_referente, r.classificacao, r.orgao_responsavel, r.status, r.responsavel, r.pergunta, r.resposta, docNome, itemTxt].join(" "));
+        const hay = normalize([r.item_referente, r.classificacao, r.orgao_responsavel, r.status, r.status_resposta, r.responsavel, r.pergunta, r.resposta, docNome, itemTxt].join(" "));
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -272,6 +282,14 @@
     return isAnswered(r)
       ? '<span class="badge s-respondida">Respondido</span>'
       : '<span class="badge s-pendente">Pendente Resposta</span>';
+  }
+  function statusRespostaBadge(v) {
+    if (!v) return '<span class="cell-empty">—</span>';
+    return `<span class="badge ${statusRespostaClass(v)}">${txt(v)}</span>`;
+  }
+  function statusRespostaTag(r) {
+    if (!r.status_resposta) return "";
+    return `<span class="badge ${statusRespostaClass(r.status_resposta)}">${txt(r.status_resposta)}</span>`;
   }
   function orgTag(r) {
     if (!r.orgao_responsavel) return "";
@@ -345,6 +363,7 @@
         <td data-label="Data protocolo" class="cell-date">${cellOr(formatDate(r.data_protocolo))}</td>
         <td data-label="Órgão responsável">${cellH(r.orgao_responsavel)}</td>
         <td data-label="Status">${statusBadge(r.status)}</td>
+        <td data-label="Status Resposta">${statusRespostaBadge(r.status_resposta)}</td>
         <td data-label="Pergunta"><div class="cell-text">${cellH(r.pergunta)}</div></td>
         <td data-label="Resposta"><div class="cell-text">${cellH(r.resposta)}</div></td>
         <td class="col-actions">
@@ -444,7 +463,7 @@
       <span class="qrow-dot ${dotClass}"></span>
       <span class="qrow-num">${r.item_referente ? txt(r.item_referente) : "·"}</span>
       <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
-      <span class="qrow-badges">${orgTag(r)}${readingStatus(r)}</span>
+      <span class="qrow-badges">${orgTag(r)}${readingStatus(r)}${statusRespostaTag(r)}</span>
       <svg class="qrow-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
     </button>`;
   }
@@ -471,7 +490,7 @@
             <span class="qrow-path">${highlight(pathOf(r), q)}</span>
             <span class="qrow-title">${r.pergunta ? highlight(r.pergunta, q) : "<i>(sem pergunta)</i>"}</span>
           </span>
-          <span class="qrow-badges">${orgTag(r)}${readingStatus(r)}</span>
+          <span class="qrow-badges">${orgTag(r)}${readingStatus(r)}${statusRespostaTag(r)}</span>
         </button>`).join("") + `</div>`;
   }
   function renderNavigate(list) {
@@ -768,7 +787,7 @@
     if (!r) return;
     currentDetailId = r.id;
     const q = state.search;
-    $("modalBadges").innerHTML = readingStatus(r);
+    $("modalBadges").innerHTML = readingStatus(r) + statusRespostaTag(r);
     const docNome = r.documento_id ? (docById(r.documento_id) || {}).nome : "";
     const itemTxt = r.item_id ? (itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "") : "";
     $("modalMeta").innerHTML = [
@@ -814,6 +833,7 @@
       r.data_protocolo ? "Data de protocolo: " + formatDate(r.data_protocolo) : "",
       r.orgao_responsavel ? "Órgão responsável: " + r.orgao_responsavel : "",
       r.status ? "Status: " + r.status : "",
+      r.status_resposta ? "Status Resposta: " + r.status_resposta : "",
       "",
       "PERGUNTA:",
       r.pergunta || "(sem pergunta)",
@@ -862,7 +882,7 @@
         return `<section class="g"><h2>${txt(c)}</h2>` + items.map((r) => `
           <div class="qa">
             <div class="q"><b>${txt(r.item_referente || "")}</b> ${txt(r.pergunta || "")}</div>
-            <div class="meta">${[r.classificacao, formatDate(r.data_protocolo), r.orgao_responsavel, r.status].filter(Boolean).map(txt).join(" · ")}</div>
+            <div class="meta">${[r.classificacao, formatDate(r.data_protocolo), r.orgao_responsavel, r.status, r.status_resposta].filter(Boolean).map(txt).join(" · ")}</div>
             <div class="a">${txt(r.resposta || "(sem resposta)")}</div>
           </div>`).join("") + `</section>`;
       }).join("");
@@ -904,6 +924,7 @@
       orgao_responsavel: $("f_orgao").value.trim(),
       responsavel: $("f_responsavel").value.trim(),
       status: $("f_status").value.trim(),
+      status_resposta: $("f_status_resposta").value.trim(),
       pergunta: $("f_pergunta").value.trim(),
       resposta: $("f_resposta").value.trim(),
       topico_fluxo: $("f_topico_doc").value || $("f_topico_bloco").value || null,
@@ -966,6 +987,7 @@
     $("f_orgao").value = "";
     $("f_responsavel").value = "";
     $("f_status").value = "";
+    $("f_status_resposta").value = "";
     $("f_pergunta").value = "";
     $("f_resposta").value = "";
     $("f_protocolo").value = "";
@@ -988,6 +1010,7 @@
     $("f_orgao").value = r.orgao_responsavel || "";
     $("f_responsavel").value = r.responsavel || "";
     $("f_status").value = r.status || "";
+    $("f_status_resposta").value = r.status_resposta || "";
     $("f_pergunta").value = r.pergunta || "";
     $("f_resposta").value = r.resposta || "";
     $("f_protocolo").value = r.numero_protocolo || "";
@@ -1092,9 +1115,10 @@
         <td>${cellOr(r.item_referente)}</td>
         <td>${cellOr(r.classificacao)}</td>
         <td>${statusBadge(r.status)}</td>
+        <td>${statusRespostaBadge(r.status_resposta)}</td>
         <td><div class="cell-text">${cellOr(r.pergunta)}</div></td>
         <td><div class="cell-text">${cellOr(r.resposta)}</div></td>
-      </tr>`).join("") + (rows.length > 8 ? `<tr><td colspan="7" style="text-align:center;color:var(--muted)">… e mais ${rows.length - 8} linha(s)</td></tr>` : "");
+      </tr>`).join("") + (rows.length > 8 ? `<tr><td colspan="8" style="text-align:center;color:var(--muted)">… e mais ${rows.length - 8} linha(s)</td></tr>` : "");
     $("importModal").hidden = false;
   }
   async function confirmImport() {
@@ -1121,7 +1145,7 @@
     if (typeof XLSX === "undefined") { toast("A biblioteca de planilha não carregou.", "error"); return; }
     const list = getFiltered();
     if (!list.length) { toast("Não há registros para exportar.", "error"); return; }
-    const headers = ["Documento", "Item do documento", "Item referente", "Tipo da pergunta", "Data de protocolo", "Órgão responsável", "Status", "Pergunta", "Resposta"];
+    const headers = ["Documento", "Item do documento", "Item referente", "Tipo da pergunta", "Data de protocolo", "Órgão responsável", "Status", "Status Resposta", "Pergunta", "Resposta"];
     const rows = list.map((r) => ({
       "Documento": r.documento_id ? (docById(r.documento_id) || {}).nome || "" : "",
       "Item do documento": r.item_id && itemById(r.item_id) ? itemLabel(itemById(r.item_id)) : "",
@@ -1130,11 +1154,12 @@
       "Data de protocolo": formatDate(r.data_protocolo),
       "Órgão responsável": r.orgao_responsavel || "",
       "Status": r.status || "",
+      "Status Resposta": r.status_resposta || "",
       "Pergunta": r.pergunta || "",
       "Resposta": r.resposta || "",
     }));
     const ws = XLSX.utils.json_to_sheet(rows, { header: headers });
-    ws["!cols"] = [{ wch: 30 }, { wch: 28 }, { wch: 12 }, { wch: 18 }, { wch: 14 }, { wch: 18 }, { wch: 14 }, { wch: 50 }, { wch: 50 }];
+    ws["!cols"] = [{ wch: 30 }, { wch: 28 }, { wch: 12 }, { wch: 18 }, { wch: 14 }, { wch: 18 }, { wch: 14 }, { wch: 18 }, { wch: 50 }, { wch: 50 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Registros");
     XLSX.writeFile(wb, `controle-perguntas-${ymd(new Date())}.xlsx`);
@@ -1151,6 +1176,7 @@
       data_protocolo: "2026-06-16",
       orgao_responsavel: "EPE",
       status: "Pendente Resposta",
+      status_resposta: "Atende a pergunta",
       pergunta: "Texto da pergunta de exemplo…",
       resposta: "Texto da resposta de exemplo…",
       responsavel: "Bruno Brambilla",
@@ -1175,9 +1201,10 @@
     $("filterClass").onchange  = (e) => { state.classificacao = e.target.value; render(); };
     $("filterOrgao").onchange  = (e) => { state.orgao        = e.target.value; render(); };
     $("filterStatus").onchange = (e) => { state.status       = e.target.value; render(); };
+    $("filterStatusResposta").onchange = (e) => { state.statusResposta = e.target.value; render(); };
     $("filterResp").onchange   = (e) => { state.responsavel  = e.target.value; render(); };
     $("clearFilters").onclick = () => {
-      state.search = state.classificacao = state.orgao = state.status = state.answered = state.documento = state.responsavel = "";
+      state.search = state.classificacao = state.orgao = state.status = state.statusResposta = state.answered = state.documento = state.responsavel = "";
       state.navDoc = null;
       state.navItems = [];
       $("search").value = "";

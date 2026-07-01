@@ -363,6 +363,8 @@ tbody tr:last-child td { border-bottom: 0; }
 .badge.s-respondida,
 .badge.s-concluida  { color: var(--success); background: color-mix(in srgb, var(--success) 15%, transparent); border-color: transparent; }
 .badge.s-cancelada  { color: var(--danger);  background: color-mix(in srgb, var(--danger)  15%, transparent); border-color: transparent; }
+.badge.s-atende     { color: var(--success); background: color-mix(in srgb, var(--success) 15%, transparent); border-color: transparent; }
+.badge.s-naoatende  { color: var(--danger);  background: color-mix(in srgb, var(--danger)  15%, transparent); border-color: transparent; }
 [data-theme="dark"] .badge.s-andamento { color: #93c5fd; }
 
 .row-actions { display: flex; gap: 4px; justify-content: flex-end; }

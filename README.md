@@ -95,6 +95,7 @@ A planilha deve ter as colunas (a ordem não importa; acentos e maiúsculas são
 | Item referente                | item             |
 | Órgão responsável             | órgão            |
 | Status                        | status           |
+| Status Resposta               | status_resposta  |
 | Pergunta                      | pergunta         |
 | Resposta                      | resposta         |
 
